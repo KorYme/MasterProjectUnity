@@ -69,7 +69,7 @@ namespace MasterProject
         {
             foreach (KeyValuePair<Type, BaseManager> kvp in m_AllManagers)
             {
-                InjectionUtilities.InjectDependencies(kvp.Key, typeof(InjectionDependency), m_AllManagers);
+                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ManagerDepencency), m_AllManagers);
             }
         }
 

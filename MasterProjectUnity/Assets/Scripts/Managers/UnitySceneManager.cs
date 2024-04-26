@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using MasterProject.Utilities;
 
 namespace MasterProject.Managers
 {
@@ -7,6 +8,8 @@ namespace MasterProject.Managers
 	{
 		public abstract string SceneName { get; }
 		public SceneReferenceContainer Container { get; private set; }
+
+		[ManagerDepencency] public UnitySceneManager a;
 
         public virtual void LinkSceneContainer()
         {
