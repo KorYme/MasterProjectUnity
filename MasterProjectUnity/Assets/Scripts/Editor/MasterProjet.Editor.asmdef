@@ -1,0 +1,18 @@
+{
+    "name": "MasterProject.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2fd06093ed19e80478de1372bf1463db"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
