@@ -12,6 +12,17 @@ namespace MasterProject.Utilities
             }
         }
 
+        public static bool TryGet<T>(this List<T> list, int index, out T value)
+        {
+            if (index < list.Count)
+            {
+                value = list[index];
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
         public static bool TryAddUnique<T>(this List<T> list, T value)
         {
             if (!list.Contains(value))

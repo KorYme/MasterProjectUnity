@@ -2,18 +2,24 @@ using MasterProject.Debugging;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestDebugLogger : MonoBehaviour
+
+namespace MasterProject.Tests
 {
-    [SerializeField] private List<string> Values;
-
-    private int m_Count = 0;
-
-    void Update()
+    public class TestDebugLogger : MonoBehaviour
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        [SerializeField] LayerMask debugLogLevel;
+        [SerializeField] private List<string> Values;
+        List<int> test = new List<int>();
+
+        private int m_Count = 0;
+
+        private void Update()
         {
-            DebugLogger.Info(Values[m_Count % Values.Count], "Ceci est un test !");
-            m_Count++;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                DebugLogger.Info(/*Values[m_Count % Values.Count],*/ this, "Ceci est un test !");
+                m_Count++;
+            }
         }
     }
 }

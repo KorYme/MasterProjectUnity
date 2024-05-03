@@ -1,6 +1,6 @@
 {
     "name": "MasterProject.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "MasterProject.Editor",
     "references": [
         "GUID:2fd06093ed19e80478de1372bf1463db"
     ],

@@ -1,7 +1,8 @@
+using MasterProject.FSM;
 using System;
 using UnityEngine;
 
-namespace MasterProject.FSM
+namespace MasterProject.Tests.FSM
 {
     public enum MovementStateID
     {

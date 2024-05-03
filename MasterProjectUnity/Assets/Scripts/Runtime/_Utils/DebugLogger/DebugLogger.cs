@@ -47,11 +47,11 @@ namespace MasterProject.Debugging
             return colorValue;
         }
 #endif
-        public static void Info(string sender, string message)
+        public static void Info<T>(T sender, string message) where T : class
         {
-            var colorValue = GetOrAddColorValue(sender);
+            var colorValue = GetOrAddColorValue(typeof(T).Name);
 #if UNITY_EDITOR
-            Debug.Log($"[<color={colorValue}>{sender}</color>] : {message}");
+            Debug.Log($"[<color={colorValue}>{typeof(T).Name}</color>] : {message}");
 #else
             Console.ForegroundColor = colorValue;
             Console.Write(sender);

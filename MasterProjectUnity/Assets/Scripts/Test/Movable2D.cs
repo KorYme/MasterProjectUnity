@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class Movable2D : MonoBehaviour
+namespace MasterProject.Tests
 {
-    [SerializeField] private Transform m_Transform;
+    public class Movable2D : MonoBehaviour
+    {
+        [SerializeField] private Transform m_Transform;
+    }
 }
