@@ -1,11 +1,7 @@
-using Codice.Client.Common.GameUI;
-using Codice.ThemeImages;
 using MasterProject.Debugging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using UnityEditor;
 
 namespace MasterProject.Utilities
 {
@@ -18,6 +14,11 @@ namespace MasterProject.Utilities
             try
             {
                 List<List<string>> output = new List<List<string>>();
+                if (string.IsNullOrEmpty(path))
+                {
+                    DebugLogger.Error(TAG, "The path you tried to read was null or empty.");
+                    return null;
+                }
                 using (StreamReader streamReader = new StreamReader(path))
                 {
                     if (streamReader.EndOfStream)

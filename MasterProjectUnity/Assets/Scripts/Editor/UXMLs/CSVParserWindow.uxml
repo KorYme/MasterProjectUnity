@@ -1,8 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement style="flex-grow: 1;">
         <ui:Button text="Parse CSV Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ParseCSVButton" />
-        <ui:SliderInt picking-mode="Ignore" label="SliderInt" value="42" high-value="100" />
-        <ui:MinMaxSlider picking-mode="Ignore" label="Min/Max Slider" min-value="10" max-value="12" low-limit="-10" high-limit="40" />
-        <ui:DropdownField label="Dropdown" index="-1" choices="System.Collections.Generic.List`1[System.String]" />
     </ui:VisualElement>
 </ui:UXML>

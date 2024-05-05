@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MasterProject.Utilities
 {
@@ -31,6 +32,12 @@ namespace MasterProject.Utilities
                 return true;
             }
             return false;
+        }
+
+        public static Dictionary<TKey, TValue> MapListsIntoDictionary<TKey, TValue>(IEnumerable<TKey> keys, IEnumerable<TValue> values)
+        {
+            return keys.Zip(values , (k, v) => new { k, v })
+                .ToDictionary(x => x.k, x => x.v);
         }
     }
 }

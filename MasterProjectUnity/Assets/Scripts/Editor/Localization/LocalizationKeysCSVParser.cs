@@ -1,4 +1,6 @@
+using MasterProject.Utilities;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -23,8 +25,20 @@ namespace MasterProject.Editor.Localization
         private void CreateGUI()
         {
             m_Tree.CloneTree(rootVisualElement);
+            Button button = rootVisualElement.Q<Button>("ParseCSVButton");
+            button.clicked += ParseCSV;
 
-            VisualElement root = rootVisualElement;
+        }
+
+        private void ParseCSV()
+        {
+            string path = EditorUtility.OpenFilePanel("Open CSV file", "", "csv");
+            m_LastTable = CSVParser.ParseCSV(path);
+            for (int i = 1; i < m_LastTable.Count; i++)
+            {
+                Dictionary<string, string> languageTable = CollectionUtils.MapListsIntoDictionary(m_LastTable[0], m_LastTable[i]);
+
+            }
         }
     }
 }
