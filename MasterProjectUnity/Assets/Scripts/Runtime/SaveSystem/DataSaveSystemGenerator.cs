@@ -3,36 +3,39 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
+using MasterProject.Debugging;
 
-namespace KorYmeLibrary.SaveSystem
+namespace MasterProject.SaveSystem
 {
     public class DataSaveSystemGenerator : MonoBehaviour
     {
+        private static readonly string TAG = nameof(DataSaveSystemGenerator);
+
         #region FIELDS
         [Header("Parameters")]
         [SerializeField, Tooltip("Name of the class which will countain all the data")] 
-        string _dataClassName;
+        private string m_DataClassName;
         [SerializeField, Tooltip("Path to the folder starting from the Assets/")]
-        string _folderName;
+        private string m_FolderName;
         #endregion
 
         #region PROPERTIES
-        string _folderPath
+        private string m_FolderPath
         {
-            get => Application.dataPath + "/" + _folderName;
+            get => Path.Combine(Application.dataPath, m_FolderName);
         }
 
-        string _systemClassName
+        private string m_SystemClassName
         {
-            get => "DSM_" + _dataClassName;
+            get => "DSM_" + m_DataClassName;
         }
 
-        string _path
+        private string m_Path
         {
-            get => _folderPath + "/" + _systemClassName + ".cs";
+            get => Path.Combine(m_FolderPath, m_SystemClassName + ".cs");
         }
 
-        string _classCode
+        private string m_ClassCode
         {
             get =>
                 "using System.Collections;" + "\n" +
@@ -41,13 +44,13 @@ namespace KorYmeLibrary.SaveSystem
                 "\n" +
                 "namespace MasterProject.SaveSystem " + "\n" +
                 "{" + "\n" +
-                "   public class " + _systemClassName + " : DataSaveManager<" + _dataClassName + ">" + "\n" +
+                "   public class " + m_SystemClassName + " : DataSaveManager<" + m_DataClassName + ">" + "\n" +
                 "   {" + "\n" +
                 "       // Modify if you're willing to add some behaviour to the component" + "\n" +
                 "   }" + "\n" +
                 "\n" +
                 "   [System.Serializable]" + "\n" +
-                "   public class " + _dataClassName + " : " + "GameDataTemplate" + "\n" +
+                "   public class " + m_DataClassName + " : " + "GameDataTemplate" + "\n" +
                 "   {" + "\n" +
                 "       // Create the values you want to save here" + "\n" +
                 "   }" + "\n" +
@@ -59,65 +62,65 @@ namespace KorYmeLibrary.SaveSystem
         #if UNITY_EDITOR
         private void Reset()
         {
-            _folderName = "SaveSystemClasses";
-            _dataClassName = "GameData";
+            m_FolderName = "SaveSystemClasses";
+            m_DataClassName = "GameData";
         }
 
         //[Button]
         public void GenerateSaveSystemFolder()
         {
-            if (Directory.Exists(_folderPath))
+            if (Directory.Exists(m_FolderPath))
             {
-                Debug.LogWarning("A folder named this way already exists in the project.");
+                DebugLogger.Warning(TAG, "A folder named this way already exists in the project.");
                 return;
             }
-            Directory.CreateDirectory(_folderPath);
+            Directory.CreateDirectory(m_FolderPath);
             AssetDatabase.Refresh();
         }
 
         //[Button]
         public void GenerateGameDataClass()
         {
-            if (!Directory.Exists(_folderPath))
+            if (!Directory.Exists(m_FolderPath))
             {
-                Debug.LogWarning("No folder named this way has been found in the project. \n" +
+                DebugLogger.Warning(TAG, "No folder named this way has been found in the project. \n" +
                                     "Try creating one with the button above");
                 return;
             }
-            if (File.Exists(_folderPath + "/" + _systemClassName + ".cs"))
+            if (File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
             {
-                Debug.LogWarning("There is already one class named this way in " + _folderName);
+                DebugLogger.Warning(TAG, "There is already one class named this way in " + m_FolderName);
                 return;
             }
             // Écriture du code généré dans un fichier
-            File.WriteAllText(_path, _classCode);
+            File.WriteAllText(m_Path, m_ClassCode);
             AssetDatabase.Refresh();
         }
 
         //[Button]
         public void AttachDataSaveManager()
         {
-            if (!Directory.Exists(_folderPath))
+            if (!Directory.Exists(m_FolderPath))
             {
-                Debug.LogWarning("No folder SaveSystemClasses has been found");
+                DebugLogger.Warning(TAG, "No folder SaveSystemClasses has been found");
                 return;
             }
-            if (!File.Exists(_folderPath + "/" + _systemClassName + ".cs"))
+            if (!File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
             {
-                Debug.LogWarning("No game data class has been found in the folder : " + _folderPath);
+                DebugLogger.Warning(TAG, "No game data class has been found in the folder : " + m_FolderPath);
                 return;
             }
             Type type = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(a => a.GetTypes())
-                                .FirstOrDefault(t => t.Name == _systemClassName);
+                                .FirstOrDefault(t => t.Name == m_SystemClassName);
             if (type == null)
             {
-                Debug.LogWarning("No type has been found");
+                DebugLogger.Warning(TAG, "No type has been found");
                 return;
             }
             if (GetComponent(type) != null)
             {
-                Debug.LogWarning("A component already exists on this gameObject");
+                DebugLogger.Warning(TAG, "A component already exists on this gameObject");
                 return;
             }
             gameObject.AddComponent(type);

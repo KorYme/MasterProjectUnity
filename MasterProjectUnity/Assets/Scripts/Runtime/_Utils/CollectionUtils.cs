@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace MasterProject.Utilities
 {
@@ -29,6 +31,15 @@ namespace MasterProject.Utilities
             if (!list.Contains(value))
             {
                 list.Add(value);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool TryAddKvp<TKey, TValue>(this Dictionary<TKey, TValue> dico, KeyValuePair<TKey, TValue> kvp)
+        {
+            if (dico.TryAdd(kvp.Key, kvp.Value))
+            {
                 return true;
             }
             return false;

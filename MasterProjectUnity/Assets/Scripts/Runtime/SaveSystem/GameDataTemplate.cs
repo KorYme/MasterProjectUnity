@@ -1,4 +1,4 @@
-namespace KorYmeLibrary.SaveSystem
+namespace MasterProject.SaveSystem
 {
     [System.Serializable]
     public class GameDataTemplate

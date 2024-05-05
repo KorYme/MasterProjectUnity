@@ -253,6 +253,10 @@ MonoBehaviour:
     Movable: {fileID: 0}
     <IdleState>k__BackingField:
       m_AnimationClip: {fileID: 0}
+  m_Dico:
+    m_Kvps:
+    - Key: 
+      Value: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,6 +365,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 796b1f93396c34845bdd2cdad729d936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugLogLevel:
+    serializedVersion: 2
+    m_Bits: 0
   Values:
   - MatchRule
   - ReportService

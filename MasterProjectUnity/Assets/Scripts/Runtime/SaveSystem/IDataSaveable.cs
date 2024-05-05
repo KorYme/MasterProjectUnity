@@ -1,4 +1,4 @@
-namespace KorYmeLibrary.SaveSystem
+namespace MasterProject.SaveSystem
 {
     public interface IDataSaveable<T>
     {
