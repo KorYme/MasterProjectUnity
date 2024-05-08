@@ -1,4 +1,3 @@
-
 using MasterProject.Debugging;
 using System;
 using System.Collections.Generic;
@@ -7,17 +6,17 @@ namespace MasterProject.FSM
 {
     public class FSM<T> where T : Enum
     {
-        protected IFSMController m_Controller;
+        private IFSMController m_Controller;
 
-        protected bool m_IsFSMRunning;
+        private Dictionary<T, FSMState<T>> m_States;
+
+        public FSMState<T> PreviousState { get; private set; }
+
+        public FSMState<T> CurrentState { get; private set; }
+
         public float StateDuration { get; private set; }
 
-        protected Dictionary<T, FSMState<T>> m_States;
-
-        protected FSMState<T> m_PreviousState;
-        protected FSMState<T> m_NextState;
-
-        protected FSMState<T> m_CurrentState;
+        public bool IsFSMRunning {  get; private set; }
 
         public FSM(IFSMController controller)
         {
@@ -34,25 +33,25 @@ namespace MasterProject.FSM
 
         public virtual void Update(float deltaTime)
         {
-            if (!m_IsFSMRunning)
+            if (!IsFSMRunning)
             {
                 return;
             }
-            m_CurrentState?.Update(deltaTime);
+            CurrentState?.Update(deltaTime);
             StateDuration += deltaTime;
         }
 
         public void Start(T startingIndex)
         {
-            if (m_IsFSMRunning)
+            if (IsFSMRunning)
             {
                 return;
             }
             if (m_States.TryGetValue(startingIndex, out FSMState<T> state))
             {
-                m_CurrentState = state;
+                CurrentState = state;
                 StateDuration = 0f;
-                m_IsFSMRunning = true;
+                IsFSMRunning = true;
             }
             else
             {
@@ -62,27 +61,27 @@ namespace MasterProject.FSM
 
         public void Stop()
         {
-            if (!m_IsFSMRunning)
+            if (!IsFSMRunning)
             {
                 return;
             }
-            m_IsFSMRunning = false;
-            m_PreviousState = m_CurrentState;
-            m_CurrentState = null;
+            IsFSMRunning = false;
+            PreviousState = CurrentState;
+            CurrentState = null;
         }
 
         public bool ChangeState(T newState)
         {
-            if (!m_IsFSMRunning)
+            if (!IsFSMRunning)
             {
                 return false;
             }
-            if (m_States.TryGetValue(newState, out FSMState<T> state) && m_CurrentState != state)
+            if (m_States.TryGetValue(newState, out FSMState<T> state) && CurrentState != state)
             {
-                m_CurrentState.Exit();
-                m_PreviousState = m_CurrentState;
-                m_CurrentState = state;
-                m_CurrentState.Enter();
+                CurrentState.Exit();
+                PreviousState = CurrentState;
+                CurrentState = state;
+                CurrentState.Enter();
                 StateDuration = 0f;
                 return true;
             }
@@ -107,6 +106,17 @@ namespace MasterProject.FSM
                 DebugLogger.Warning(GetType().Name, $"A state {index} has already been added to the FSM.");
                 return null;
             }
+        }
+
+        public bool TryGetController<TFSMController>(out TFSMController controller) where TFSMController : IFSMController
+        {
+            if (m_Controller is TFSMController fsmController)
+            {
+                controller = fsmController;
+                return true;
+            }
+            controller = default;
+            return false;
         }
     }
 }

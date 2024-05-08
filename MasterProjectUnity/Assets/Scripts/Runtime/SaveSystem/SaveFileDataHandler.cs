@@ -72,13 +72,13 @@ namespace MasterProject.SaveSystem
             }
         }
 
-        public static void DestroySavedData(string filePath)
+        public void DestroySavedData()
         {
-            if (!File.Exists(filePath))
+            if (!File.Exists(m_FullPath))
             {
-                DebugLogger.Error(TAG, $"The file you tried to destroy with path {filePath} didn't exist");
+                DebugLogger.Error(TAG, $"The file you tried to destroy with path {m_FullPath} didn't exist");
             }
-            File.Delete(filePath);
+            File.Delete(m_FullPath);
         }
         #endregion
     }

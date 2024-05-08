@@ -101,10 +101,9 @@ namespace MasterProject.SaveSystem
             m_DataHasBeenLoaded = false;
         }
 
-        [MenuItem("CONTEXT/DataSaveManager/Delete saved data")]
-        public void DestroySavedData()
+        public virtual void DestroySavedData()
         {
-            SaveFileDataHandler<T>.DestroySavedData(Path.Combine(Application.persistentDataPath, m_FileName));
+            m_SaveFileDataHandler.DestroySavedData();
         }
 #endregion
     }
