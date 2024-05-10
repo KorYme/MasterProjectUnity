@@ -2,7 +2,6 @@ using MasterProject.Debugging;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace MasterProject.Tests
 {
     public class TestDebugLogger : MonoBehaviour

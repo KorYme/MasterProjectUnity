@@ -1,0 +1,14 @@
+{
+    "name": "MasterProject.Debugging",
+    "rootNamespace": "MasterProject.Debugging",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

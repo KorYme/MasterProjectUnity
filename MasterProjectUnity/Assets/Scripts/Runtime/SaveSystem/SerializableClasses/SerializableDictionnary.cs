@@ -16,7 +16,7 @@ namespace KorYmeLibrary.SaveSystem
             Clear();
             if (m_Keys.Count != m_Values.Count)
             {
-                DebugLogger.Warning("SerializableDictionnary", "There is a different number of keys and values in the save file");
+                DebugLogger.Warning(this, "There is a different number of keys and values in the save file");
                 return;
             }
             for (int i = 0; i < m_Keys.Count; i++)

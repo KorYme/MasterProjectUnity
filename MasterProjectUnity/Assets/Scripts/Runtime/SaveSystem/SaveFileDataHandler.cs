@@ -8,8 +8,6 @@ namespace MasterProject.SaveSystem
 {
     public class SaveFileDataHandler<T>
     {
-        private static readonly string TAG = "SaveFileDataHandler";
-
         #region FIELDS
         private string m_DataDirPath;
         private string m_DataFileName;
@@ -39,7 +37,7 @@ namespace MasterProject.SaveSystem
         {
             if (!File.Exists(m_FullPath))
             {
-                DebugLogger.Error(TAG, "No data has been found, please ensure you've saved before loading.");
+                DebugLogger.Error(this, "No data has been found, please ensure you've saved before loading.");
                 return default;
             }
             try
@@ -52,7 +50,7 @@ namespace MasterProject.SaveSystem
             }
             catch (Exception e)
             {
-                DebugLogger.Warning(TAG, "Error occured when trying to save data to file: " + m_FullPath + "\n" + e);
+                DebugLogger.Warning(this, "Error occured when trying to save data to file: " + m_FullPath + "\n" + e);
                 return default;
             }
         }
@@ -68,7 +66,7 @@ namespace MasterProject.SaveSystem
             }
             catch (Exception e)
             {
-                DebugLogger.Error(TAG, "Error occured when trying to save data to file: " + m_FullPath + "\n" + e);
+                DebugLogger.Error(this, "Error occured when trying to save data to file: " + m_FullPath + "\n" + e);
             }
         }
 
@@ -76,7 +74,7 @@ namespace MasterProject.SaveSystem
         {
             if (!File.Exists(m_FullPath))
             {
-                DebugLogger.Error(TAG, $"The file you tried to destroy with path {m_FullPath} didn't exist");
+                DebugLogger.Error(this, $"The file you tried to destroy with path {m_FullPath} didn't exist");
             }
             File.Delete(m_FullPath);
         }

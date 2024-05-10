@@ -10,8 +10,6 @@ namespace MasterProject.SaveSystem
 {
     public class DataSaveManager<T> : MonoBehaviour where T : GameDataTemplate, new()
     {
-        private static readonly string TAG = "DataSaveManager";
-
         #region FIELDS
         public static DataSaveManager<T> Instance { get; private set; }
 
@@ -36,7 +34,7 @@ namespace MasterProject.SaveSystem
         {
             if (Instance != null)
             {
-                DebugLogger.Warning(TAG, "There is more than one DataSaveManager of this type in the scene");
+                DebugLogger.Warning(this, "There is more than one DataSaveManager of this type in the scene");
                 return;
             }
             Instance = this;
@@ -87,7 +85,7 @@ namespace MasterProject.SaveSystem
             m_GameData = m_SaveFileDataHandler.Load();
             if (m_GameData == null)
             {
-                DebugLogger.Warning(TAG, "No data was found. Initializing with defaults data.");
+                DebugLogger.Warning(this, "No data was found. Initializing with defaults data.");
                 NewGame();
                 return;
             }

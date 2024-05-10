@@ -9,8 +9,6 @@ namespace MasterProject.SaveSystem
 {
     public class DataSaveSystemGenerator : MonoBehaviour
     {
-        private static readonly string TAG = nameof(DataSaveSystemGenerator);
-
         #region FIELDS
         [Header("Parameters")]
         [SerializeField, Tooltip("Name of the class which will countain all the data")] 
@@ -71,7 +69,7 @@ namespace MasterProject.SaveSystem
         {
             if (Directory.Exists(m_FolderPath))
             {
-                DebugLogger.Warning(TAG, "A folder named this way already exists in the project.");
+                DebugLogger.Warning(this, "A folder named this way already exists in the project.");
                 return;
             }
             Directory.CreateDirectory(m_FolderPath);
@@ -83,13 +81,13 @@ namespace MasterProject.SaveSystem
         {
             if (!Directory.Exists(m_FolderPath))
             {
-                DebugLogger.Warning(TAG, "No folder named this way has been found in the project. \n" +
+                DebugLogger.Warning(this, "No folder named this way has been found in the project. \n" +
                                     "Try creating one with the button above");
                 return;
             }
             if (File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
             {
-                DebugLogger.Warning(TAG, "There is already one class named this way in " + m_FolderName);
+                DebugLogger.Warning(this, "There is already one class named this way in " + m_FolderName);
                 return;
             }
             // Écriture du code généré dans un fichier
@@ -102,12 +100,12 @@ namespace MasterProject.SaveSystem
         {
             if (!Directory.Exists(m_FolderPath))
             {
-                DebugLogger.Warning(TAG, "No folder SaveSystemClasses has been found");
+                DebugLogger.Warning(this, "No folder SaveSystemClasses has been found");
                 return;
             }
             if (!File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
             {
-                DebugLogger.Warning(TAG, "No game data class has been found in the folder : " + m_FolderPath);
+                DebugLogger.Warning(this, "No game data class has been found in the folder : " + m_FolderPath);
                 return;
             }
             Type type = AppDomain.CurrentDomain.GetAssemblies()
@@ -115,12 +113,12 @@ namespace MasterProject.SaveSystem
                                 .FirstOrDefault(t => t.Name == m_SystemClassName);
             if (type == null)
             {
-                DebugLogger.Warning(TAG, "No type has been found");
+                DebugLogger.Warning(this, "No type has been found");
                 return;
             }
             if (GetComponent(type) != null)
             {
-                DebugLogger.Warning(TAG, "A component already exists on this gameObject");
+                DebugLogger.Warning(this, "A component already exists on this gameObject");
                 return;
             }
             gameObject.AddComponent(type);

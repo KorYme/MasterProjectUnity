@@ -8,7 +8,7 @@ namespace MasterProject.FSM
     {
         private IFSMController m_Controller;
 
-        private Dictionary<T, FSMState<T>> m_States;
+        private Dictionary<T, FSMState<T>> m_States = new Dictionary<T, FSMState<T>>();
 
         public FSMState<T> PreviousState { get; private set; }
 
@@ -103,7 +103,7 @@ namespace MasterProject.FSM
             }
             else
             {
-                DebugLogger.Warning(GetType().Name, $"A state {index} has already been added to the FSM.");
+                DebugLogger.Warning(this, $"A state {index} has already been added to the FSM.");
                 return null;
             }
         }

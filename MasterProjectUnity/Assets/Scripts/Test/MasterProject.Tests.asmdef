@@ -2,7 +2,9 @@
     "name": "MasterProject.Tests",
     "rootNamespace": "MasterProject.Tests",
     "references": [
-        "GUID:2fd06093ed19e80478de1372bf1463db"
+        "GUID:2fd06093ed19e80478de1372bf1463db",
+        "GUID:39fbbed6db245804b8f9626982245de0",
+        "GUID:8223f40598a062146bcc3bca9a561588"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

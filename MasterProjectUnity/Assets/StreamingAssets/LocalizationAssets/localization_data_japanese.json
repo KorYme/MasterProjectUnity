@@ -1,0 +1,9 @@
+{
+  "LanguageID": "JAPANESE",
+  "LocalizationKeys": {
+    "KEY_ID": "JAPANESE",
+    "MP_TEST1": "Testo",
+    "MP_VALUE": "Ichi",
+    "MP_HELLO": "Konnichiwa"
+  }
+}
