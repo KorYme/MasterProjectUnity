@@ -1,9 +1,9 @@
 {
-  "LanguageID": "FRENCH",
+  "LanguageID": "French",
   "LocalizationKeys": {
-    "KEY_ID": "FRENCH",
-    "MP_TEST1": "Examen",
-    "MP_VALUE": "Valeur",
-    "MP_HELLO": "Bonjour"
+    "LANGUAGE_ID": "French",
+    "KEY_HELLO": "Bonjour",
+    "KEY_THANKS": "Merci",
+    "KEY_RED": "Rouge"
   }
 }

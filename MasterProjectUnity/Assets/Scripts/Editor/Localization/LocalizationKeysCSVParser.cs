@@ -38,7 +38,7 @@ namespace MasterProject.Editor.Localization
             m_LastTable = CSVParser.ParseCSV(path);
             for (int i = 1; i < m_LastTable.Count; i++)
             {
-                LanguageData languageData = new LanguageData()
+                LocalizationData languageData = new LocalizationData()
                 {
                     LanguageID = m_LastTable[i][0],
                     LocalizationKeys = CollectionUtils.MapListsIntoDictionary(m_LastTable[0], m_LastTable[i])

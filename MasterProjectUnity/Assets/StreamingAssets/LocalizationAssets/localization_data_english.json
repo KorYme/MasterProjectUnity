@@ -1,9 +1,9 @@
 {
-  "LanguageID": "ENGLISH",
+  "LanguageID": "English",
   "LocalizationKeys": {
-    "KEY_ID": "ENGLISH",
-    "MP_TEST1": "Test ",
-    "MP_VALUE": "Value",
-    "MP_HELLO": "Hello"
+    "LANGUAGE_ID": "English",
+    "KEY_HELLO": "Hello",
+    "KEY_THANKS": "Thanks",
+    "KEY_RED": "Red"
   }
 }

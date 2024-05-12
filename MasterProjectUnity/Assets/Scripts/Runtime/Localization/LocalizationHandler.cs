@@ -10,14 +10,11 @@ namespace MasterProject.Localization
     {
         public static readonly string LocalizationAssetsDirectory = Path.Combine(Application.streamingAssetsPath, "LocalizationAssets");
 
-        private const string KEY_NOT_FOUND = "{0} KEY NOT FOUND";
-        private const string KEY_EMPTY = "EMPTY KEY";
-
         private static HashSet<LocalizedText> m_LocalizedTexts = new HashSet<LocalizedText>();
 
-        private Dictionary<string, LanguageData> m_LoadedLanguages = new Dictionary<string, LanguageData>();
+        private Dictionary<string, LocalizationData> m_LoadedLanguages = new Dictionary<string, LocalizationData>();
         private List<string> m_LanguagesIDs = new List<string>();
-        private LanguageData m_CurrentLanguageData;
+        private LocalizationData m_CurrentLocaData;
 
         public virtual void Initialize()
         {
@@ -26,10 +23,10 @@ namespace MasterProject.Localization
             IEnumerable<string> localizationFilesPath = Directory.EnumerateFiles(LocalizationAssetsDirectory, "*.json", SearchOption.AllDirectories);
             foreach (string filePath in localizationFilesPath)
             {
-                LanguageData languageData = JsonConvert.DeserializeObject<LanguageData>(File.ReadAllText(filePath));
-                if (m_LoadedLanguages.TryAdd(languageData.LanguageID, languageData))
+                LocalizationData localizationData = JsonConvert.DeserializeObject<LocalizationData>(File.ReadAllText(filePath));
+                if (m_LoadedLanguages.TryAdd(localizationData.LanguageID, localizationData))
                 {
-                    m_LanguagesIDs.Add(languageData.LanguageID);
+                    m_LanguagesIDs.Add(localizationData.LanguageID);
                 }
                 else
                 {
@@ -40,52 +37,49 @@ namespace MasterProject.Localization
             {
                 throw new System.ArgumentOutOfRangeException($"The {LocalizationAssetsDirectory} folder doesn't countain any localization asset");
             }
-            if (m_LoadedLanguages.TryGetValue(m_LanguagesIDs[0], out LanguageData locaData))
+            if (m_LoadedLanguages.TryGetValue(m_LanguagesIDs[0], out LocalizationData locaData))
             {
-                m_CurrentLanguageData = locaData;
+                m_CurrentLocaData = locaData;
+                LocalizedText.OnLocalizationKeyChanged = GetTextFromKey;
+                SetLocalizationData(locaData);
             }
-            LocalizedText.OnLocalizationKeyChanged += GetTextFromKey;
-            Refresh();
         }
 
         public virtual void Unload()
         {
-            LocalizedText.OnLocalizationKeyChanged -= GetTextFromKey;
+            LocalizedText.OnLocalizationKeyChanged = null;
         }
 
-        public void SetLangage(string languageID)
+        public void SetLocalizationData(string languageID)
         {
-            if (languageID == m_CurrentLanguageData.LanguageID)
+            if (languageID == m_CurrentLocaData.LanguageID)
             {
                 return;
             }
-            if (!m_LoadedLanguages.TryGetValue(languageID, out LanguageData languageData))
+            if (!m_LoadedLanguages.TryGetValue(languageID, out LocalizationData locaData))
             {
                 DebugLogger.Warning(this, $"The language with languageId {languageID} doesn't exist");
                 return;
             }
-            m_CurrentLanguageData = languageData;
+            SetLocalizationData(locaData);
+        }
+
+        public void SetLocalizationData(LocalizationData locaData)
+        {
+            m_CurrentLocaData = locaData;
             Refresh();
         }
 
-        public string GetTextFromKey(string key)
+        public bool GetTextFromKey(string key, out string text)
         {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                return KEY_EMPTY;
-            }
-            if (!m_CurrentLanguageData.LocalizationKeys.TryGetValue(key, out string text))
-            {
-                return string.Format(KEY_NOT_FOUND, key);
-            }
-            return text;
+            return m_CurrentLocaData.LocalizationKeys.TryGetValue(key, out text);
         }
 
         public virtual void Refresh()
         {
             foreach (LocalizedText locaText in m_LocalizedTexts)
             {
-                locaText.SetText(GetTextFromKey(locaText.LocalizationKey));
+                locaText.Refresh();
             }
         }
 

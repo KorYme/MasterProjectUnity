@@ -21,9 +21,9 @@ namespace MasterProject.Tests
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(2))
+            if (Input.GetMouseButtonDown(1))
             {
-                m_LocalizationHandler.SetLangage(m_LanguageId);
+                m_LocalizationHandler.SetLocalizationData(m_LanguageId);
             }
         }
     }

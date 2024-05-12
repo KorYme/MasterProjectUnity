@@ -1,9 +1,9 @@
 {
-  "LanguageID": "JAPANESE",
+  "LanguageID": "Japanese",
   "LocalizationKeys": {
-    "KEY_ID": "JAPANESE",
-    "MP_TEST1": "Testo",
-    "MP_VALUE": "Ichi",
-    "MP_HELLO": "Konnichiwa"
+    "LANGUAGE_ID": "Japanese",
+    "KEY_HELLO": "Konichiiwa",
+    "KEY_THANKS": "Arigatou",
+    "KEY_RED": "Akai"
   }
 }
