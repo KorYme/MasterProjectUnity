@@ -2,7 +2,7 @@ name: CI Actions 😎
 
 on:
   schedule:
-    - cron: '32 22 * * *'
+    - cron: '32 21 * * *'
 
 jobs:
   build:
