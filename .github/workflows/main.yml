@@ -17,7 +17,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ hashFiles('MasterProjectUnity/Assets/**', 'MasterProjectUnity/Packages/**', 'MasterProjectUnity/ProjectSettings/**') }}
           restore-keys: |
             Library-
 
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ hashFiles('MasterProjectUnity/Assets/**', 'MasterProjectUnity/Packages/**', 'MasterProjectUnity/ProjectSettings/**') }}
           restore-keys: |
             Library-
 
