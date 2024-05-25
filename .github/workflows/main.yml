@@ -1,20 +1,10 @@
-name: CI Actions 😎
+name: Daily Build Action 😎
 
 on:
-  push:
-    branches:
   schedule:
-    - cron: '40 21 * * *'
+    - cron: '0 3 * * *'
 
 jobs:
-  checkLicense:
-    name: Check for Unity License 📜
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fail - No License ☠️
-        if: ${{ !startsWith(env.UNITY_LICENSE, '<') }} 
-        run : exit 1
-
   build:
     needs: checkLicense
     name: Build unity project for Windows ✨
@@ -47,7 +37,7 @@ jobs:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
-      # Output
+      #Output
       - uses: actions/upload-artifact@v3
         with:
           name: Build
