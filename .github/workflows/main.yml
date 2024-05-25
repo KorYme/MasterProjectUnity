@@ -34,7 +34,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: 'MasterProjectUnity/'
-          buildName: 'build$(date +'%Y-%m-%dT%H:%M:%S')'
+          buildName: 'build'
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
