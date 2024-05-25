@@ -1,9 +1,10 @@
 {
-  "LanguageID": "French",
+  "LanguageID": "FRENCH",
   "LocalizationKeys": {
-    "LANGUAGE_ID": "French",
+    "KEY_CURRENT_LANGUAGE": "Français",
+    "KEY_VALUE_ONE": "un",
     "KEY_HELLO": "Bonjour",
-    "KEY_THANKS": "Merci",
-    "KEY_RED": "Rouge"
+    "KEY_PLEASE": "S'il vous plait",
+    "KEY_TEST_SENTENCE": "Il y a {0} phrase en {1}"
   }
 }

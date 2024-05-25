@@ -1,9 +1,10 @@
 {
-  "LanguageID": "Japanese",
+  "LanguageID": "JAPANESE",
   "LocalizationKeys": {
-    "LANGUAGE_ID": "Japanese",
-    "KEY_HELLO": "Konichiiwa",
-    "KEY_THANKS": "Arigatou",
-    "KEY_RED": "Akai"
+    "KEY_CURRENT_LANGUAGE": "日本語",
+    "KEY_VALUE_ONE": "一",
+    "KEY_HELLO": "こんにちは",
+    "KEY_PLEASE": "ください",
+    "KEY_TEST_SENTENCE": "{1}の文が{0}あります"
   }
 }

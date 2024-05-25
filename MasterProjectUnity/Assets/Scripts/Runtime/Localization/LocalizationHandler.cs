@@ -8,18 +8,32 @@ namespace MasterProject.Localization
 {
     public class LocalizationHandler
     {
+        private const string KEY_NOT_FOUND = "{0} NOT FOUND";
+        private const string NO_LOCA_DATA_FOUND = "NO LOCALIZATION DATA FOUND";
+        private const string KEY_EMPTY = "EMPTY KEY";
+
+        private const string FILE_NAME_TEMPLATE = "localization_data_{0}.json";
+
         public static readonly string LocalizationAssetsDirectory = Path.Combine(Application.streamingAssetsPath, "LocalizationAssets");
 
-        private static HashSet<LocalizedText> m_LocalizedTexts = new HashSet<LocalizedText>();
+        protected static HashSet<LocalizedText> s_LocalizedTexts = new HashSet<LocalizedText>();
 
-        private Dictionary<string, LocalizationData> m_LoadedLanguages = new Dictionary<string, LocalizationData>();
-        private List<string> m_LanguagesIDs = new List<string>();
-        private LocalizationData m_CurrentLocaData;
+        protected Dictionary<string, LocalizationData> m_LoadedLanguages;
+        protected List<string> m_LanguagesIDs;
+        public IReadOnlyList<string> LanguagesIDs => m_LanguagesIDs;
+
+        protected LocalizationData m_CurrentLocaData;
 
         public virtual void Initialize()
         {
-            m_LoadedLanguages.Clear();
-            m_LanguagesIDs.Clear();
+#if UNITY_EDITOR
+            if (this is not LocalizationHandlerEditor)
+            {
+                LocalizationHandlerEditor.Clear();
+            }
+#endif
+            m_LoadedLanguages = new Dictionary<string, LocalizationData>();
+            m_LanguagesIDs = new List<string>();
             IEnumerable<string> localizationFilesPath = Directory.EnumerateFiles(LocalizationAssetsDirectory, "*.json", SearchOption.AllDirectories);
             foreach (string filePath in localizationFilesPath)
             {
@@ -40,7 +54,7 @@ namespace MasterProject.Localization
             if (m_LoadedLanguages.TryGetValue(m_LanguagesIDs[0], out LocalizationData locaData))
             {
                 m_CurrentLocaData = locaData;
-                LocalizedText.OnLocalizationKeyChanged = GetTextFromKey;
+                LocalizedText.OnLocalizationKeyChanged = GetTextFromKeyAndArgs;
                 SetLocalizationData(locaData);
             }
         }
@@ -50,7 +64,7 @@ namespace MasterProject.Localization
             LocalizedText.OnLocalizationKeyChanged = null;
         }
 
-        public void SetLocalizationData(string languageID)
+        public void SetLocalizationLanguage(string languageID)
         {
             if (languageID == m_CurrentLocaData.LanguageID)
             {
@@ -64,20 +78,56 @@ namespace MasterProject.Localization
             SetLocalizationData(locaData);
         }
 
-        public void SetLocalizationData(LocalizationData locaData)
+        protected void SetLocalizationData(LocalizationData locaData)
         {
             m_CurrentLocaData = locaData;
-            Refresh();
+            RefreshLocalizedTexts();
         }
 
-        public bool GetTextFromKey(string key, out string text)
+        public IEnumerable<string> GetLocalization()
         {
-            return m_CurrentLocaData.LocalizationKeys.TryGetValue(key, out text);
+            return m_LanguagesIDs;
         }
 
-        public virtual void Refresh()
+        public string GetTextFromKeyAndArgs(string key, params string[] args)
         {
-            foreach (LocalizedText locaText in m_LocalizedTexts)
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return KEY_EMPTY;
+            }
+            if (m_CurrentLocaData.LocalizationKeys == null)
+            {
+                return NO_LOCA_DATA_FOUND;
+            }
+            if (!m_CurrentLocaData.LocalizationKeys.TryGetValue(key, out string localizedText))
+            {
+                return string.Format(KEY_NOT_FOUND, key);
+            }
+            else
+            {
+                if (args == null || args.Length == 0)
+                {
+                    return localizedText;
+                }
+                string[] localizedArguments = new string[args.Length];
+                for (int index = 0; index < args.Length; index++)
+                {
+                    if (m_CurrentLocaData.LocalizationKeys.TryGetValue(args[index], out string localizedArg))
+                    {
+                        localizedArguments[index] = localizedArg;
+                    }
+                    else
+                    {
+                        localizedArguments[index] = args[index];
+                    }
+                }
+                return string.Format(localizedText, localizedArguments);        
+            }
+        }
+
+        public virtual void RefreshLocalizedTexts()
+        {
+            foreach (LocalizedText locaText in s_LocalizedTexts)
             {
                 locaText.Refresh();
             }
@@ -85,17 +135,17 @@ namespace MasterProject.Localization
 
         public static void RegisterLocalizedText(LocalizedText locaText)
         {
-            m_LocalizedTexts.Add(locaText);
+            s_LocalizedTexts.Add(locaText);
         }
 
         public static void UnRegisterLocalizedText(LocalizedText locaText)
         {
-            m_LocalizedTexts.Remove(locaText);
+            s_LocalizedTexts.Remove(locaText);
         }
 
         public static string GetLocalizationAssetFullPath(string languageName)
         {
-            return Path.Combine(LocalizationAssetsDirectory, "localization_data_" + languageName.ToLower() + ".json");
+            return Path.Combine(LocalizationAssetsDirectory, string.Format(FILE_NAME_TEMPLATE, languageName.ToLower()));
         }
     }
 }

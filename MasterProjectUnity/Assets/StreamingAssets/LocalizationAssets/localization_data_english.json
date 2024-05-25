@@ -1,9 +1,10 @@
 {
-  "LanguageID": "English",
+  "LanguageID": "ENGLISH",
   "LocalizationKeys": {
-    "LANGUAGE_ID": "English",
+    "KEY_CURRENT_LANGUAGE": "English",
+    "KEY_VALUE_ONE": "one",
     "KEY_HELLO": "Hello",
-    "KEY_THANKS": "Thanks",
-    "KEY_RED": "Red"
+    "KEY_PLEASE": "Please",
+    "KEY_TEST_SENTENCE": "There is {0} sentence in {1}"
   }
 }

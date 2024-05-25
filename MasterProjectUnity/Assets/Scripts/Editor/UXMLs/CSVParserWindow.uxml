@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement style="flex-grow: 1;">
         <ui:Button text="Parse CSV Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ParseCSVButton" />
+        <ui:DropdownField label="Dropdown" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="LanguagesDropdown" />
     </ui:VisualElement>
 </ui:UXML>

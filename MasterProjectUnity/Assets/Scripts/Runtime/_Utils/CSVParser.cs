@@ -53,7 +53,7 @@ namespace MasterProject.Utilities
             }
         }
 
-        private static string[] GetValuesFromLine(this StreamReader streamReader, char separator = ';')
+        private static string[] GetValuesFromLine(this StreamReader streamReader, char separator = ',')
         {
             return streamReader.ReadLine().Split(separator);
         }

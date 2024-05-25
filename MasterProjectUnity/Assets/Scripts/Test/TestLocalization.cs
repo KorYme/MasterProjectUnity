@@ -5,25 +5,25 @@ namespace MasterProject.Tests
 {
     public class TestLocalization : MonoBehaviour
     {
-        private LocalizationHandler m_LocalizationHandler;
+        public LocalizationHandler LocalizationHandler;
         [SerializeField] private string m_LanguageId;
 
         private void Start()
         {
-            m_LocalizationHandler = new LocalizationHandler();
-            m_LocalizationHandler.Initialize();
+            LocalizationHandler = new LocalizationHandler();
+            LocalizationHandler.Initialize();
         }
 
         private void OnDestroy()
         {
-            m_LocalizationHandler?.Unload();
+            LocalizationHandler?.Unload();
         }
 
         private void Update()
         {
             if (Input.GetMouseButtonDown(1))
             {
-                m_LocalizationHandler.SetLocalizationData(m_LanguageId);
+                LocalizationHandler.SetLocalizationLanguage(m_LanguageId);
             }
         }
     }

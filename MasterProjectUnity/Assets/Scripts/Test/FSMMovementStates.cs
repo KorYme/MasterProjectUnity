@@ -16,7 +16,11 @@ namespace MasterProject.Tests.FSM
     [Serializable]
     public class MovementFSM : FSM<MovementStateID>
     {
-        public Movable2D Movable;
+        [SerializeField] private CharacterController m_CharacterController;
+        public CharacterController CharacterController => m_CharacterController;
+
+        [SerializeField] private Animator m_Animator;
+        public Animator Animator => m_Animator;
 
         [field:SerializeField] public IdleState IdleState { get; protected set; }
         [field:SerializeField] public WalkState WalkState { get; protected set; }
@@ -39,11 +43,21 @@ namespace MasterProject.Tests.FSM
         }
     }
 
-    [Serializable]
-    public class IdleState : FSMState<MovementStateID>
+    public abstract class MovementState : FSMState<MovementStateID>
     {
         [SerializeField] private AnimationClip m_AnimationClip;
 
+        protected MovementFSM m_MovementFSM;
+
+        public MovementState(FSM<MovementStateID> fsm) : base(fsm)
+        {
+            m_MovementFSM = m_FSM as MovementFSM;
+        }
+    }
+
+    [Serializable]
+    public class IdleState : MovementState
+    {
         public IdleState(FSM<MovementStateID> fsm) : base(fsm)
         {
         }
@@ -56,7 +70,7 @@ namespace MasterProject.Tests.FSM
     }
 
     [Serializable]
-    public class WalkState : FSMState<MovementStateID>
+    public class WalkState : MovementState
     {
         public WalkState(FSM<MovementStateID> fsm) : base(fsm)
         {
@@ -64,7 +78,7 @@ namespace MasterProject.Tests.FSM
     }
 
     [Serializable]
-    public class AccelerateState : FSMState<MovementStateID>
+    public class AccelerateState : MovementState
     {
         public AccelerateState(FSM<MovementStateID> fsm) : base(fsm)
         {
@@ -72,7 +86,7 @@ namespace MasterProject.Tests.FSM
     }
 
     [Serializable]
-    public class RunState : FSMState<MovementStateID>
+    public class RunState : MovementState
     {
         public RunState(FSM<MovementStateID> fsm) : base(fsm)
         {
@@ -80,7 +94,7 @@ namespace MasterProject.Tests.FSM
     }
 
     [Serializable]
-    public class DecelerateState : FSMState<MovementStateID>
+    public class DecelerateState : MovementState
     {
         public DecelerateState(FSM<MovementStateID> fsm) : base(fsm)
         {

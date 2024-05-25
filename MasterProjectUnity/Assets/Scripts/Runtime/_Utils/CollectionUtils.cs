@@ -47,8 +47,7 @@ namespace MasterProject.Utilities
 
         public static Dictionary<TKey, TValue> MapListsIntoDictionary<TKey, TValue>(IEnumerable<TKey> keys, IEnumerable<TValue> values)
         {
-            return keys.Zip(values , (k, v) => new { k, v })
-                .ToDictionary(x => x.k, x => x.v);
+            return keys.Zip(values, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
         }
     }
 }

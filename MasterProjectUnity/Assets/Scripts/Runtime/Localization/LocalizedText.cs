@@ -1,5 +1,10 @@
 using TMPro;
 using UnityEngine;
+using MasterProject.Debugging;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace MasterProject.Localization
 {
@@ -9,11 +14,9 @@ namespace MasterProject.Localization
     [ExecuteAlways]
     public class LocalizedText : MonoBehaviour
     {
-        private const string LOCALIZATION_HANDLER_NOT_INITIALIZED = "LOCA HANDLER NOT INITIALIZED";
-        private const string KEY_NOT_FOUND = "{0} KEY NOT FOUND";
-        private const string KEY_EMPTY = "EMPTY KEY";
+        private const string LOCALIZATION_HANDLER_NOT_INITIALIZED = "LOCA HANDLER MISSING";
 
-        public delegate bool GetLocalizedText(string key, out string text);
+        public delegate string GetLocalizedText(string key, params string[] args);
         public static GetLocalizedText OnLocalizationKeyChanged;
         public delegate bool GetLocalizedFont(string fontKey, FontStyle fontStyle);
         public static GetLocalizedFont OnLocalizationFontChanged;
@@ -24,12 +27,18 @@ namespace MasterProject.Localization
 
         [SerializeField] private string[] m_Arguments;
 
-        private void Awake()
+        private void OnEnable()
         {
             LocalizationHandler.RegisterLocalizedText(this);
+#if UNITY_EDITOR
+            if (!EditorApplication.isPlaying)
+            {
+                Refresh();
+            }
+#endif
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             LocalizationHandler.UnRegisterLocalizedText(this);
         }
@@ -51,18 +60,7 @@ namespace MasterProject.Localization
 
         public void Refresh()
         {
-            if (m_Arguments == null || m_Arguments.Length == 0)
-            {
-                SetText(GetLocalizedString(m_LocalizationKey, true));
-            }
-            else
-            {
-                for (int i = 0; i < m_Arguments.Length; i++)
-                {
-                    m_Arguments[i] = GetLocalizedString(m_Arguments[i], false);
-                }
-                SetText(string.Format(GetLocalizedString(m_LocalizationKey, true), m_Arguments));
-            }
+            SetText(GetLocalizedString());
         }
 
         public void SetLocalizedKey(string key)
@@ -90,29 +88,22 @@ namespace MasterProject.Localization
             {
                 m_TextComponent.SetText(text);
             }
+            // A MODIFIER AVEC D'AUTRES COMPONENTS POSSIBLE
         }
 
-        private string GetLocalizedString(string key, bool forceLocalization = false)
+        private string GetLocalizedString()
         {
-            if (string.IsNullOrWhiteSpace(key))
+            if (OnLocalizationKeyChanged != null)
             {
-                return KEY_EMPTY;
+                return OnLocalizationKeyChanged(m_LocalizationKey, m_Arguments);
             }
-            else if (OnLocalizationKeyChanged != null)
+#if UNITY_EDITOR
+            if (!EditorApplication.isPlaying)
             {
-                if (OnLocalizationKeyChanged(key, out string text))
-                {
-                    return text;
-                }
-                else
-                {
-                    return forceLocalization ? string.Format(KEY_NOT_FOUND, key) : key;
-                }
+                return LocalizationHandlerEditor.Instance.GetTextFromKeyAndArgs(m_LocalizationKey, m_Arguments);
             }
-            else
-            {
-                return forceLocalization ? LOCALIZATION_HANDLER_NOT_INITIALIZED : key;
-            }
+#endif
+            return LOCALIZATION_HANDLER_NOT_INITIALIZED;
         }
     }
 }
