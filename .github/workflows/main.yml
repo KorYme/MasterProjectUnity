@@ -7,8 +7,17 @@ on:
     - cron: '40 21 * * *'
 
 jobs:
+  checkLicense:
+    name: Check for Unity License 📜
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail - No License ☠️
+      if: ${{ !startsWith(env.UNITY_LICENSE, '<')) }} 
+      run : exit 1
+
   build:
-    name: Build unity project ✨
+    needs: checkLicense
+    name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
     steps:
       # Checkout
@@ -34,7 +43,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: 'MasterProjectUnity/'
-          buildName: 'build'
+          buildName: Build_StandaloneWindows64_${{ env.TIME }}
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
