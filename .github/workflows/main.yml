@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    needs: checkLicense
     name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +14,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: false
-
+      - name: Debug Time
+        run: echo "${{ env.TIME }}"
       # Cache
       #- uses: actions/cache@v3
       #  with:
