@@ -2,7 +2,8 @@ name: Daily Build Action 😎
 
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: '0 3 * * *'
+  workflow_dispach
 
 jobs:
   build:
@@ -17,28 +18,28 @@ jobs:
       - name: Debug Time
         run: echo "${{ env.TIME }}"
       # Cache
-      #- uses: actions/cache@v3
-      #  with:
-      #    path: MasterProject/Library
-      #    key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
-      #    restore-keys: |
-      #      Library-
-#
-      # Build
-      #- name: Build project
-      #  uses: game-ci/unity-builder@v4.2.3
-      #  env:
-      #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-      #    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-      #    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-      #  with:
-      #    projectPath: 'MasterProjectUnity/'
-      #    buildName: Build_StandaloneWindows64_${{ env.TIME }}
-      #    targetPlatform: StandaloneWindows64
-      #    allowDirtyBuild: true
+      - uses: actions/cache@v3
+        with:
+          path: MasterProject/Library
+          key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
-      ##Output
-      #- uses: actions/upload-artifact@v3
-      #  with:
-      #    name: Build_StandaloneWindows64_${{ env.TIME }}
-      #    path: build
+      #Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4.2.3
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: 'MasterProjectUnity/'
+          buildName: Build_StandaloneWindows64_${{ env.TIME }}
+          targetPlatform: StandaloneWindows64
+          allowDirtyBuild: true
+
+      #Output
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Build_StandaloneWindows64_${{ env.TIME }}
+          path: build
