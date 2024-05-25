@@ -1,8 +1,10 @@
 name: CI Actions 😎
 
 on:
+  push:
+    branches:
   schedule:
-    - cron: '32 21 * * *'
+    - cron: '40 21 * * *'
 
 jobs:
   build:
