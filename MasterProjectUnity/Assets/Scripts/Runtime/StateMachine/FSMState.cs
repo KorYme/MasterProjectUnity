@@ -4,6 +4,7 @@ namespace MasterProject.FSM
 {
     public class FSMState<T> where T : Enum
     {
+        [NonSerialized]
         protected FSM<T> m_FSM;
 
         public FSMState(FSM<T> fsm)

@@ -6,12 +6,15 @@ namespace MasterProject.FSM
 {
     public class FSM<T> where T : Enum
     {
+        [NonSerialized]
         private IFSMController m_Controller;
 
         private Dictionary<T, FSMState<T>> m_States = new Dictionary<T, FSMState<T>>();
 
+        [field: NonSerialized]
         public FSMState<T> PreviousState { get; private set; }
 
+        [field: NonSerialized]
         public FSMState<T> CurrentState { get; private set; }
 
         public float StateDuration { get; private set; }
