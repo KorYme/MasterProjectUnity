@@ -4,14 +4,15 @@ on: [workflow_dispatch]
 
 jobs:
   build:
+    name: Debug Variables
     runs-on: ubuntu-latest
     steps:
       # Current Name
       - name: Set current date as env variable
-        run: echo "NOW=$(date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
+        run: echo "NOW=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
       - name: Echo current date
         run: echo "Test_$NOW"
 
       # Repo Name
       - name: Echo repo name
-        run: echo $github.repository
+        run: echo ${{ github.repository }}
