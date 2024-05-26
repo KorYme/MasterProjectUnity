@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
+  push:
 
 env:
   # Don't forget to declare these variables and secrets in repo settings
@@ -28,7 +29,7 @@ jobs:
         run: echo $REPO_NAME
 
       - name: Echo Library folder
-        run: echo ${{ unity_project_root }}Library
+        run: echo '${{ unity_project_root }}Library'
       - name: Echo hashFiles
         run: echo Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
 
@@ -46,14 +47,13 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ unity_project_root }}Library # The path to the Library folder 
-          key: Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
+          key: Library-${{ hashFiles('${{ unity_project_root }}Assets/**', '${{ unity_project_root }}Packages/**', '${{ unity_project_root }}ProjectSettings/**') }}
           restore-keys: |
             Library-
 
       - name: Build project
         uses: game-ci/unity-builder@v4.2.3
         env:
-          # Don't forget to setup secrets variables in repo settings
           UNITY_LICENSE: $unity_license
           UNITY_EMAIL: $unity_email
           UNITY_PASSWORD: $unity_password
