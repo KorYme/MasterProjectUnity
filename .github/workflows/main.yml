@@ -4,42 +4,45 @@ on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
+  #push:
+  #  branches:
+  #    - "main"
 
 jobs:
   build:
     name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
     steps:
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: false
-      - name: Debug Time
-        run: echo "${{ env.TIME }}"
-      # Cache
-      #- uses: actions/cache@v3
-      #  with:
-      #    path: MasterProject/Library
-      #    key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
-      #    restore-keys: |
-      #      Library-
-#
-      ##Build
-      #- name: Build project
-      #  uses: game-ci/unity-builder@v4.2.3
-      #  env:
-      #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-      #    UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-      #    UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-      #  with:
-      #    projectPath: 'MasterProjectUnity/'
-      #    buildName: Build_StandaloneWindows64_${{ env.TIME }}
-      #    targetPlatform: StandaloneWindows64
-      #    allowDirtyBuild: true
-#
-      ##Output
-      #- uses: actions/upload-artifact@v3
-      #  with:
-      #    name: Build_StandaloneWindows64_${{ env.TIME }}
-      #    path: build
+          ref: main # The branch you want the build to be done with
+          lfs: false # Whether or not lfs needs to be used to build
+
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        with:
+          path: MasterProject/Library # The path to the Library folder 
+          key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Build project
+        uses: game-ci/unity-builder@v4.2.3
+        env:
+          # Don't forget to setup secrets variables in repo settings
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: 'MasterProjectUnity/' # 
+          buildName: Build_StandaloneWindows64_${{ env.TIME }}
+          targetPlatform: StandaloneWindows64
+          allowDirtyBuild: true
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Build_StandaloneWindows64_$NOW
+          path: build
