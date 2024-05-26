@@ -38,7 +38,7 @@ jobs:
           lfs: false # Whether or not lfs needs to be used to build
 
       - name: Caching Library Data to speed up process
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '${{ vars.UNITY_PROJECT_PATH }}Library' # The path to the Library folder 
           key: Library-${{ hashFiles('${{ unity_project_root }}Assets/**', '${{ unity_project_root }}Packages/**', '${{ unity_project_root }}ProjectSettings/**') }}
@@ -58,7 +58,7 @@ jobs:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build_StandaloneWindows64_${{ env.START_TIME }}
           path: Build
