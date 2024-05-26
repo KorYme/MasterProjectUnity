@@ -29,9 +29,9 @@ jobs:
         run: echo $REPO_NAME
 
       - name: Echo Library folder
-        run: echo '${{ unity_project_root }}Library'
+        run: echo ${{ unity_project_root }}Library
       - name: Echo hashFiles
-        run: echo Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
+        run: echo Library-${{ hashFiles('${{ unity_project_root }}Assets/**', '${{ unity_project_root }}Packages/**', '${{ unity_project_root }}ProjectSettings/**') }}
 
   build:
     needs: setup
