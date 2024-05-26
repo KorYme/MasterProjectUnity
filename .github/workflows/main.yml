@@ -53,11 +53,11 @@ jobs:
           UNITY_PASSWORD: $secrets.UNITY_PASSWORD
         with:
           projectPath: $vars.UNITY_PROJECT_PATH
-          buildName: Build_StandaloneWindows64_${{ START_TIME }}
+          buildName: Build_StandaloneWindows64_${{ env.START_TIME }}
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
       - uses: actions/upload-artifact@v3
         with:
-          name: Build_StandaloneWindows64_${{ START_TIME }}
+          name: Build_StandaloneWindows64_${{ env.START_TIME }}
           path: Build
