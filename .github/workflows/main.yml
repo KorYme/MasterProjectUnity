@@ -45,7 +45,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ${{ unity_proejct_root }}Library # The path to the Library folder 
+          path: ${{ unity_project_root }}Library # The path to the Library folder 
           key: Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
           restore-keys: |
             Library-
