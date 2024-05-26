@@ -13,6 +13,6 @@ jobs:
         run: echo "$START_TIME"
 
       - name: Set Repo Name
-        run: echo "REPO_NAME=${{ github.repository#*/ }}" >> $GITHUB_ENV
+        run: echo "REPO_NAME=${{ github.repository }}" >> $GITHUB_ENV
       - name: Echo repo name
         run: echo $REPO_NAME
