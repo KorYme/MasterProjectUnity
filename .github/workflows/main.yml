@@ -6,13 +6,6 @@ on:
   workflow_dispatch:
   push:
 
-env:
-  # Don't forget to declare these variables and secrets in repo settings
-  unity_email: ${{ secrets.UNITY_EMAIL }}
-  unity_password: ${{ secrets.UNITY_PASSWORD }}
-  unity_license: ${{ secrets.UNITY_LICENSE }}
-  unity_project_root: ${{ vars.UNITY_PROJECT_PATH }}
-
 jobs:
   setup:
     name: Setup Variables
@@ -29,9 +22,9 @@ jobs:
         run: echo $REPO_NAME
 
       - name: Echo Library folder
-        run: echo ${{ unity_project_root }}Library
+        run: echo ${{ vars.UNITY_PROJECT_PATH }}Library
       - name: Echo hashFiles
-        run: echo Library-${{ hashFiles('${{ unity_project_root }}Assets/**', '${{ unity_project_root }}Packages/**', '${{ unity_project_root }}ProjectSettings/**') }}
+        run: echo Library-${{ hashFiles('${{ vars.UNITY_PROJECT_PATH }}Assets/**', '${{ vars.UNITY_PROJECT_PATH }}Packages/**', '${{ vars.UNITY_PROJECT_PATH }}ProjectSettings/**') }}
 
   build:
     needs: setup
@@ -46,7 +39,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ${{ unity_project_root }}Library # The path to the Library folder 
+          path: ${{ vars.UNITY_PROJECT_PATH }}Library # The path to the Library folder 
           key: Library-${{ hashFiles('${{ unity_project_root }}Assets/**', '${{ unity_project_root }}Packages/**', '${{ unity_project_root }}ProjectSettings/**') }}
           restore-keys: |
             Library-
@@ -54,11 +47,12 @@ jobs:
       - name: Build project
         uses: game-ci/unity-builder@v4.2.3
         env:
-          UNITY_LICENSE: $unity_license
-          UNITY_EMAIL: $unity_email
-          UNITY_PASSWORD: $unity_password
+          # Don't forget to setup these secrets in repo settings 
+          UNITY_LICENSE: $secrets.UNITY_LICENSE
+          UNITY_EMAIL: $secrets.UNITY_EMAIL
+          UNITY_PASSWORD: $secrets.UNITY_PASSWORD
         with:
-          projectPath: $unity_project_root
+          projectPath: $vars.UNITY_PROJECT_PATH
           buildName: Build_StandaloneWindows64_${{ START_TIME }}
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
