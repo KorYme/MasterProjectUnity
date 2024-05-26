@@ -4,12 +4,27 @@ on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
-  #push:
-  #  branches:
-  #    - "main"
+
+env:
+  unity_root: ${ vars.UNITY_PROJECT_PATH }
 
 jobs:
+  setup:
+    name: Setup Variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Start Time
+        run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
+      - name: Echo current date
+        run: echo "$START_TIME"
+
+      - name: Set Repo Name
+        run: echo "REPO_NAME=${{ github.repository }}" >> $GITHUB_ENV
+      - name: Echo repo name
+        run: echo $REPO_NAME
+
   build:
+    needs: setup
     name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
     steps:
@@ -19,12 +34,9 @@ jobs:
           ref: main # The branch you want the build to be done with
           lfs: false # Whether or not lfs needs to be used to build
 
-      - name: Set current date as env variable
-        run: echo "NOW=$(date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
-
       - uses: actions/cache@v3
         with:
-          path: MasterProject/Library # The path to the Library folder 
+          path: ${unity_root}Library # The path to the Library folder 
           key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
           restore-keys: |
             Library-
@@ -37,12 +49,12 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: 'MasterProjectUnity/' # 
-          buildName: Build_StandaloneWindows64_${{ env.TIME }}
+          projectPath: 'MasterProjectUnity/' # Need to be changed
+          buildName: Build_StandaloneWindows64_$START_TIME
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
       - uses: actions/upload-artifact@v3
         with:
-          name: Build_StandaloneWindows64_$NOW
-          path: build
+          name: Build_StandaloneWindows64_$START_TIME
+          path: Build
