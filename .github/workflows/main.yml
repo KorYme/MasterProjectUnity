@@ -7,30 +7,12 @@ on:
   push:
 
 jobs:
-  setup:
-    name: Setup Variables
+  build:
+    name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
-      - name: Echo current date
-        run: echo "$START_TIME"
-
-      - name: Set Repo Name
-        run: echo "REPO_NAME=${{ github.repository }}" >> $GITHUB_ENV
-      - name: Echo repo name
-        run: echo $REPO_NAME
-
-      - name: Echo Library folder
-        run: echo ${{ vars.UNITY_PROJECT_PATH }}Library
-      - name: Echo hashFiles
-        run: echo Library-${{ hashFiles('${{ vars.UNITY_PROJECT_PATH }}Assets/**', '${{ vars.UNITY_PROJECT_PATH }}Packages/**', '${{ vars.UNITY_PROJECT_PATH }}ProjectSettings/**') }}
-
-  build:
-    needs: setup
-    name: Build unity project for Windows ✨
-    runs-on: ubuntu-latest
-    steps:
       - name: Debug Time
         run: echo "$START_TIME"
 
@@ -57,12 +39,12 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ vars.UNITY_PROJECT_PATH }}
-          buildName: Build_StandaloneWindows64_${{ env.START_TIME }}
+          buildName: Build_StandaloneWindows64_$START_TIME
           buildsPath: Builds
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
       - uses: actions/upload-artifact@v4.3.3
         with:
-          name: Build_StandaloneWindows64_${{ env.START_TIME }}
+          name: Build_StandaloneWindows64_$START_TIME
           path: Builds/StandaloneWindows64
