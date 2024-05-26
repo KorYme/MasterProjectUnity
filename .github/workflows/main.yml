@@ -6,7 +6,11 @@ on:
   workflow_dispatch:
 
 env:
-  unity_root: ${ vars.UNITY_PROJECT_PATH }
+  # Don't forget to declare these variables and secrets in repo settings
+  unity_email: ${{ secrets.UNITY_EMAIL }}
+  unity_password: ${{ secrets.UNITY_PASSWORD }}
+  unity_license: ${{ secrets.UNITY_LICENSE }}
+  unity_project_root: ${{ vars.UNITY_PROJECT_PATH }}
 
 jobs:
   setup:
@@ -23,6 +27,11 @@ jobs:
       - name: Echo repo name
         run: echo $REPO_NAME
 
+      - name: Echo Library folder
+        run: echo ${{ unity_root }}Library
+      - name: Echo hashFiles
+        run: echo Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
+
   build:
     needs: setup
     name: Build unity project for Windows ✨
@@ -36,8 +45,8 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ${unity_root}Library # The path to the Library folder 
-          key: Library-${{ hashFiles('MasterProject/Assets/**', 'MasterProject/Packages/**', 'MasterProject/ProjectSettings/**') }}
+          path: ${{ unity_root }}Library # The path to the Library folder 
+          key: Library-${{ hashFiles('${{ unity_project_rootAssets }}/**', '${{ unity_project_rootAssets }}Packages/**', '${{ unity_project_rootAssets }}ProjectSettings/**') }}
           restore-keys: |
             Library-
 
@@ -45,16 +54,16 @@ jobs:
         uses: game-ci/unity-builder@v4.2.3
         env:
           # Don't forget to setup secrets variables in repo settings
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: $unity_license
+          UNITY_EMAIL: $unity_email
+          UNITY_PASSWORD: $unity_password
         with:
-          projectPath: 'MasterProjectUnity/' # Need to be changed
-          buildName: Build_StandaloneWindows64_$START_TIME
+          projectPath: $unity_project_root
+          buildName: Build_StandaloneWindows64_${{ START_TIME }}
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
       - uses: actions/upload-artifact@v3
         with:
-          name: Build_StandaloneWindows64_$START_TIME
+          name: Build_StandaloneWindows64_${{ START_TIME }}
           path: Build
