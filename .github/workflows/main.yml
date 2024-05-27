@@ -44,17 +44,7 @@ jobs:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4.3.3
+      - uses: actions/upload-artifact@v4.3.3
         with:
           name: Build_StandaloneWindows64_${{ env.START_TIME }}
           path: Builds/StandaloneWindows64
-
-      - name: Notify discord
-        uses: th0th/notify-discord@v0.4.1
-        if: ${{ always() }}
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_JOB_NAME: "Build and deploy"
-          GITHUB_JOB_STATUS: ${{ job.status }}
