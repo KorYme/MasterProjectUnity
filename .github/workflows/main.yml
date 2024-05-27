@@ -44,7 +44,18 @@ jobs:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
 
-      - uses: actions/upload-artifact@v4.3.3
+      - name: Upload build as artifact
+        id: build-upload
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: Build_StandaloneWindows64_${{ env.START_TIME }}
           path: Builds/StandaloneWindows64
+          retention-days: 30
+
+      - name: Notify Discord
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: >
+            The build was a success. *${{ env.START_TIME }}*
+            [Build Link](${{ steps.build-upload.outputs.artifact-url }})
