@@ -107,10 +107,10 @@ jobs:
             > A VOUS LE DEBUG !!!
           embed-color: 5763719
           embed-footer-text: MasterProject CI
-          embed-timestamp: ${{ date }}
+          #embed-timestamp: ${{ date }}
       
       - name: Notify Discord Fail
-        if: ${{ needs.build.outputs.build-exit-code == '0' }}
+        if: ${{ needs.build.outputs.build-exit-code != '0' }}
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -127,4 +127,4 @@ jobs:
             > Do. Not. PANIK ! 
           embed-color: 15548997
           embed-footer-text: MasterProject CI
-          embed-timestamp: ${{ date }}
+          #embed-timestamp: ${{ date }}
