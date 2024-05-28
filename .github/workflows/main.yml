@@ -81,11 +81,11 @@ jobs:
         id: time
         uses: nanzm/get-time-action@master
         with:
-          timezone: "+02:00"
+          timezone: Europe/Paris
           format: YYYY-MM-DDTHH:MM:SS.MSSZ
 
-      - name: Debug Upload Time
-        run: echo ${{ steps.time.outputs.time }}
+      - name: Debug Time
+        run : echo ${{ steps.time.outputs.formattedTime }}
 
       - name: Notify Discord Success
         if: ${{ needs.build.outputs.build-exit-code == '0' }}
@@ -98,6 +98,7 @@ jobs:
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://tenor.com/view/legend-of-zelda-loz-link-gif-4992970.gif
+          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: | 
             The build succeeded !
             Download the build [Here](${{ needs.build.outputs.build-url }})
@@ -106,7 +107,7 @@ jobs:
             > A VOUS LE DEBUG !!!
           embed-color: 5763719
           embed-footer-text: MasterProject CI
-          embed-timestamp: ${{ steps.time.outputs.time }}
+          embed-timestamp: ${{ date }}
       
       - name: Notify Discord Fail
         if: ${{ needs.build.outputs.build-exit-code == '0' }}
@@ -119,10 +120,11 @@ jobs:
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://tenor.com/view/this-is-fine-its-fine-everything-is-fine-burning-house-happy-dog-gif-21646319.gif
+          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: | 
             The build failed...
             
             > Do. Not. PANIK ! 
           embed-color: 15548997
           embed-footer-text: MasterProject CI
-          embed-timestamp: ${{ steps.time.outputs.time }}
+          embed-timestamp: ${{ date }}
