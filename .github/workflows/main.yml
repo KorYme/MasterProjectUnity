@@ -22,6 +22,8 @@ jobs:
   build:
     name: Build unity project for Windows ✨
     runs-on: ubuntu-latest
+    outputs:
+      build-url: ${{ steps.build-upload.outputs.artifact-url }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
@@ -90,7 +92,7 @@ jobs:
           embed-url: https://github.com/KorYme
           embed-description: | 
             The nightly build has been a success
-            Download the build [Here](${{ needs.build.steps.build-upload.outputs.artifact-url }})
+            Download the build [Here](${{ needs.build.outputs.build-url }})
             
             > QAs ! 
             > A VOUS LE DEBUG
