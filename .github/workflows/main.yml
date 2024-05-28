@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
+      build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
@@ -45,6 +46,7 @@ jobs:
             Library-
 
       - name: Build project
+        id: project-build
         uses: game-ci/unity-builder@v4.2.3
         env:
           # Don't forget to setup these secrets in repo settings 
@@ -52,7 +54,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: ${{ vars.UNITY_PROJECT_PATH }}
+          #projectPath: ${{ vars.UNITY_PROJECT_PATH }}
           buildName: Build_StandaloneWindows64_${{ env.START_TIME }}
           buildsPath: Builds
           targetPlatform: StandaloneWindows64
@@ -81,7 +83,8 @@ jobs:
       - name: Debug Upload Time
         run: echo ${{ steps.time.outputs.time }}
 
-      - name: Notify Discord
+      - name: Notify Discord Success
+        if: ${{ needs.build.outputs.build-exit-code }} == 0
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -91,11 +94,30 @@ jobs:
           embed-title: Nightly Build
           embed-url: https://github.com/KorYme
           embed-description: | 
-            The nightly build has been a success
+            The nightly build succeeded
             Download the build [Here](${{ needs.build.outputs.build-url }})
             
             > QAs ! 
             > A VOUS LE DEBUG
           embed-color: 5763719
+          embed-footer-text: MasterProject CI
+          # embed-timestamp: ${{ steps.time.outputs.time }}
+      
+      - name: Notify Discord Fail
+        if: ${{ needs.build.outputs.build-exit-code }} != 0
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-author-name: AutoBuilder
+          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-url: https://github.com/KorYme/MasterProject/actions/workflows/main.yml
+          embed-title: Nightly Build
+          embed-url: https://github.com/KorYme
+          embed-image-url: https://img.lemde.fr/2016/08/04/0/0/560/267/664/0/75/0/a9b1471_17806-xsb5q2.jpg
+          embed-description: | 
+            The build failed !
+            
+            > This is fine ! 
+          embed-color: 15548997
           embed-footer-text: MasterProject CI
           # embed-timestamp: ${{ steps.time.outputs.time }}
