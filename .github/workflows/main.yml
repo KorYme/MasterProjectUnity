@@ -97,7 +97,7 @@ jobs:
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          embed-image-url: https://tenor.com/view/legend-of-zelda-loz-link-gif-4992970.gif
+          embed-image-url: https://tenor.com/view/legend-of-zelda-loz-link-gif-4992970
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: | 
             The build succeeded !
