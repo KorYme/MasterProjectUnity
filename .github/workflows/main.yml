@@ -81,8 +81,8 @@ jobs:
         id: time
         uses: nanzm/get-time-action@master
         with:
-          timezone: UTC+2
-          format: 'YYYY-MM-DDTHH:MM:SS.MSSZ'
+          timezone: "+02:00"
+          format: YYYY-MM-DDTHH:MM:SS.MSSZ
 
       - name: Debug Upload Time
         run: echo ${{ steps.time.outputs.time }}
@@ -94,35 +94,35 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           embed-author-name: AutoBuilder
           embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
-          embed-author-url: https://github.com/KorYme/MasterProject/actions/workflows/main.yml
+          embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
-          embed-url: https://github.com/KorYme
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-image-url: https://tenor.com/view/legend-of-zelda-loz-link-gif-4992970.gif
           embed-description: | 
-            The nightly build succeeded
+            The build succeeded !
             Download the build [Here](${{ needs.build.outputs.build-url }})
             
             > QAs ! 
-            > A VOUS LE DEBUG
+            > A VOUS LE DEBUG !!!
           embed-color: 5763719
           embed-footer-text: MasterProject CI
-          # embed-timestamp: ${{ steps.time.outputs.time }}
+          embed-timestamp: ${{ steps.time.outputs.time }}
       
       - name: Notify Discord Fail
-        if: ${{ needs.build.outputs.build-exit-code != '0' }}
+        if: ${{ needs.build.outputs.build-exit-code == '0' }}
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           embed-author-name: AutoBuilder
           embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
-          embed-author-url: https://github.com/KorYme/MasterProject/actions/workflows/main.yml
+          embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
-          embed-url: https://github.com/KorYme
-          embed-image-url: https://img.lemde.fr/2016/08/04/0/0/560/267/664/0/75/0/a9b1471_17806-xsb5q2.jpg
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-image-url: https://tenor.com/view/this-is-fine-its-fine-everything-is-fine-burning-house-happy-dog-gif-21646319.gif
           embed-description: | 
-            The build failed !
+            The build failed...
             
-            Code Error : ${{ needs.build.outputs.build-exit-code }}
-            > Do not PANIK ! 
+            > Do. Not. PANIK ! 
           embed-color: 15548997
           embed-footer-text: MasterProject CI
-          # embed-timestamp: ${{ steps.time.outputs.time }}
+          embed-timestamp: ${{ steps.time.outputs.time }}
