@@ -52,13 +52,16 @@ jobs:
           # Don't forget to setup these secrets in repo settings 
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}/q
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ vars.UNITY_PROJECT_PATH }}
           buildName: Build_StandaloneWindows64_${{ env.START_TIME }}
           buildsPath: Builds
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
+      - name: Return License
+        if: always()
+        uses: game-ci/unity-return-license@v2.0.0
 
       - name: Upload build as artifact
         id: build-upload
