@@ -98,7 +98,7 @@ jobs:
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          embed-image-url: https://media.tenor.com/Kp0EqMZrdIEAAAPo/legend-of.gif
+          embed-image-url: https://media.tenor.com/Kp0EqMZrdIEAAAPo/legend-of.mp4
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: | 
             The build succeeded !
@@ -120,7 +120,7 @@ jobs:
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          embed-image-url: https://media.tenor.com/fKIG2kiLVPgAAAPo/this-is-fine-its-fine.gif
+          embed-image-url: https://media.tenor.com/fKIG2kiLVPgAAAPo/this-is-fine-its-fine.mp4
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: | 
             The build failed...
