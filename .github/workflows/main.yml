@@ -47,7 +47,6 @@ jobs:
 
       - name: Build project
         id: project-build
-        if: false
         uses: game-ci/unity-builder@v4.2.3
         env:
           # Don't forget to setup these secrets in repo settings 
