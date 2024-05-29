@@ -77,22 +77,12 @@ jobs:
     if: always()
     needs: build
     steps:
-      - name: Get Upload Time
-        id: time
-        uses: nanzm/get-time-action@master
-        with:
-          timezone: Europe/Paris
-          format: YYYY-MM-DDTHH:MM:SS.MSSZ
-
-      - name: Debug Time
-        run : echo ${{ steps.time.outputs.formattedTime }}
-
-      - name: Notify Discord Success
-        if: ${{ needs.build.outputs.build-exit-code == '0' }}
+      - name: Nightly Build Notify Discord Success
+        if: ${{ needs.build.outputs.build-exit-code == '0'}} && ${{ github.event_name == 'schedule' }} 
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          embed-author-name: AutoBuilder
+          embed-author-name: UnityAutoBuilder
           embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
@@ -100,28 +90,69 @@ jobs:
           embed-image-url: https://media1.tenor.com/m/Kp0EqMZrdIEAAAAC/legend-of.gif
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
-            The build succeeded !
+            The nightly build succeeded !
             Download the build [Here](${{ needs.build.outputs.build-url }})
             
-            > QAs ! 
-            > A VOUS LE DEBUG !!!
+            > TA TA TA TAAAAAAA !
+            > _Insert LinkOpeningSound.wav_
           embed-color: 5763719
           embed-footer-text: MasterProject CI
       
-      - name: Notify Discord Fail
-        if: ${{ needs.build.outputs.build-exit-code != '0' }}
+      - name: Nightly Build Notify Discord Fail
+        if: ${{ needs.build.outputs.build-exit-code != '0' }} && ${{ github.event_name == 'schedule' }} 
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          embed-author-name: AutoBuilder
+          embed-author-name: UnityAutoBuilder
           embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-image-url: https://media1.tenor.com/m/5x934L_nVKEAAAAC/monsters-inc-shhh.gif
+          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-description: |
+            The nightly build failed...
+            
+            > Shhhhhhh... 
+            > Don't tell them anything, they'll soon learn the news !
+          embed-color: 15548997
+          embed-footer-text: MasterProject CI
+
+      - name: Manual Build Notify Discord Success
+        if: ${{ needs.build.outputs.build-exit-code == '0'}} && ${{ github.event_name != 'schedule' }} 
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-author-name: UnityAutoBuilder
+          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-url: ${{ github.server_url }}/${{ github.repository }}
+          embed-title: Manual Build
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
+          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-description: |
+            The manual build succeeded !
+            Download the build [Here](${{ needs.build.outputs.build-url }})
+             
+            > A VOUS LE DEBUG !!!
+          embed-color: 5763719
+          embed-footer-text: MasterProject CI
+
+
+      - name: Manual Build Notify Discord Fail
+        if: ${{ needs.build.outputs.build-exit-code != '0'}} && ${{ github.event_name != 'schedule' }} 
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-author-name: UnityAutoBuilder
+          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-url: ${{ github.server_url }}/${{ github.repository }}
+          embed-title: Manual Build
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/fKIG2kiLVPgAAAAC/this-is-fine-its-fine.gif
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
-            The build failed...
+            The manual build failed...
             
             > Do. Not. PANIK !
           embed-color: 15548997
