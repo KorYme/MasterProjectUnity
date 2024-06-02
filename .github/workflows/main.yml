@@ -25,11 +25,14 @@ jobs:
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
       build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
+      build-execution-time: ${{ steps.duration.outputs.duration }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
-      - name: Debug Time
-        run: echo "$START_TIME"
+        
+      - name: Workflow run duration action
+        uses: channyein87/workflow-duration-action@v1
+        id: duration
 
       - name: Checkout repository
         uses: actions/checkout@v4.1.6
@@ -77,9 +80,8 @@ jobs:
     if: always()
     needs: build
     steps:
-      - name: Set short SHA
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: benjlevesque/short-sha@v3.0
+        id: short-sha
       - name: Nightly Build Notify Discord Success
         if: ${{ needs.build.outputs.build-exit-code == '0' && github.event_name == 'schedule' }} 
         uses: tsickert/discord-webhook@v6.0.0
@@ -93,10 +95,10 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/Kp0EqMZrdIEAAAAC/legend-of.gif
           embed-description: |
-            The nightly build succeeded !
+            The nightly build succeeded in ${{ needs.build.outputs.build-execution-time }} !
             
             Last commit :
-            [``${{ steps.vars.outputs.sha_short }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
+            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
             
@@ -118,10 +120,10 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/5x934L_nVKEAAAAC/monsters-inc-shhh.gif
           embed-description: |
-            The nightly build failed...
+            The nightly build failed... (in ${{ needs.build.outputs.build-execution-time }})
 
             Last commit :
-            [``${{ steps.vars.outputs.sha_short }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
+            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             > Shhhhhhh... 
             > Don't tell them anything, they'll soon learn the news !
@@ -141,10 +143,10 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
           embed-description: |
-            The manual build succeeded !
+            The manual build succeeded in ${{ needs.build.outputs.build-execution-time }}  !
             
             Last commit :
-            [``${{ steps.vars.outputs.sha_short }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
+            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
              
@@ -166,10 +168,10 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/fKIG2kiLVPgAAAAC/this-is-fine-its-fine.gif
           embed-description: |
-            The manual build failed...
+            The manual build failed... (in ${{ needs.build.outputs.build-execution-time }})
             
             Last commit :
-            [``${{ steps.vars.outputs.sha_short }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
+            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             > Do. Not. PANIK !
           embed-color: 15548997
