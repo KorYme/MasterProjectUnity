@@ -33,6 +33,10 @@ jobs:
       - name: Workflow run duration action
         uses: channyein87/workflow-duration-action@v1.17
         id: duration
+        with:
+          repository: ${{ github.repository }}
+          workflow: main.yml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
         uses: actions/checkout@v4.1.6
