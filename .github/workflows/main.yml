@@ -31,7 +31,7 @@ jobs:
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
         
       - name: Workflow run duration action
-        uses: channyein87/workflow-duration-action@v1
+        uses: channyein87/workflow-duration-action@v1.17
         id: duration
 
       - name: Checkout repository
