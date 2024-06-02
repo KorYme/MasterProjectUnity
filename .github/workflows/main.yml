@@ -91,6 +91,7 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The nightly build succeeded !
+            Last commit was ${{ github.event.head_commit.message }}
             Download the build [Here](${{ needs.build.outputs.build-url }})
             
             > TA TA TA TAAAAAAA !
@@ -112,6 +113,7 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The nightly build failed...
+            Last commit was ${{ github.event.head_commit.message }}
             
             > Shhhhhhh... 
             > Don't tell them anything, they'll soon learn the news !
@@ -132,6 +134,7 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The manual build succeeded !
+            Last commit was ${{ github.event.head_commit.message }}
             Download the build [Here](${{ needs.build.outputs.build-url }})
              
             > A VOUS LE DEBUG !!!
@@ -153,6 +156,7 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The manual build failed...
+            Last commit was ${{ github.event.head_commit.message }}
             
             > Do. Not. PANIK !
           embed-color: 15548997
