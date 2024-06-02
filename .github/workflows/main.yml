@@ -91,8 +91,9 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The nightly build succeeded !
-            Last commit was ${{ github.event.head_commit.message }}
-            Download the build [Here](${{ needs.build.outputs.build-url }})
+            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            [__Download the build__](${{ needs.build.outputs.build-url }})
             
             > TA TA TA TAAAAAAA !
             > _Insert LinkOpeningSound.wav_
@@ -134,8 +135,9 @@ jobs:
           embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The manual build succeeded !
-            Last commit was ${{ github.event.head_commit.message }}
-            Download the build [Here](${{ needs.build.outputs.build-url }})
+            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            [__Download the build__](${{ needs.build.outputs.build-url }})
              
             > A VOUS LE DEBUG !!!
           embed-color: 5763719
