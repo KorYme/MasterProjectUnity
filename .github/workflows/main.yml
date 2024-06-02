@@ -91,7 +91,9 @@ jobs:
           embed-image-url: https://media1.tenor.com/m/Kp0EqMZrdIEAAAAC/legend-of.gif
           embed-description: |
             The nightly build succeeded !
-            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            Last commit :
+            [``${{ github.workflow_sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
             
@@ -112,10 +114,11 @@ jobs:
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/5x934L_nVKEAAAAC/monsters-inc-shhh.gif
-          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The nightly build failed...
-            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+
+            Last commit :
+            [``${{ github.workflow_sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             > Shhhhhhh... 
             > Don't tell them anything, they'll soon learn the news !
@@ -134,10 +137,11 @@ jobs:
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
-          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The manual build succeeded !
-            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            Last commit :
+            [``${{ github.workflow_sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
              
@@ -158,10 +162,11 @@ jobs:
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/fKIG2kiLVPgAAAAC/this-is-fine-its-fine.gif
-          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The manual build failed...
-            Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            Last commit :
+            [``${{ github.workflow_sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
             
             > Do. Not. PANIK !
           embed-color: 15548997
