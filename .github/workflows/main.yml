@@ -82,13 +82,13 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/Kp0EqMZrdIEAAAAC/legend-of.gif
-          embed-thumbnail-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-description: |
             The nightly build succeeded !
             Last commit : [${{ github.event.head_commit.message }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
@@ -105,8 +105,9 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -126,8 +127,9 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -149,8 +151,9 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
+          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
