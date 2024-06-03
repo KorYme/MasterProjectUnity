@@ -25,7 +25,7 @@ jobs:
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
       build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
-      build-execution-time: ${{ steps.build-execution-time.outputs.duration }}
+      build-execution-time: ${{ steps.build-execution-time.outputs.time }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
@@ -152,7 +152,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
           embed-description: |
-            The manual build succeeded in ${{ time }}  !
+            The manual build succeeded in ${{ needs.build.outputs.build-execution-time }}  !
             
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
