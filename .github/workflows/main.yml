@@ -68,7 +68,8 @@ jobs:
         id: build-execution-time
         run: |
           printf -v now '%(%s)T'
-          printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
+          printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }}))
+          printf time =${{'%dh:%dm:%ds\n' $((duration/3600)) $((duration%3600/60)) $((duration%60))}} >> "$GITHUB_OUTPUT"
       
       - name: Return License
         if: always()
@@ -151,7 +152,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
           embed-description: |
-            The manual build succeeded in ${{ needs.build.outputs.build-execution-time / 60 }}m ${{ needs.build.outputs.build-execution-time % 60 }}s  !
+            The manual build succeeded in ${{ time }}  !
             
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
