@@ -25,18 +25,10 @@ jobs:
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
       build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
-      build-execution-time: ${{ steps.duration.outputs.duration }}
+      build-execution-time: ${{ steps.build-execution-time.outputs.duration }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
-        
-      - name: Workflow run duration action
-        uses: channyein87/workflow-duration-action@v1.17
-        id: duration
-        with:
-          repository: ${{ github.repository }}
-          workflow: main.yml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
         uses: actions/checkout@v4.1.6
@@ -52,6 +44,11 @@ jobs:
           restore-keys: |
             Library-
 
+      - name: Set start timestamp
+        id: start-timestamp
+        run: |
+          printf 'timestamp=%(%s)T\n' >> "$GITHUB_OUTPUT"
+      
       - name: Build project
         id: project-build
         uses: game-ci/unity-builder@v4.2.3
@@ -66,10 +63,17 @@ jobs:
           buildsPath: Builds
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
+
+      - name: Calculate duration
+        id: build-execution-time
+        run: |
+          echo -v now '%(%s)T'
+          echo duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
+      
       - name: Return License
         if: always()
         uses: game-ci/unity-return-license@v2.0.0
-
+            
       - name: Upload build as artifact
         id: build-upload
         uses: actions/upload-artifact@v4.3.3
