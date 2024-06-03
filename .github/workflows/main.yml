@@ -68,7 +68,7 @@ jobs:
         id: build-execution-time
         run: |
           printf -v now '%(%s)T'
-          printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }}))
+          printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
       
       - name: Return License
         if: always()
