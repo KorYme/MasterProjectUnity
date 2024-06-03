@@ -69,7 +69,7 @@ jobs:
         run: |
           printf -v now '%(%s)T'
           printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }}))
-          printf "time=${{$ date -d@${{duration}} -u +%H:%M:%S}}" >> $GITHUB.OUTPUT
+          echo time=${{$ date -d@${{duration}} -u +%H:%M:%S}} >> $GITHUB.OUTPUT
       
       - name: Return License
         if: always()
