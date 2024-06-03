@@ -25,7 +25,7 @@ jobs:
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
       build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
-      build-execution-time: ${{ steps.build-execution-time.outputs.time }}
+      build-execution-time: ${{ steps.build-execution-time.outputs.duration }}
     steps:
       - name: Set Start Time
         run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
@@ -69,7 +69,6 @@ jobs:
         run: |
           printf -v now '%(%s)T'
           printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }}))
-          printf 'time=$( date -d@$((now - ${{ steps.start-timestamp.outputs.timestamp }})) -u +%H:%M:%S)' >> "$GITHUB.OUTPUT"
       
       - name: Return License
         if: always()
@@ -104,7 +103,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/Kp0EqMZrdIEAAAAC/legend-of.gif
           embed-description: |
-            The nightly build succeeded in ${{ needs.build.outputs.build-execution-time }} !
+            The nightly build succeeded in ${{ needs.build.outputs.build-execution-time }}s !
             
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
@@ -129,7 +128,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/5x934L_nVKEAAAAC/monsters-inc-shhh.gif
           embed-description: |
-            The nightly build failed... (in ${{ needs.build.outputs.build-execution-time }})
+            The nightly build failed... (in ${{ needs.build.outputs.build-execution-time }}s)
 
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
@@ -152,7 +151,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/bVOUcotOsqsAAAAd/miguel-o%27hara-across-the-spider-verse.gif
           embed-description: |
-            The manual build succeeded in ${{ needs.build.outputs.build-execution-time }}  !
+            The manual build succeeded in ${{ needs.build.outputs.build-execution-time }}s !
             
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
@@ -177,7 +176,7 @@ jobs:
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           embed-image-url: https://media1.tenor.com/m/fKIG2kiLVPgAAAAC/this-is-fine-its-fine.gif
           embed-description: |
-            The manual build failed... (in ${{ needs.build.outputs.build-execution-time }})
+            The manual build failed... (in ${{ needs.build.outputs.build-execution-time }}s)
             
             Last commit :
             [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message }} - ${{ github.event.head_commit.author.name }}
