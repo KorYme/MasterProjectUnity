@@ -16,13 +16,13 @@ namespace MasterProject.Localization
 
         public static readonly string LocalizationAssetsDirectory = Path.Combine(Application.streamingAssetsPath, "LocalizationAssets");
 
-        protected static HashSet<LocalizedText> s_LocalizedTexts = new HashSet<LocalizedText>();
+        protected static HashSet<LocalizedText> s_localizedTexts = new HashSet<LocalizedText>();
 
-        protected Dictionary<string, LocalizationData> m_LoadedLanguages;
-        protected List<string> m_LanguagesIDs;
-        public IReadOnlyList<string> LanguagesIDs => m_LanguagesIDs;
+        protected Dictionary<string, LocalizationData> m_loadedLanguages;
+        protected List<string> m_languagesIDs;
+        public IReadOnlyList<string> LanguagesIDs => m_languagesIDs;
 
-        protected LocalizationData m_CurrentLocaData;
+        protected LocalizationData m_currentLocaData;
 
         public virtual void Initialize()
         {
@@ -32,28 +32,28 @@ namespace MasterProject.Localization
                 LocalizationHandlerEditor.Clear();
             }
 #endif
-            m_LoadedLanguages = new Dictionary<string, LocalizationData>();
-            m_LanguagesIDs = new List<string>();
+            m_loadedLanguages = new Dictionary<string, LocalizationData>();
+            m_languagesIDs = new List<string>();
             IEnumerable<string> localizationFilesPath = Directory.EnumerateFiles(LocalizationAssetsDirectory, "*.json", SearchOption.AllDirectories);
             foreach (string filePath in localizationFilesPath)
             {
                 LocalizationData localizationData = JsonConvert.DeserializeObject<LocalizationData>(File.ReadAllText(filePath));
-                if (m_LoadedLanguages.TryAdd(localizationData.LanguageID, localizationData))
+                if (m_loadedLanguages.TryAdd(localizationData.LanguageID, localizationData))
                 {
-                    m_LanguagesIDs.Add(localizationData.LanguageID);
+                    m_languagesIDs.Add(localizationData.LanguageID);
                 }
                 else
                 {
                     DebugLogger.Error(this, $"The file {localizationFilesPath} has the same LangageID as another localization asset, it will not be considered.");
                 }
             }
-            if (m_LanguagesIDs.Count == 0)
+            if (m_languagesIDs.Count == 0)
             {
                 throw new System.ArgumentOutOfRangeException($"The {LocalizationAssetsDirectory} folder doesn't countain any localization asset");
             }
-            if (m_LoadedLanguages.TryGetValue(m_LanguagesIDs[0], out LocalizationData locaData))
+            if (m_loadedLanguages.TryGetValue(m_languagesIDs[0], out LocalizationData locaData))
             {
-                m_CurrentLocaData = locaData;
+                m_currentLocaData = locaData;
                 LocalizedText.OnLocalizationKeyChanged = GetTextFromKeyAndArgs;
                 SetLocalizationData(locaData);
             }
@@ -66,11 +66,11 @@ namespace MasterProject.Localization
 
         public void SetLocalizationLanguage(string languageID)
         {
-            if (languageID == m_CurrentLocaData.LanguageID)
+            if (languageID == m_currentLocaData.LanguageID)
             {
                 return;
             }
-            if (!m_LoadedLanguages.TryGetValue(languageID, out LocalizationData locaData))
+            if (!m_loadedLanguages.TryGetValue(languageID, out LocalizationData locaData))
             {
                 DebugLogger.Warning(this, $"The language with languageId {languageID} doesn't exist");
                 return;
@@ -80,13 +80,13 @@ namespace MasterProject.Localization
 
         protected void SetLocalizationData(LocalizationData locaData)
         {
-            m_CurrentLocaData = locaData;
+            m_currentLocaData = locaData;
             RefreshLocalizedTexts();
         }
 
         public IEnumerable<string> GetLocalization()
         {
-            return m_LanguagesIDs;
+            return m_languagesIDs;
         }
 
         public string GetTextFromKeyAndArgs(string key, params string[] args)
@@ -95,11 +95,11 @@ namespace MasterProject.Localization
             {
                 return KEY_EMPTY;
             }
-            if (m_CurrentLocaData.LocalizationKeys == null)
+            if (m_currentLocaData.LocalizationKeys == null)
             {
                 return NO_LOCA_DATA_FOUND;
             }
-            if (!m_CurrentLocaData.LocalizationKeys.TryGetValue(key, out string localizedText))
+            if (!m_currentLocaData.LocalizationKeys.TryGetValue(key, out string localizedText))
             {
                 return string.Format(KEY_NOT_FOUND, key);
             }
@@ -112,7 +112,7 @@ namespace MasterProject.Localization
                 string[] localizedArguments = new string[args.Length];
                 for (int index = 0; index < args.Length; index++)
                 {
-                    if (m_CurrentLocaData.LocalizationKeys.TryGetValue(args[index], out string localizedArg))
+                    if (m_currentLocaData.LocalizationKeys.TryGetValue(args[index], out string localizedArg))
                     {
                         localizedArguments[index] = localizedArg;
                     }
@@ -127,7 +127,7 @@ namespace MasterProject.Localization
 
         public virtual void RefreshLocalizedTexts()
         {
-            foreach (LocalizedText locaText in s_LocalizedTexts)
+            foreach (LocalizedText locaText in s_localizedTexts)
             {
                 locaText.Refresh();
             }
@@ -135,12 +135,12 @@ namespace MasterProject.Localization
 
         public static void RegisterLocalizedText(LocalizedText locaText)
         {
-            s_LocalizedTexts.Add(locaText);
+            s_localizedTexts.Add(locaText);
         }
 
         public static void UnRegisterLocalizedText(LocalizedText locaText)
         {
-            s_LocalizedTexts.Remove(locaText);
+            s_localizedTexts.Remove(locaText);
         }
 
         public static string GetLocalizationAssetFullPath(string languageName)

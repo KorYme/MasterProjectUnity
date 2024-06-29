@@ -18,7 +18,7 @@ namespace MasterProject.Managers
 				.FirstOrDefault(/*goContainer => goContainer.gameObject.scene.name == SceneName*/);
 			if (Container == null)
 			{
-				throw new System.Exception($"No {typeof(SceneReferenceContainer).Name} has been found in {SceneName}");
+				throw new System.Exception($"No {GetType().Name} has been found in {SceneName}");
 			}
         }
     }

@@ -9,8 +9,8 @@ namespace MasterProject
 {
     public class GameLoop : MonoBehaviour
     {
-        Dictionary<Type, BaseManager> m_AllManagers;
-        LinkedList<BaseManager> m_ManagersUpdateOrder;
+        private Dictionary<Type, BaseManager> m_allManagers;
+        private LinkedList<BaseManager> m_managersUpdateOrder;
 
         private void Awake()
         {
@@ -23,7 +23,7 @@ namespace MasterProject
         private void Update()
         {
             float deltaTime = Time.deltaTime;
-            LinkedList<BaseManager>.Enumerator currentManager = m_ManagersUpdateOrder.GetEnumerator();
+            LinkedList<BaseManager>.Enumerator currentManager = m_managersUpdateOrder.GetEnumerator();
             while (currentManager.MoveNext())
             {
                 currentManager.Current.Update(deltaTime);
@@ -32,20 +32,20 @@ namespace MasterProject
 
         private void InstantiateManagersContainers()
         {
-            m_AllManagers = new Dictionary<Type, BaseManager>();
+            m_allManagers = new Dictionary<Type, BaseManager>();
             foreach (Type type in GameStatesAndManagers.AllManagers)
             {
                 if (type.IsSubclassOf(typeof(BaseManager)) && !type.IsAbstract)
                 {
-                    m_AllManagers.Add(type, (BaseManager)Activator.CreateInstance(type));
+                    m_allManagers.Add(type, (BaseManager)Activator.CreateInstance(type));
                 }
             }
-            m_ManagersUpdateOrder = new LinkedList<BaseManager>();
+            m_managersUpdateOrder = new LinkedList<BaseManager>();
             foreach (Type type in GameStatesAndManagers.UpdateManagersOrder)
             {
-                if (m_AllManagers.TryGetValue(type, out BaseManager manager))
+                if (m_allManagers.TryGetValue(type, out BaseManager manager))
                 {
-                    m_ManagersUpdateOrder.AddLast(manager);
+                    m_managersUpdateOrder.AddLast(manager);
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace MasterProject
         {
             foreach (Type type in GameStatesAndManagers.InitializeManagersOrder)
             {
-                if (m_AllManagers.TryGetValue(type, out BaseManager manager))
+                if (m_allManagers.TryGetValue(type, out BaseManager manager))
                 {
                     if (manager is UnitySceneManager sceneManager)
                     {
@@ -67,9 +67,9 @@ namespace MasterProject
 
         public void SetupDependencies()
         {
-            foreach (KeyValuePair<Type, BaseManager> kvp in m_AllManagers)
+            foreach (KeyValuePair<Type, BaseManager> kvp in m_allManagers)
             {
-                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ManagerDepencency), m_AllManagers);
+                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ManagerDepencency), m_allManagers);
             }
         }
 
@@ -77,7 +77,7 @@ namespace MasterProject
         {
             foreach (Type type in GameStatesAndManagers.InitializeManagersOrder)
             {
-                if (m_AllManagers.TryGetValue(type, out BaseManager manager) && manager is UnitySceneManager unityManager)
+                if (m_allManagers.TryGetValue(type, out BaseManager manager) && manager is UnitySceneManager unityManager)
                 {
                     SceneManager.LoadSceneAsync(unityManager.SceneName, LoadSceneMode.Additive).allowSceneActivation = true;
                 }

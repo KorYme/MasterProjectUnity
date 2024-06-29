@@ -5,18 +5,18 @@ namespace MasterProject.Tests.FSM
 {
     public class TestFSM : MonoBehaviour, IFSMController
     {
-        [SerializeField] private MovementFSM m_FSM;
+        [SerializeField] private MovementFSM m_fsm;
 
         void Start()
         {
-            m_FSM = new MovementFSM(this);
-            m_FSM.Initialize();
-            m_FSM.Start(MovementStateID.Idle);
+            m_fsm = new MovementFSM(this);
+            m_fsm.Initialize();
+            m_fsm.Start(MovementStateID.Idle);
         }
 
         void Update()
         {
-            m_FSM?.Update(Time.deltaTime);
+            m_fsm?.Update(Time.deltaTime);
         }
     }
 }

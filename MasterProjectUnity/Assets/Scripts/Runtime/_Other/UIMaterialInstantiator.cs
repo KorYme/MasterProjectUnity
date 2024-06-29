@@ -6,19 +6,19 @@ namespace MasterProject.Utilities
     [RequireComponent(typeof(Graphic))]
     public class UIMaterialInstantiator : MonoBehaviour
     {
-        private Graphic m_Graphic;
+        private Graphic m_graphic;
 
         private void Awake()
         {
-            m_Graphic = GetComponent<Graphic>();
-            m_Graphic.material = new Material(m_Graphic.material);
+            m_graphic = GetComponent<Graphic>();
+            m_graphic.material = new Material(m_graphic.material);
         }
 
         private void OnDestroy()
         {
-            if (m_Graphic.material)
+            if (m_graphic.material)
             {
-                Destroy(m_Graphic.material);
+                Destroy(m_graphic.material);
             }
         }
     }

@@ -1,4 +1,3 @@
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace MasterProject.UI
@@ -13,16 +12,16 @@ namespace MasterProject.UI
     [RequireComponent(typeof(Canvas))]
     public class CanvasSorter : MonoBehaviour
     {
-        public const int DEFAULT_ORDER = 1000;
+        private const int DEFAULT_ORDER = 1000;
 
-        [SerializeField] CanvasOrderID m_CanvasID;
+        [SerializeField] CanvasOrderID m_canvasID;
 
-        Canvas canvas;
+        private Canvas m_canvas;
 
         private void Awake()
         {
-            canvas = GetComponent<Canvas>();
-            canvas.sortingOrder = (int)m_CanvasID + DEFAULT_ORDER;
+            m_canvas = GetComponent<Canvas>();
+            m_canvas.sortingOrder = (int)m_canvasID + DEFAULT_ORDER;
         }
     }
 }

@@ -5,11 +5,11 @@ namespace MasterProject.FSM
     public class FSMState<T> where T : Enum
     {
         [NonSerialized]
-        protected FSM<T> m_FSM;
+        protected FSM<T> m_fsm;
 
         public FSMState(FSM<T> fsm)
         {
-            m_FSM = fsm;
+            m_fsm = fsm;
         }
 
         public virtual void Initialize()

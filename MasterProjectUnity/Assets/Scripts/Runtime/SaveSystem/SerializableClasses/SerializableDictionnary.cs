@@ -8,31 +8,31 @@ namespace KorYmeLibrary.SaveSystem
     [Serializable]
     public class SerializableDictionnary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
-        [SerializeField] private List<TKey> m_Keys = new();
-        [SerializeField] private List<TValue> m_Values = new();
+        [SerializeField] private List<TKey> m_keys = new();
+        [SerializeField] private List<TValue> m_values = new();
 
         public void OnAfterDeserialize()
         {
             Clear();
-            if (m_Keys.Count != m_Values.Count)
+            if (m_keys.Count != m_values.Count)
             {
                 DebugLogger.Warning(this, "There is a different number of keys and values in the save file");
                 return;
             }
-            for (int i = 0; i < m_Keys.Count; i++)
+            for (int i = 0; i < m_keys.Count; i++)
             {
-                Add(m_Keys[i], m_Values[i]);
+                Add(m_keys[i], m_values[i]);
             }
         }
 
         public void OnBeforeSerialize()
         {
-            m_Keys.Clear();
-            m_Values.Clear();
+            m_keys.Clear();
+            m_values.Clear();
             foreach (KeyValuePair<TKey, TValue> kvp in this)
             {
-                m_Keys.Add(kvp.Key);
-                m_Values.Add(kvp.Value);
+                m_keys.Add(kvp.Key);
+                m_values.Add(kvp.Value);
             }
         }
     }

@@ -5,7 +5,6 @@ using UnityEngine;
 using System;
 #endif
 
-
 namespace MasterProject.Debugging
 {
     public static class DebugLogger
@@ -18,14 +17,14 @@ namespace MasterProject.Debugging
         }
 
 #if UNITY_EDITOR
-        private static Dictionary<string, string> m_SenderColors = new Dictionary<string, string>();
+        private static Dictionary<string, string> s_senderColors = new Dictionary<string, string>();
         private static readonly string[] COLOR_PALETTE = new string[]
         {
             "#ff0000", "#ffff00", "#00ff00", "#0d3dff", "#00ffff", "#ff00ff",
             "#ffa500", "#808000", "#800080", "#8b0000", "#006400", "#ff8C00", "#ffd700",
         };
 #else
-        private static Dictionary<string, ConsoleColor> m_SenderColors = new Dictionary<string, ConsoleColor>();
+        private static Dictionary<string, ConsoleColor> s_senderColors = new Dictionary<string, ConsoleColor>();
         private static readonly ConsoleColor[] COLOR_PALETTE = new ConsoleColor[]
         {
             ConsoleColor.Red, ConsoleColor.Gray, ConsoleColor.Blue, ConsoleColor.Magenta,
@@ -36,20 +35,20 @@ namespace MasterProject.Debugging
 #if UNITY_EDITOR
         private static string GetOrAddColorValue(string sender)
         {
-            if (!m_SenderColors.TryGetValue(sender, out string colorValue))
+            if (!s_senderColors.TryGetValue(sender, out string colorValue))
             {
-                colorValue = COLOR_PALETTE[m_SenderColors.Count % COLOR_PALETTE.Length];
-                m_SenderColors.Add(sender, colorValue);
+                colorValue = COLOR_PALETTE[s_senderColors.Count % COLOR_PALETTE.Length];
+                s_senderColors.Add(sender, colorValue);
             }
             return colorValue;
         }
 #else
         private static ConsoleColor GetOrAddColorValue(string sender)
         {
-            if (!m_SenderColors.TryGetValue(sender, out ConsoleColor colorValue))
+            if (!s_senderColors.TryGetValue(sender, out ConsoleColor colorValue))
             {
-                colorValue = COLOR_PALETTE[m_SenderColors.Count % COLOR_PALETTE.Length];
-                m_SenderColors.Add(sender, colorValue);
+                colorValue = COLOR_PALETTE[s_senderColors.Count % COLOR_PALETTE.Length];
+                s_senderColors.Add(sender, colorValue);
             }
             return colorValue;
         }

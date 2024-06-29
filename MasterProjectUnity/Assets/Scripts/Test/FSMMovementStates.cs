@@ -16,11 +16,11 @@ namespace MasterProject.Tests.FSM
     [Serializable]
     public class MovementFSM : FSM<MovementStateID>
     {
-        [SerializeField] private CharacterController m_CharacterController;
-        public CharacterController CharacterController => m_CharacterController;
+        [SerializeField] private CharacterController m_characterController;
+        public CharacterController CharacterController => m_characterController;
 
-        [SerializeField] private Animator m_Animator;
-        public Animator Animator => m_Animator;
+        [SerializeField] private Animator m_animator;
+        public Animator Animator => m_animator;
 
         [field:SerializeField] public IdleState IdleState { get; protected set; }
         [field:SerializeField] public WalkState WalkState { get; protected set; }
@@ -45,13 +45,13 @@ namespace MasterProject.Tests.FSM
 
     public abstract class MovementState : FSMState<MovementStateID>
     {
-        [SerializeField] private AnimationClip m_AnimationClip;
+        [SerializeField] private AnimationClip m_animationClip;
 
-        protected MovementFSM m_MovementFSM;
+        protected MovementFSM m_movementFSM;
 
         public MovementState(FSM<MovementStateID> fsm) : base(fsm)
         {
-            m_MovementFSM = m_FSM as MovementFSM;
+            m_movementFSM = m_fsm as MovementFSM;
         }
     }
 

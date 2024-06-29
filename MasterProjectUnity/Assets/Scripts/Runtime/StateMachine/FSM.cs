@@ -7,9 +7,9 @@ namespace MasterProject.FSM
     public class FSM<T> where T : Enum
     {
         [NonSerialized]
-        private IFSMController m_Controller;
+        private IFSMController m_controller;
 
-        private Dictionary<T, FSMState<T>> m_States = new Dictionary<T, FSMState<T>>();
+        private Dictionary<T, FSMState<T>> m_states = new Dictionary<T, FSMState<T>>();
 
         [field: NonSerialized]
         public FSMState<T> PreviousState { get; private set; }
@@ -23,12 +23,12 @@ namespace MasterProject.FSM
 
         public FSM(IFSMController controller)
         {
-            m_Controller = controller;
+            m_controller = controller;
         }
 
         public virtual void Initialize()
         {
-            foreach (KeyValuePair<T, FSMState<T>> kvp in m_States)
+            foreach (KeyValuePair<T, FSMState<T>> kvp in m_states)
             {
                 kvp.Value.Initialize();
             }
@@ -50,7 +50,7 @@ namespace MasterProject.FSM
             {
                 return;
             }
-            if (m_States.TryGetValue(startingIndex, out FSMState<T> state))
+            if (m_states.TryGetValue(startingIndex, out FSMState<T> state))
             {
                 CurrentState = state;
                 StateDuration = 0f;
@@ -79,7 +79,7 @@ namespace MasterProject.FSM
             {
                 return false;
             }
-            if (m_States.TryGetValue(newState, out FSMState<T> state) && CurrentState != state)
+            if (m_states.TryGetValue(newState, out FSMState<T> state) && CurrentState != state)
             {
                 CurrentState.Exit();
                 PreviousState = CurrentState;
@@ -93,15 +93,15 @@ namespace MasterProject.FSM
 
         public bool AddState(T index, FSMState<T> state)
         {
-            return m_States.TryAdd(index, state);
+            return m_states.TryAdd(index, state);
         }
 
         public TState AddAndGetState<TState>(T index) where TState : FSMState<T>
         {
-            if (!m_States.ContainsKey(index))
+            if (!m_states.ContainsKey(index))
             {
                 TState state = (TState)Activator.CreateInstance(typeof(TState), this);
-                m_States.Add(index, state);
+                m_states.Add(index, state);
                 return state;
             }
             else
@@ -113,7 +113,7 @@ namespace MasterProject.FSM
 
         public bool TryGetController<TFSMController>(out TFSMController controller) where TFSMController : IFSMController
         {
-            if (m_Controller is TFSMController fsmController)
+            if (m_controller is TFSMController fsmController)
             {
                 controller = fsmController;
                 return true;

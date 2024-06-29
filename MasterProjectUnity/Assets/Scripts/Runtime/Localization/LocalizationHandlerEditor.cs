@@ -6,23 +6,23 @@ namespace MasterProject.Localization
     /// </summary>
     public class LocalizationHandlerEditor : LocalizationHandler
     {
-        private static LocalizationHandlerEditor m_Instance;
+        private static LocalizationHandlerEditor s_instance;
         public static LocalizationHandlerEditor Instance
         {
             get
             {
-                if (m_Instance == null)
+                if (s_instance == null)
                 {
-                    m_Instance = new LocalizationHandlerEditor();
-                    m_Instance.Initialize();
+                    s_instance = new LocalizationHandlerEditor();
+                    s_instance.Initialize();
                 }
-                return m_Instance;
+                return s_instance;
             }
         }
 
         public static void Clear()
         {
-            m_Instance = null;
+            s_instance = null;
         }
     }
 }
