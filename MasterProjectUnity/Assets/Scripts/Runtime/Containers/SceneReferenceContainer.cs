@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MasterProject.Managers
+namespace MasterProject.Services
 {
 	public abstract class SceneReferenceContainer : MonoBehaviour
 	{

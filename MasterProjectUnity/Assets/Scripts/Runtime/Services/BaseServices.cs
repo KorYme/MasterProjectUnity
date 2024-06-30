@@ -1,8 +1,6 @@
-using TMPro;
-
-namespace MasterProject.Managers
+namespace MasterProject.Services
 {
-    public abstract class BaseManager
+    public abstract class BaseServices
     {
         public bool IsInitialized { get; private set; } = false;
         public bool IsEnabled { get; private set; } = false;

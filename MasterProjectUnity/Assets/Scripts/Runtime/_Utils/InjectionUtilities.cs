@@ -80,7 +80,7 @@ namespace MasterProject.Utilities
         public bool IsAlreadyInjected { get; set; } = false;
     }
 
-    public class ManagerDepencency : InjectionAttribute
+    public class ServiceDepencency : InjectionAttribute
     {
 
     }
