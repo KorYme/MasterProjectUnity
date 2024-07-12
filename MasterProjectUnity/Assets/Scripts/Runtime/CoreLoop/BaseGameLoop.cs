@@ -1,4 +1,3 @@
-using MasterProject.Services;
 using MasterProject.Utilities;
 using System;
 using System.Collections.Generic;
@@ -8,68 +7,88 @@ namespace MasterProject
 {
     public abstract class BaseGameLoop : MonoBehaviour
     {
-        protected Dictionary<Type, BaseServices> m_allServices;
-        protected LinkedList<BaseServices> m_servicesUpdateOrder;
+        protected BindingContainer m_container;
+
+        protected abstract IReadOnlyList<Type> InitializeServicesOrder { get; }
+        protected abstract IReadOnlyList<Type> UpdateServicesOrder { get; }
+        protected abstract IReadOnlyList<Type> LateUpdateServicesOrder { get; }
 
         protected virtual void Awake()
         {
-            InstantiateContainers();
-            InstallBindings();
+            InstantiateContainer();
+            InstantiateServices(m_container);
             SetupServicesContainers();
             GenerateScenes();
             SetupServicesDependencies();
+            SetupOtherDependencies();
             InitializeServices();
         }
 
-        protected virtual void Update()
+        protected virtual void InstantiateContainer()
         {
-            float deltaTime = Time.deltaTime;
-            LinkedList<BaseServices>.Enumerator currentService = m_servicesUpdateOrder.GetEnumerator();
-            while (currentService.MoveNext())
-            {
-                currentService.Current.Update(deltaTime);
-            }
+            m_container = new BindingContainer(transform);
         }
 
-        protected virtual void InstantiateContainers()
-        {
-            m_allServices = new Dictionary<Type, BaseServices>();
-            m_servicesUpdateOrder = new LinkedList<BaseServices>();
-        }
-
-        // REWORK AVEC PREFAB
-        protected abstract void InstallBindings();
+        protected abstract void InstantiateServices(in BindingContainer container);
 
         protected virtual void SetupServicesContainers()
         {
-            foreach (Type type in ServicesLoopOrder.UpdateServicesOrder)
-            {
-                if (m_allServices.TryGetValue(type, out BaseServices manager))
-                {
-                    m_servicesUpdateOrder.AddLast(manager);
-                }
-            }
+            m_container.SetupOrders(UpdateServicesOrder, LateUpdateServicesOrder);
         }
 
         protected virtual void SetupServicesDependencies()
         {
-            foreach (KeyValuePair<Type, BaseServices> kvp in m_allServices)
+            foreach (KeyValuePair<Type, IService> kvp in m_container.AllServices)
             {
-                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ServiceDepencency), m_allServices);
+                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ServiceDepencency), m_container.AllServices);
             }
         }
 
+        protected abstract void SetupOtherDependencies();
+
+        // A REVOIR
         protected virtual void GenerateScenes()
         {
         }
 
         protected virtual void InitializeServices()
         {
-            foreach (Type type in ServicesLoopOrder.InitializeServicesOrder)
+            foreach (Type type in InitializeServicesOrder)
             {
-                if (m_allServices.TryGetValue(type, out BaseServices service))
+                if (m_container.AllServices.TryGetValue(type, out IService service))
                 {
                     service.Initialize();
+                }
+            }
+        }
+
+        protected virtual void Update()
+        {
+            float deltaTime = Time.deltaTime;
+            IEnumerator<IService> currentService = m_container.ServicesUpdateOrder.GetEnumerator();
+            while (currentService.MoveNext())
+            {
+                currentService.Current.BaseUpdate(deltaTime);
+            }
+        }
+
+        protected virtual void LateUpdate()
+        {
+            float deltaTime = Time.deltaTime;
+            IEnumerator<IService> currentService = m_container.ServicesLateUpdateOrder.GetEnumerator();
+            while (currentService.MoveNext())
+            {
+                currentService.Current.BaseLateUpdate(deltaTime);
+            }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            foreach (Type type in InitializeServicesOrder)
+            {
+                if (m_container.AllServices.TryGetValue(type, out IService service))
+                {
+                    service.Unload(); // CHECK IF SERVICES ARE UNLOADED BEFORE
                 }
             }
         }
