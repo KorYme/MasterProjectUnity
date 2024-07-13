@@ -73,5 +73,5 @@ crashlytics-build.properties
 MasterProjectUnity/ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 
 # Package ignored assets (settings, ...)
-/[Aa]ssets/Scripts/Editor/ToolbarExtender/CustomPlayButton/BookmarkSettings/*
-/[Aa]ssets/Scripts/Editor/ToolbarExtender/CustomPlayButton/BookmarkSettings.meta
+**/ToolbarExtender/CustomPlayButton/BookmarkSettings/*
+**/ToolbarExtender/CustomPlayButton/BookmarkSettings.meta
