@@ -86,7 +86,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.0.1",
+      "version": "3.2.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -215,11 +215,11 @@
       "url": "https://packages.unity.com"
     },
     "net.tnrd.nsubstitute": {
-      "version": "https://github.com/Thundernerd/Unity3D-NSubstitute.git",
+      "version": "5.1.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {},
-      "hash": "449712b25ae237eb5da2d958dd72a5432051e192"
+      "url": "https://package.openupm.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
