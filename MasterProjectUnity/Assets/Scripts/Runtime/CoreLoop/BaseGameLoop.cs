@@ -40,7 +40,7 @@ namespace MasterProject
         {
             foreach (KeyValuePair<Type, IService> kvp in m_container.AllServices)
             {
-                InjectionUtilities.InjectDependencies(kvp.Value, typeof(ServiceDepencency), m_container.AllServices);
+                InjectionUtilities.InjectDependencies(typeof(ServiceDepencency), m_container.AllServices, kvp.Value);
             }
         }
 

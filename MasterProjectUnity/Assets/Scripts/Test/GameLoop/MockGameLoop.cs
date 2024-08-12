@@ -23,7 +23,7 @@ namespace MasterProject.Tests
 
         protected override void SetupOtherDependencies()
         {
-            InjectionUtilities.InjectDependencies(m_test, typeof(ServiceDepencency), m_container.AllServices);
+            InjectionUtilities.InjectDependencies(typeof(ServiceDepencency), m_container.AllServices, m_test);
         }
     }
 }
