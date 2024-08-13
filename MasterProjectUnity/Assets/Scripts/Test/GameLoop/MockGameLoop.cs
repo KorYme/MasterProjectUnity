@@ -25,5 +25,9 @@ namespace MasterProject.Tests
         {
             InjectionUtilities.InjectDependencies(typeof(ServiceDepencency), m_container.AllServices, m_test);
         }
+
+        protected override void GenerateScenes()
+        {
+        }
     }
 }

@@ -46,10 +46,7 @@ namespace MasterProject
 
         protected abstract void SetupOtherDependencies();
 
-        // A REVOIR
-        protected virtual void GenerateScenes()
-        {
-        }
+        protected abstract void GenerateScenes();
 
         protected virtual void InitializeServices()
         {
@@ -86,9 +83,9 @@ namespace MasterProject
         {
             foreach (Type type in InitializeServicesOrder)
             {
-                if (m_container.AllServices.TryGetValue(type, out IService service))
+                if (m_container.AllServices.TryGetValue(type, out IService service) && (service?.IsLoaded ?? false))
                 {
-                    service.Unload(); // CHECK IF SERVICES ARE UNLOADED BEFORE
+                    service.Unload();
                 }
             }
         }

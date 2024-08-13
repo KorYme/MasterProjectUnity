@@ -1,18 +1,16 @@
-﻿using MasterProject.Tests;
+using MasterProject.Tests;
 using System;
 using System.Collections.Generic;
 
-namespace MasterProject
+namespace TLNTH
 {
-    /// <summary>
-    /// Container class allowing us to keep track of every services and their orders
-    /// </summary>
-    public static class TestServicesLoopOrder
+    public static class TLNTHServicesLoopOrder
     {
         public static readonly List<Type> InitializeServicesOrder = new List<Type>()
         {
             typeof(IErrorService),
             typeof(IMusicService),
+            typeof(IInputService),
         };
 
         public static readonly List<Type> UpdateServicesOrder = new List<Type>()

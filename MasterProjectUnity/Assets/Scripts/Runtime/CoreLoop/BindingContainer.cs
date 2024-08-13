@@ -46,16 +46,20 @@ namespace MasterProject
 
         public void BindWithInstance<T>(IService serviceInstance) where T : IService
         {
-            if (CheckTypeKey<T>(serviceInstance))
+            if (!CheckTypeKey<T>(serviceInstance))
             {
                 return;
             }
             m_allServices.Add(typeof(T), serviceInstance);
+            if (serviceInstance is MonoBehaviour monoBehaviour)
+            {
+                monoBehaviour.transform.parent = m_transform;
+            }
         }
 
         public void BindWithPrefab<T>(BaseService servicePrefab) where T : IService
         {
-            if (CheckTypeKey<T>(servicePrefab))
+            if (!CheckTypeKey<T>(servicePrefab))
             {
                 return;
             }
