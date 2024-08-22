@@ -54,40 +54,40 @@ namespace MasterProject.Debugging
         }
 #endif
 
-        public static void Info<T>(T sender, string message) where T : class
+        public static void Info<T>(T sender, object message) where T : class
         {
             string senderName = typeof(T).Name;
             Info(senderName, message);
         }
 
-        public static void Info(string senderName, string message)
+        public static void Info(string senderName, object message)
         {
             WriteMessage(LogLevel.Info, senderName, message);
         }
 
-        public static void Warning<T>(T sender, string message) where T : class
+        public static void Warning<T>(T sender, object message) where T : class
         {
             string senderName = typeof(T).Name;
             Warning(senderName, message);
         }
 
-        public static void Warning(string senderName, string message)
+        public static void Warning(string senderName, object message)
         {
             WriteMessage(LogLevel.Warning, senderName, message);
         }
 
-        public static void Error<T>(T sender, string message) where T : class
+        public static void Error<T>(T sender, object message) where T : class
         {
             string senderName = typeof(T).Name;
             Error(senderName, message);
         }
 
-        public static void Error(string senderName, string message)
+        public static void Error(string senderName, object message)
         {
             WriteMessage(LogLevel.Error, senderName, message);
         }
 
-        private static void WriteMessage(LogLevel logLevel, string senderName, string message)
+        private static void WriteMessage(LogLevel logLevel, string senderName, object message)
         {
             var colorValue = GetOrAddColorValue(senderName);
 #if UNITY_EDITOR
@@ -122,7 +122,7 @@ namespace MasterProject.Debugging
                 default:
                     break;
             }
-            Console.WriteLine(message);
+            Console.WriteLine(message.ToString());
             Console.ResetColor();
 #endif
         }
