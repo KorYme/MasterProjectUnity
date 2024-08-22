@@ -1,0 +1,17 @@
+{
+    "name": "MasterProject.DiscordManager",
+    "rootNamespace": "MasterProject.DiscordManager",
+    "references": [
+        "GUID:37a3333d0afec80469ca282717154ccf",
+        "GUID:39fbbed6db245804b8f9626982245de0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
