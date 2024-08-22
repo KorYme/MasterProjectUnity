@@ -2,42 +2,26 @@ using System;
 
 namespace MasterProject.Utilities
 {
-    public class ObjectFlux<T> : IDisposable
+    public class Flux<T> : IDisposable
     {
-        protected T m_value;
-        public virtual T Value
-        {
-            get => m_value;
-            set
-            {
-                if (!Equals(m_value, value))
-                {
-                    m_value = value;
-                    OnFluxUpdate?.Invoke(value);
-                }
-            }
-        }
-        protected Action<T> OnFluxUpdate;
-        protected ISubFluxUpdatable m_ContainingObject;
+        public T Value;
 
-        public ObjectFlux(T value, ISubFluxUpdatable containingClass = null)
+        private Action<T> OnFluxUpdate;
+
+        public Flux(T value)
         {
+            OnFluxUpdate = null;
             Value = value;
-            m_ContainingObject = containingClass;
-            OnFluxUpdate = ContainingClassUpdateCallback;
         }
 
-        public void SetContainingObject(ISubFluxUpdatable newContainingClass)
+        public void OnUpdate()
         {
-            m_ContainingObject = newContainingClass;
+            OnFluxUpdate?.Invoke(Value);
         }
-
-        private void ContainingClassUpdateCallback(T _)
-            => m_ContainingObject?.OnSubFluxUpdate?.Invoke();
 
         public void Subscribe(Action<T> fluxUpdateCallback)
         {
-            fluxUpdateCallback?.Invoke(m_value);
+            fluxUpdateCallback?.Invoke(Value);
             OnFluxUpdate += fluxUpdateCallback;
         }
 
@@ -46,47 +30,14 @@ namespace MasterProject.Utilities
             OnFluxUpdate -= fluxUpdateCallback;
         }
 
-        public void UnsubscribeAllCallbacks(bool unsubContainingClass = false)
+        public void UnsubscribeAllCallbacks()
         {
-            OnFluxUpdate = unsubContainingClass ? null : ContainingClassUpdateCallback;
+            OnFluxUpdate = null;
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
-            UnsubscribeAllCallbacks(true);
+            UnsubscribeAllCallbacks();
         }
-    }
-
-    public class ClassFlux<T> : ObjectFlux<T> where T : ISubFluxUpdatable
-    {
-        public override T Value
-        {
-            get => m_value;
-            set
-            {
-                if (!Equals(m_value, value))
-                {
-                    if (m_value != null)
-                    {
-                        m_value.OnSubFluxUpdate -= UpdateFluxValue;
-                    }
-                    m_value = value;
-                    if (m_value != null)
-                    {
-                        m_value.OnSubFluxUpdate += UpdateFluxValue;
-                    }
-                    OnFluxUpdate?.Invoke(value);
-                }
-            }
-        }
-
-        public ClassFlux(T value, ISubFluxUpdatable containingClass = null) : base(value, containingClass) { }
-
-        private void UpdateFluxValue() => OnFluxUpdate?.Invoke(m_value);
-    }
-
-    public interface ISubFluxUpdatable
-    {
-        public Action OnSubFluxUpdate { get; set; }
     }
 }
