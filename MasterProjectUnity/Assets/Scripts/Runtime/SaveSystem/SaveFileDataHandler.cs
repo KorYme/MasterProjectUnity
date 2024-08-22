@@ -9,26 +9,26 @@ namespace MasterProject.SaveSystem
     public class SaveFileDataHandler<T>
     {
         #region FIELDS
-        private string m_DataDirPath;
-        private string m_DataFileName;
-        private EncryptionUtilities.EncryptionType m_EncryptionType;
-        private string m_EncryptionString;
+        private string m_dataDirPath;
+        private string m_dataFileName;
+        private EncryptionUtilities.EncryptionType m_encryptionType;
+        private string m_encryptionString;
         #endregion
 
         #region PROPERTIES
         string m_FullPath
         {
-            get => Path.Combine(m_DataDirPath, "SavingDataSystem", m_DataFileName);
+            get => Path.Combine(m_dataDirPath, "SavingDataSystem", m_dataFileName);
         }
         #endregion
 
         #region CONSTRUCTORS
         public SaveFileDataHandler(string dataDirPath = "", string dataFileName = "", EncryptionUtilities.EncryptionType encryptionType = EncryptionUtilities.EncryptionType.None, string encryptionString = "")
         {
-            m_DataDirPath = dataDirPath;
-            m_DataFileName = dataFileName;
-            m_EncryptionType = encryptionType;
-            m_EncryptionString = encryptionString;
+            m_dataDirPath = dataDirPath;
+            m_dataFileName = dataFileName;
+            m_encryptionType = encryptionType;
+            m_encryptionString = encryptionString;
         }
         #endregion
 
@@ -45,7 +45,7 @@ namespace MasterProject.SaveSystem
                 string dataToLoad;
                 using FileStream stream = new FileStream(m_FullPath, FileMode.Open);
                 using StreamReader reader = new StreamReader(stream);
-                dataToLoad = EncryptionUtilities.Encrypt(reader.ReadToEnd(), m_EncryptionType, false, m_EncryptionString);
+                dataToLoad = EncryptionUtilities.Encrypt(reader.ReadToEnd(), m_encryptionType, false, m_encryptionString);
                 return JsonConvert.DeserializeObject<T>(dataToLoad);
             }
             catch (Exception e)
@@ -62,7 +62,7 @@ namespace MasterProject.SaveSystem
                 Directory.CreateDirectory(Path.GetDirectoryName(m_FullPath));
                 using FileStream stream = new FileStream(m_FullPath, FileMode.Create);
                 using StreamWriter writer = new StreamWriter(stream);
-                writer.Write(EncryptionUtilities.Encrypt(JsonConvert.SerializeObject(data, Formatting.Indented), m_EncryptionType, true, m_EncryptionString));
+                writer.Write(EncryptionUtilities.Encrypt(JsonConvert.SerializeObject(data, Formatting.Indented), m_encryptionType, true, m_encryptionString));
             }
             catch (Exception e)
             {

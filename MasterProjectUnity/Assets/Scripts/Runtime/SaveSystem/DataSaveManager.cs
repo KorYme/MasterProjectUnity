@@ -1,9 +1,7 @@
 using MasterProject.Debugging;
 using MasterProject.Utilities;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace MasterProject.SaveSystem
@@ -13,20 +11,20 @@ namespace MasterProject.SaveSystem
         #region FIELDS
         public static DataSaveManager<T> Instance { get; private set; }
 
-        protected T m_GameData = null;
-        protected List<IDataSaveable<T>> m_AllSaveData
+        protected T m_gameData = null;
+        protected List<IDataSaveable<T>> m_allSaveData
         {
             get => FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
         }
-        protected SaveFileDataHandler<T> m_SaveFileDataHandler;
-        protected bool m_DataHasBeenLoaded;
+        protected SaveFileDataHandler<T> m_saveFileDataHandler;
+        protected bool m_dataHasBeenLoaded;
 
         [Header("File Storage Config")]
-        [SerializeField] protected string m_FileName;
-        [SerializeField] protected EncryptionUtilities.EncryptionType m_EncryptionType;
+        [SerializeField] protected string m_fileName;
+        [SerializeField] protected EncryptionUtilities.EncryptionType m_encryptionType;
 
         [Header("InGame parameters")]
-        [SerializeField] protected bool m_SaveOnQuit;
+        [SerializeField] protected bool m_saveOnQuit;
         #endregion
 
         #region METHODS
@@ -38,21 +36,21 @@ namespace MasterProject.SaveSystem
                 return;
             }
             Instance = this;
-            m_SaveFileDataHandler = new SaveFileDataHandler<T>(Application.persistentDataPath, m_FileName, m_EncryptionType);
-            m_DataHasBeenLoaded = false;
+            m_saveFileDataHandler = new SaveFileDataHandler<T>(Application.persistentDataPath, m_fileName, m_encryptionType);
+            m_dataHasBeenLoaded = false;
             LoadGame();
         }
 
         private void Reset()
         {
-            m_FileName = "data.json";
-            m_SaveOnQuit = true;
+            m_fileName = "data.json";
+            m_saveOnQuit = true;
         }
 
 #if UNITY_EDITOR || UNITY_STANDALONE
         private void OnApplicationQuit()
         {
-            if (!m_SaveOnQuit) return;
+            if (!m_saveOnQuit) return;
             SaveGame();
         }
 #endif
@@ -60,7 +58,7 @@ namespace MasterProject.SaveSystem
 #if UNITY_ANDROID || UNITY_IOS
         private void OnApplicationFocus(bool focus)
         {
-            if (!m_SaveOnQuit) return;
+            if (!m_saveOnQuit) return;
             if (focus)
             {
                 LoadGame();
@@ -74,34 +72,34 @@ namespace MasterProject.SaveSystem
 
         public void NewGame()
         {
-            m_GameData = new T();
-            m_AllSaveData.ForEach(x => x.InitializeData());
+            m_gameData = new T();
+            m_allSaveData.ForEach(x => x.InitializeData());
         }
 
         public void LoadGame(bool isLoadForced = false)
         {
-            if (m_DataHasBeenLoaded && !isLoadForced) return;
-            m_DataHasBeenLoaded = true;
-            m_GameData = m_SaveFileDataHandler.Load();
-            if (m_GameData == null)
+            if (m_dataHasBeenLoaded && !isLoadForced) return;
+            m_dataHasBeenLoaded = true;
+            m_gameData = m_saveFileDataHandler.Load();
+            if (m_gameData == null)
             {
                 DebugLogger.Warning(this, "No data was found. Initializing with defaults data.");
                 NewGame();
                 return;
             }
-            m_AllSaveData.ForEach(x => x.LoadData(m_GameData));
+            m_allSaveData.ForEach(x => x.LoadData(m_gameData));
         }
 
         public void SaveGame()
         {
-            m_AllSaveData.ForEach(x => x.SaveData(ref m_GameData));
-            m_SaveFileDataHandler.Save(m_GameData);
-            m_DataHasBeenLoaded = false;
+            m_allSaveData.ForEach(x => x.SaveData(ref m_gameData));
+            m_saveFileDataHandler.Save(m_gameData);
+            m_dataHasBeenLoaded = false;
         }
 
         public virtual void DestroySavedData()
         {
-            m_SaveFileDataHandler.DestroySavedData();
+            m_saveFileDataHandler.DestroySavedData();
         }
 #endregion
     }

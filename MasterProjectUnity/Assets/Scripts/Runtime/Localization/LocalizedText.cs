@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using MasterProject.Debugging;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,11 +20,11 @@ namespace MasterProject.Localization
         public delegate bool GetLocalizedFont(string fontKey, FontStyle fontStyle);
         public static GetLocalizedFont OnLocalizationFontChanged;
 
-        [SerializeField] private TMP_Text m_TextComponent;
+        [SerializeField] private TMP_Text m_textComponent;
 
-        [SerializeField] private string m_LocalizationKey;
+        [SerializeField] private string m_localizationKey;
 
-        [SerializeField] private string[] m_Arguments;
+        [SerializeField] private string[] m_arguments;
 
         private void OnEnable()
         {
@@ -50,7 +49,7 @@ namespace MasterProject.Localization
 
         private void Reset()
         {
-            m_TextComponent = GetComponent<TMP_Text>();
+            m_textComponent = GetComponent<TMP_Text>();
         }
 
         private void OnValidate()
@@ -65,28 +64,28 @@ namespace MasterProject.Localization
 
         public void SetLocalizedKey(string key)
         {
-            m_LocalizationKey = key;
+            m_localizationKey = key;
             Refresh();
         }
 
         public void SetArguments(params string[] args)
         {
-            m_Arguments = args;
+            m_arguments = args;
             Refresh();
         }
 
         public void SetLocalizedKeyAndArgs(string key, params string[] ags)
         {
-            m_LocalizationKey = key;
-            m_Arguments = ags;
+            m_localizationKey = key;
+            m_arguments = ags;
             Refresh();
         }
 
         private void SetText(string text)
         {
-            if (m_TextComponent)
+            if (m_textComponent)
             {
-                m_TextComponent.SetText(text);
+                m_textComponent.SetText(text);
             }
             // A MODIFIER AVEC D'AUTRES COMPONENTS POSSIBLE
         }
@@ -95,12 +94,12 @@ namespace MasterProject.Localization
         {
             if (OnLocalizationKeyChanged != null)
             {
-                return OnLocalizationKeyChanged(m_LocalizationKey, m_Arguments);
+                return OnLocalizationKeyChanged(m_localizationKey, m_arguments);
             }
 #if UNITY_EDITOR
             if (!EditorApplication.isPlaying)
             {
-                return LocalizationHandlerEditor.Instance.GetTextFromKeyAndArgs(m_LocalizationKey, m_Arguments);
+                return LocalizationHandlerEditor.Instance.GetTextFromKeyAndArgs(m_localizationKey, m_arguments);
             }
 #endif
             return LOCALIZATION_HANDLER_NOT_INITIALIZED;

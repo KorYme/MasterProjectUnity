@@ -6,20 +6,20 @@ namespace MasterProject.FSM
 {
     public class MonoBehaviourFSM<T> : MonoBehaviour, IFSMController where T : Enum
     {
-        protected IFSMController m_Controller => this;
+        protected IFSMController Controller => this;
 
         public float StateDuration { get; private set; }
 
-        protected Dictionary<T, FSMState<T>> m_States;
+        protected Dictionary<T, FSMState<T>> m_states;
 
-        protected FSMState<T> m_PreviousState;
-        protected FSMState<T> m_NextState;
+        protected FSMState<T> m_previousState;
+        protected FSMState<T> m_nextState;
 
-        protected FSMState<T> m_CurrentState;
+        protected FSMState<T> m_currentState;
 
         public virtual void Awake()
         {
-            foreach (KeyValuePair<T, FSMState<T>> kvp in m_States)
+            foreach (KeyValuePair<T, FSMState<T>> kvp in m_states)
             {
                 kvp.Value.Initialize();
             }
@@ -28,7 +28,7 @@ namespace MasterProject.FSM
         public virtual void Update()
         {
             float deltaTime = Time.deltaTime;
-            m_CurrentState?.Update(deltaTime);
+            m_currentState?.Update(deltaTime);
             StateDuration += deltaTime;
         }
 
@@ -38,9 +38,9 @@ namespace MasterProject.FSM
             {
                 return;
             }
-            if (m_States.TryGetValue(startingIndex, out FSMState<T> state))
+            if (m_states.TryGetValue(startingIndex, out FSMState<T> state))
             {
-                m_CurrentState = state;
+                m_currentState = state;
                 StateDuration = 0f;
                 enabled = true;
             }
@@ -57,8 +57,8 @@ namespace MasterProject.FSM
                 return;
             }
             enabled = false;
-            m_PreviousState = m_CurrentState;
-            m_CurrentState = null;
+            m_previousState = m_currentState;
+            m_currentState = null;
         }
 
         public bool ChangeState(T newState)
@@ -67,12 +67,12 @@ namespace MasterProject.FSM
             {
                 return false;
             }
-            if (m_States.TryGetValue(newState, out FSMState<T> state) && m_CurrentState != state)
+            if (m_states.TryGetValue(newState, out FSMState<T> state) && m_currentState != state)
             {
-                m_CurrentState.Exit();
-                m_PreviousState = m_CurrentState;
-                m_CurrentState = state;
-                m_CurrentState.Enter();
+                m_currentState.Exit();
+                m_previousState = m_currentState;
+                m_currentState = state;
+                m_currentState.Enter();
                 StateDuration = 0f;
                 return true;
             }
@@ -81,15 +81,15 @@ namespace MasterProject.FSM
 
         public bool AddState(T index, FSMState<T> state)
         {
-            return m_States.TryAdd(index, state);
+            return m_states.TryAdd(index, state);
         }
 
         public TState AddAndGetState<TState>(T index) where TState : FSMState<T>
         {
-            if (!m_States.ContainsKey(index))
+            if (!m_states.ContainsKey(index))
             {
                 TState state = (TState)Activator.CreateInstance(typeof(TState), this);
-                m_States.Add(index, state);
+                m_states.Add(index, state);
                 return state;
             }
             else

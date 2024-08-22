@@ -12,25 +12,25 @@ namespace MasterProject.SaveSystem
         #region FIELDS
         [Header("Parameters")]
         [SerializeField, Tooltip("Name of the class which will countain all the data")] 
-        private string m_DataClassName;
+        private string m_dataClassName;
         [SerializeField, Tooltip("Path to the folder starting from the Assets/")]
         private string m_FolderName;
         #endregion
 
         #region PROPERTIES
-        private string m_FolderPath
+        private string FolderPath
         {
-            get => Path.Combine(Application.dataPath, m_FolderName);
+            get => System.IO.Path.Combine(Application.dataPath, m_FolderName);
         }
 
-        private string m_SystemClassName
+        private string SystemClassName
         {
-            get => "DSM_" + m_DataClassName;
+            get => "DSM_" + m_dataClassName;
         }
 
-        private string m_Path
+        private string Path
         {
-            get => Path.Combine(m_FolderPath, m_SystemClassName + ".cs");
+            get => System.IO.Path.Combine(FolderPath, SystemClassName + ".cs");
         }
 
         private string m_ClassCode
@@ -42,13 +42,13 @@ namespace MasterProject.SaveSystem
                 "\n" +
                 "namespace MasterProject.SaveSystem " + "\n" +
                 "{" + "\n" +
-                "   public class " + m_SystemClassName + " : DataSaveManager<" + m_DataClassName + ">" + "\n" +
+                "   public class " + SystemClassName + " : DataSaveManager<" + m_dataClassName + ">" + "\n" +
                 "   {" + "\n" +
                 "       // Modify if you're willing to add some behaviour to the component" + "\n" +
                 "   }" + "\n" +
                 "\n" +
                 "   [System.Serializable]" + "\n" +
-                "   public class " + m_DataClassName + " : " + "GameDataTemplate" + "\n" +
+                "   public class " + m_dataClassName + " : " + "GameDataTemplate" + "\n" +
                 "   {" + "\n" +
                 "       // Create the values you want to save here" + "\n" +
                 "   }" + "\n" +
@@ -61,56 +61,56 @@ namespace MasterProject.SaveSystem
         private void Reset()
         {
             m_FolderName = "SaveSystemClasses";
-            m_DataClassName = "GameData";
+            m_dataClassName = "GameData";
         }
 
         //[Button]
         public void GenerateSaveSystemFolder()
         {
-            if (Directory.Exists(m_FolderPath))
+            if (Directory.Exists(FolderPath))
             {
                 DebugLogger.Warning(this, "A folder named this way already exists in the project.");
                 return;
             }
-            Directory.CreateDirectory(m_FolderPath);
+            Directory.CreateDirectory(FolderPath);
             AssetDatabase.Refresh();
         }
 
         //[Button]
         public void GenerateGameDataClass()
         {
-            if (!Directory.Exists(m_FolderPath))
+            if (!Directory.Exists(FolderPath))
             {
                 DebugLogger.Warning(this, "No folder named this way has been found in the project. \n" +
                                     "Try creating one with the button above");
                 return;
             }
-            if (File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
+            if (File.Exists(FolderPath + "/" + SystemClassName + ".cs"))
             {
                 DebugLogger.Warning(this, "There is already one class named this way in " + m_FolderName);
                 return;
             }
             // Écriture du code généré dans un fichier
-            File.WriteAllText(m_Path, m_ClassCode);
+            File.WriteAllText(Path, m_ClassCode);
             AssetDatabase.Refresh();
         }
 
         //[Button]
         public void AttachDataSaveManager()
         {
-            if (!Directory.Exists(m_FolderPath))
+            if (!Directory.Exists(FolderPath))
             {
                 DebugLogger.Warning(this, "No folder SaveSystemClasses has been found");
                 return;
             }
-            if (!File.Exists(m_FolderPath + "/" + m_SystemClassName + ".cs"))
+            if (!File.Exists(FolderPath + "/" + SystemClassName + ".cs"))
             {
-                DebugLogger.Warning(this, "No game data class has been found in the folder : " + m_FolderPath);
+                DebugLogger.Warning(this, "No game data class has been found in the folder : " + FolderPath);
                 return;
             }
             Type type = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(a => a.GetTypes())
-                                .FirstOrDefault(t => t.Name == m_SystemClassName);
+                                .FirstOrDefault(t => t.Name == SystemClassName);
             if (type == null)
             {
                 DebugLogger.Warning(this, "No type has been found");

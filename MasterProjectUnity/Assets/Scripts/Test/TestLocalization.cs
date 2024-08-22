@@ -6,7 +6,7 @@ namespace MasterProject.Tests
     public class TestLocalization : MonoBehaviour
     {
         public LocalizationHandler LocalizationHandler;
-        [SerializeField] private string m_LanguageId;
+        [SerializeField] private string m_languageId;
 
         private void Start()
         {
@@ -23,7 +23,7 @@ namespace MasterProject.Tests
         {
             if (Input.GetMouseButtonDown(1))
             {
-                LocalizationHandler.SetLocalizationLanguage(m_LanguageId);
+                LocalizationHandler.SetLocalizationLanguage(m_languageId);
             }
         }
     }

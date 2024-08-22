@@ -14,7 +14,7 @@ namespace MasterProject.Editor.Localization
 {
     public class LocalizationKeysCSVParser : EditorWindow
     {
-        [SerializeField] private VisualTreeAsset m_Tree;
+        [SerializeField] private VisualTreeAsset m_tree;
 
         [MenuItem("MasterProject/Localization/LocalizationKeysCSVParser")]
         public static void OpenWindow()
@@ -25,7 +25,7 @@ namespace MasterProject.Editor.Localization
 
         private void CreateGUI()
         {
-            m_Tree.CloneTree(rootVisualElement);
+            m_tree.CloneTree(rootVisualElement);
             Button button = rootVisualElement.Q<Button>("ParseCSVButton");
             button.clicked += ParseLocalizationCSV;
             DropdownField languageDropdown = rootVisualElement.Q<DropdownField>("LanguagesDropdown");

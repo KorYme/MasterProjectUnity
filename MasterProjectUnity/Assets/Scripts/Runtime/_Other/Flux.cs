@@ -4,15 +4,15 @@ namespace MasterProject.Utilities
 {
     public class ObjectFlux<T> : IDisposable
     {
-        protected T m_Value;
+        protected T m_value;
         public virtual T Value
         {
-            get => m_Value;
+            get => m_value;
             set
             {
-                if (!Equals(m_Value, value))
+                if (!Equals(m_value, value))
                 {
-                    m_Value = value;
+                    m_value = value;
                     OnFluxUpdate?.Invoke(value);
                 }
             }
@@ -37,7 +37,7 @@ namespace MasterProject.Utilities
 
         public void Subscribe(Action<T> fluxUpdateCallback)
         {
-            fluxUpdateCallback?.Invoke(m_Value);
+            fluxUpdateCallback?.Invoke(m_value);
             OnFluxUpdate += fluxUpdateCallback;
         }
 
@@ -61,19 +61,19 @@ namespace MasterProject.Utilities
     {
         public override T Value
         {
-            get => m_Value;
+            get => m_value;
             set
             {
-                if (!Equals(m_Value, value))
+                if (!Equals(m_value, value))
                 {
-                    if (m_Value != null)
+                    if (m_value != null)
                     {
-                        m_Value.OnSubFluxUpdate -= UpdateFluxValue;
+                        m_value.OnSubFluxUpdate -= UpdateFluxValue;
                     }
-                    m_Value = value;
-                    if (m_Value != null)
+                    m_value = value;
+                    if (m_value != null)
                     {
-                        m_Value.OnSubFluxUpdate += UpdateFluxValue;
+                        m_value.OnSubFluxUpdate += UpdateFluxValue;
                     }
                     OnFluxUpdate?.Invoke(value);
                 }
@@ -82,7 +82,7 @@ namespace MasterProject.Utilities
 
         public ClassFlux(T value, ISubFluxUpdatable containingClass = null) : base(value, containingClass) { }
 
-        private void UpdateFluxValue() => OnFluxUpdate?.Invoke(m_Value);
+        private void UpdateFluxValue() => OnFluxUpdate?.Invoke(m_value);
     }
 
     public interface ISubFluxUpdatable
