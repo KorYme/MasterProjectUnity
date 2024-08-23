@@ -12,9 +12,9 @@ namespace ASze.CustomPlayButton
     [InitializeOnLoad]
     public static class CustomPlayButton
     {
-        const string FOLDER_PATH = "Assets/Scripts/Editor/ToolbarExtender/CustomPlayButton/BookmarkSettings/";
-        const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
-        const string ICONS_PATH = "Packages/com.antonysze.custom-play-button/Editor/Icons/";
+        const string FOLDER_PATH = "Assets/Scripts/Editor/ToolbarExtender/CustomPlayButton/";
+        const string SETTING_PATH = FOLDER_PATH + "BookmarkSettings/BookmarkSetting.asset";
+        const string ICONS_PATH = FOLDER_PATH + "Icons/";
 
         private static SceneBookmark bookmark = null;
         private static SceneAsset selectedScene = null;
@@ -91,11 +91,11 @@ namespace ASze.CustomPlayButton
                 Bookmark?.RemoveNullValue();
             }
 
-            var savedScenePath = EditorPrefs.GetString(GetEditorPrefKey(), "");
+            string savedScenePath = EditorPrefs.GetString(GetEditorPrefKey(), "");
             selectedScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(savedScenePath);
             if (selectedScene == null && EditorBuildSettings.scenes.Length > 0)
             {
-                var scenePath = EditorBuildSettings.scenes[0].path;
+                string scenePath = EditorBuildSettings.scenes[0].path;
                 SelectedScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
             }
 
@@ -107,8 +107,8 @@ namespace ASze.CustomPlayButton
         {
             GUILayout.FlexibleSpace();
 
-            var sceneName = selectedScene != null ? selectedScene.name : "Select Scene...";
-            var selected = EditorGUILayout.DropdownButton(new GUIContent(sceneName), FocusType.Passive, GUILayout.Width(128.0f));
+            string sceneName = selectedScene != null ? selectedScene.name : "Select Scene...";
+            bool selected = EditorGUILayout.DropdownButton(new GUIContent(sceneName, "Setup selected scene and bookmarks"), FocusType.Passive);
             if (Event.current.type == EventType.Repaint)
             {
                 buttonRect = GUILayoutUtility.GetLastRect();
@@ -138,8 +138,8 @@ namespace ASze.CustomPlayButton
             {
                 if (EditorBuildSettings.scenes.Length > 0)
                 {
-                    var scenePath = EditorBuildSettings.scenes[0].path;
-                    var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+                    string scenePath = EditorBuildSettings.scenes[0].path;
+                    SceneAsset scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
                     StartScene(scene);
                 }
                 else
@@ -175,22 +175,22 @@ namespace ASze.CustomPlayButton
             // Get toolbar element for repainting
             if (toolbarElement == null)
             {
-                var toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
-                var toolbars = Resources.FindObjectsOfTypeAll(toolbarType);
-                var currentToolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
+                System.Type toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
+                Object[] toolbars = Resources.FindObjectsOfTypeAll(toolbarType);
+                ScriptableObject currentToolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
                 if (currentToolbar != null)
                 {
-                    var guiViewType = typeof(Editor).Assembly.GetType("UnityEditor.GUIView");
+                    System.Type guiViewType = typeof(Editor).Assembly.GetType("UnityEditor.GUIView");
 #if UNITY_2020_1_OR_NEWER
-                    var iWindowBackendType = typeof(Editor).Assembly.GetType("UnityEditor.IWindowBackend");
-                    var guiBackend = guiViewType.GetProperty("windowBackend",
+                    System.Type iWindowBackendType = typeof(Editor).Assembly.GetType("UnityEditor.IWindowBackend");
+                    PropertyInfo guiBackend = guiViewType.GetProperty("windowBackend",
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    var viewVisualTree = iWindowBackendType.GetProperty("visualTree",
+                    PropertyInfo viewVisualTree = iWindowBackendType.GetProperty("visualTree",
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    var windowBackend = guiBackend.GetValue(currentToolbar);
+                    object windowBackend = guiBackend.GetValue(currentToolbar);
                     toolbarElement = (VisualElement)viewVisualTree.GetValue(windowBackend, null);
 #else
-                    var viewVisualTree = guiViewType.GetProperty("visualTree",
+                    PropertyInfo viewVisualTree = guiViewType.GetProperty("visualTree",
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     toolbarElement = (VisualElement)viewVisualTree.GetValue(currentToolbar, null);
 #endif
@@ -227,13 +227,13 @@ namespace ASze.CustomPlayButton
 
         public static string GetEditorPrefKey()
         {
-            var projectPrefix = PlayerSettings.companyName + "." + PlayerSettings.productName;
+            string projectPrefix = PlayerSettings.companyName + "." + PlayerSettings.productName;
             return projectPrefix + "_CustomPlayButton_SelectedScenePath";
         }
 
         public static GUIContent CreateIconContent(string localTex, string builtInTex, string tooltip)
         {
-            var tex = LoadTexture(localTex);
+            Texture2D tex = LoadTexture(localTex);
             if (tex != null) return new GUIContent(tex, tooltip);
             else return EditorGUIUtility.IconContent(builtInTex, tooltip);
         }

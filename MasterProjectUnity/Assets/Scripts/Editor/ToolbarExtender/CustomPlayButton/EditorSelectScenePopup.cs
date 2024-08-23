@@ -8,6 +8,7 @@ namespace ASze.CustomPlayButton
     public class EditorSelectScenePopup : PopupWindowContent
     {
         const float COLLUMN_WIDTH = 200.0f;
+        const float COLLUMN_HEIGHT = 28f;
         readonly GUILayoutOption[] ICON_LAYOUT = new GUILayoutOption[] {
             GUILayout.Width(20.0f), GUILayout.Height(20.0f)
         };
@@ -72,7 +73,7 @@ namespace ASze.CustomPlayButton
         {
             var width = COLLUMN_WIDTH * (CustomPlayButton.Bookmark.HasBookmark() ? 2 : 1);
             var maxRow = Mathf.Max(buildScenes.Length, CustomPlayButton.Bookmark.bookmarks.Count, 1);
-            var height = Mathf.Min(22 * maxRow + 26, Screen.currentResolution.height * 0.5f);
+            var height = Mathf.Min(COLLUMN_HEIGHT * (maxRow + 1), Screen.currentResolution.height * 0.5f);
             return new Vector2(width, height);
         }
 
@@ -157,11 +158,6 @@ namespace ASze.CustomPlayButton
             if (scene == null) return;
 
             GUILayout.BeginHorizontal();
-            var style = CustomPlayButton.SelectedScene == scene ? selectedButtonStyle : buttonStyle;
-            if (GUILayout.Button(index >= 0 ? $"{index}\t{scene.name}" : scene.name, style))
-            {
-                SelectScene(scene);
-            }
 
             if (bookmarkButton)
             {
@@ -197,10 +193,16 @@ namespace ASze.CustomPlayButton
                 }
             }
 
-            style = currentScene == scene ? selectedButtonStyle : buttonStyle;
+            GUIStyle style = currentScene == scene ? selectedButtonStyle : buttonStyle;
             if (GUILayout.Button(EditorGUIUtility.IconContent("d_BuildSettings.SelectedIcon", "Open Scene"), style, ICON_LAYOUT))
             {
                 OpenScene(scene);
+            }
+
+            style = CustomPlayButton.SelectedScene == scene ? selectedButtonStyle : buttonStyle;
+            if (GUILayout.Button(index >= 0 ? $"{index}   {scene.name}" : scene.name, style))
+            {
+                SelectScene(scene);
             }
             GUILayout.EndHorizontal();
         }
