@@ -1,3 +1,4 @@
+using MasterProject.Services;
 using MasterProject.Utilities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ namespace MasterProject
 {
     public abstract class BaseGameLoop : MonoBehaviour
     {
-        protected BindingContainer m_container;
+        protected BindingContainer m_servicesContainer;
 
         protected abstract IReadOnlyList<Type> InitializeServicesOrder { get; }
         protected abstract IReadOnlyList<Type> UpdateServicesOrder { get; }
@@ -15,44 +16,49 @@ namespace MasterProject
 
         protected virtual void Awake()
         {
+            DontDestroyOnLoad(gameObject);
             InstantiateContainer();
-            InstantiateServices(m_container);
+            InstantiateServices(m_servicesContainer);
             SetupServicesContainers();
-            GenerateScenes();
+            GenerateInitialScenes();
             SetupServicesDependencies();
-            SetupOtherDependencies();
             InitializeServices();
         }
 
         protected virtual void InstantiateContainer()
         {
-            m_container = new BindingContainer(transform);
+            m_servicesContainer = new BindingContainer(transform);
         }
 
         protected abstract void InstantiateServices(in BindingContainer container);
 
         protected virtual void SetupServicesContainers()
         {
-            m_container.SetupOrders(UpdateServicesOrder, LateUpdateServicesOrder);
+            m_servicesContainer.SetupOrders(UpdateServicesOrder, LateUpdateServicesOrder);
+        }
+
+        private void GenerateInitialScenes()
+        {
+            if (m_servicesContainer.AllServices.TryGetValue(typeof(ISceneLoaderService), out IService service) &&
+                service is ISceneLoaderService sceneLoaderService)
+            {
+                sceneLoaderService.GenerateInitialScene();
+            }
         }
 
         protected virtual void SetupServicesDependencies()
         {
-            foreach (KeyValuePair<Type, IService> kvp in m_container.AllServices)
+            foreach (KeyValuePair<Type, IService> kvp in m_servicesContainer.AllServices)
             {
-                InjectionUtilities.InjectDependencies(typeof(ServiceDepencency), m_container.AllServices, kvp.Value);
+                InjectionUtilities.InjectDependencies(typeof(ServiceDepencency), m_servicesContainer.AllServices, kvp.Value);
             }
         }
-
-        protected abstract void SetupOtherDependencies();
-
-        protected abstract void GenerateScenes();
 
         protected virtual void InitializeServices()
         {
             foreach (Type type in InitializeServicesOrder)
             {
-                if (m_container.AllServices.TryGetValue(type, out IService service))
+                if (m_servicesContainer.AllServices.TryGetValue(type, out IService service))
                 {
                     service.Initialize();
                 }
@@ -62,7 +68,7 @@ namespace MasterProject
         protected virtual void Update()
         {
             float deltaTime = Time.deltaTime;
-            IEnumerator<IService> currentService = m_container.ServicesUpdateOrder.GetEnumerator();
+            IEnumerator<IService> currentService = m_servicesContainer.ServicesUpdateOrder.GetEnumerator();
             while (currentService.MoveNext())
             {
                 currentService.Current.BaseUpdate(deltaTime);
@@ -72,7 +78,7 @@ namespace MasterProject
         protected virtual void LateUpdate()
         {
             float deltaTime = Time.deltaTime;
-            IEnumerator<IService> currentService = m_container.ServicesLateUpdateOrder.GetEnumerator();
+            IEnumerator<IService> currentService = m_servicesContainer.ServicesLateUpdateOrder.GetEnumerator();
             while (currentService.MoveNext())
             {
                 currentService.Current.BaseLateUpdate(deltaTime);
@@ -83,7 +89,7 @@ namespace MasterProject
         {
             foreach (Type type in InitializeServicesOrder)
             {
-                if (m_container.AllServices.TryGetValue(type, out IService service) && (service?.IsLoaded ?? false))
+                if (m_servicesContainer.AllServices.TryGetValue(type, out IService service) && (service?.IsLoaded ?? false))
                 {
                     service.Unload();
                 }

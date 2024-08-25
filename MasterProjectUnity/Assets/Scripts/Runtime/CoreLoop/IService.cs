@@ -1,4 +1,4 @@
-﻿namespace MasterProject
+﻿namespace MasterProject.Services
 {
     public interface IService
     {
