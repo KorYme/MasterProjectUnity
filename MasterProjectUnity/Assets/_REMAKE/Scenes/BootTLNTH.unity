@@ -435,6 +435,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9063678940359358066, guid: 21092bc3dd052f44c9ef8d823c4760c1, type: 3}
+      propertyPath: m_initialScenesToLaunch.Array.data[0].m_name
+      value: MainSceneTLNTH
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063678940359358066, guid: 21092bc3dd052f44c9ef8d823c4760c1, type: 3}
       propertyPath: m_initialScenesToLaunch.Array.data[1].m_name
       value: MainSceneTLNTH
       objectReference: {fileID: 0}
@@ -442,6 +446,10 @@ PrefabInstance:
       propertyPath: m_initialScenesToLaunch.Array.data[2].m_name
       value: MainSceneTLNTH
       objectReference: {fileID: 0}
+    - target: {fileID: 9063678940359358066, guid: 21092bc3dd052f44c9ef8d823c4760c1, type: 3}
+      propertyPath: m_initialScenesToLaunch.Array.data[0].m_sceneObject
+      value: 
+      objectReference: {fileID: 102900000, guid: 648cc25e935445442bcfc285dfbf19e7, type: 3}
     - target: {fileID: 9063678940359358066, guid: 21092bc3dd052f44c9ef8d823c4760c1, type: 3}
       propertyPath: m_initialScenesToLaunch.Array.data[1].m_sceneObject
       value: 
