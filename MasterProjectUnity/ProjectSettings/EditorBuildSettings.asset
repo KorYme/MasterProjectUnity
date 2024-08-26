@@ -6,9 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_REMAKE/Scene/ProtoTLNTH.unity
-    guid: 648cc25e935445442bcfc285dfbf19e7
+    path: Assets/_REMAKE/Scenes/BootTLNTH.unity
+    guid: ac3ef74c7dc6b3149a67b3b4c591f26b
   - enabled: 1
-    path: Assets/Scenes/LocalizationSample.unity
-    guid: ff28a003ffba7ed46a43c06a00c49a74
-  m_configObjects: {}
+    path: Assets/_REMAKE/Scenes/MainSceneTLNTH.unity
+    guid: 648cc25e935445442bcfc285dfbf19e7
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: b038c030784a3d34e8b3129e823994f5, type: 2}

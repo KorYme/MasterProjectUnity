@@ -44,23 +44,29 @@ namespace MasterProject
             }
         }
 
-        public void BindWithInstance<T>(IService serviceInstance) where T : IService
+        public void BindWithInstance<T>(IService serviceInstance) where T : class, IService
         {
-            if (CheckTypeKey<T>(serviceInstance))
+            if (!CheckTypeKey<T>(serviceInstance))
             {
                 return;
             }
             m_allServices.Add(typeof(T), serviceInstance);
+            if (serviceInstance is MonoBehaviour monoBehaviour && monoBehaviour.transform != m_transform)
+            {
+                monoBehaviour.transform.parent = m_transform;
+            }
+            DebugLogger.Info(this, $"{typeof(T).Name} has been binded with a simple instance.");
         }
 
-        public void BindWithPrefab<T>(BaseService servicePrefab) where T : IService
+        public void BindWithPrefab<T>(BaseService servicePrefab) where T : class, IService
         {
-            if (CheckTypeKey<T>(servicePrefab))
+            if (!CheckTypeKey<T>(servicePrefab))
             {
                 return;
             }
             BaseService serviceInstance = GameObject.Instantiate(servicePrefab, m_transform);
             m_allServices.Add(typeof(T), serviceInstance);
+            DebugLogger.Info(this, $"{typeof(T).Name} has been binded with a prefab instance.");
         }
 
         public void BindWithMockService<T>() where T : class, IService
@@ -72,10 +78,16 @@ namespace MasterProject
             }
             T mockService = Substitute.For<T>();
             m_allServices.Add(typeof(T), mockService);
+            DebugLogger.Info(this, $"{typeof(T).Name} has been binded with a mock instance.");
         }
 
-        private bool CheckTypeKey<T>(IService serviceInstance) where T : IService 
+        private bool CheckTypeKey<T>(IService serviceInstance) where T : class, IService
         {
+            if (serviceInstance is null)
+            {
+                BindWithMockService<T>();
+                return false;
+            }
             if (serviceInstance is not T)
             {
                 DebugLogger.Error(this, $"The object type you gave is not a service.");

@@ -24,6 +24,7 @@ namespace MasterProject.Channels
         }
     }
 
+    //[CreateAssetMenu(menuName = "Channels/XXX Channel", order = 1)]
     public abstract class Channel<T> : ScriptableObject
     {
         private event Action<T> OnChannelRaised;
@@ -39,86 +40,6 @@ namespace MasterProject.Channels
         }
 
         public void UnbindCallBack(Action<T> callback)
-        {
-            OnChannelRaised -= callback;
-        }
-    }
-
-    public abstract class Channel<T0, T1> : ScriptableObject
-    {
-        private event Action<T0, T1> OnChannelRaised;
-
-        public void RaiseEvent(T0 value0, T1 value1)
-        {
-            OnChannelRaised?.Invoke(value0, value1);
-        }
-
-        public void BindCallBack(Action<T0, T1> callback)
-        {
-            OnChannelRaised += callback;
-        }
-
-        public void UnbindCallBack(Action<T0, T1> callback)
-        {
-            OnChannelRaised -= callback;
-        }
-    }
-
-    public abstract class Channel<T0, T1, T2> : ScriptableObject
-    {
-        private event Action<T0, T1, T2> OnChannelRaised;
-
-        public void RaiseEvent(T0 value0, T1 value1, T2 value2)
-        {
-            OnChannelRaised?.Invoke(value0, value1, value2);
-        }
-
-        public void BindCallBack(Action<T0, T1, T2> callback)
-        {
-            OnChannelRaised += callback;
-        }
-
-        public void UnbindCallBack(Action<T0, T1, T2> callback)
-        {
-            OnChannelRaised -= callback;
-        }
-    }
-
-    public abstract class Channel<T0, T1, T2, T3> : ScriptableObject
-    {
-        private event Action<T0, T1, T2, T3> OnChannelRaised;
-
-        public void RaiseEvent(T0 value0, T1 value1, T2 value2, T3 value3)
-        {
-            OnChannelRaised?.Invoke(value0, value1, value2, value3);
-        }
-
-        public void BindCallBack(Action<T0, T1, T2, T3> callback)
-        {
-            OnChannelRaised += callback;
-        }
-
-        public void UnbindCallBack(Action<T0, T1, T2, T3> callback)
-        {
-            OnChannelRaised -= callback;
-        }
-    }
-
-    public abstract class Channel<T0, T1, T2, T3, T4> : ScriptableObject
-    {
-        private event Action<T0, T1, T2, T3, T4> OnChannelRaised;
-
-        public void RaiseEvent(T0 value0, T1 value1, T2 value2, T3 value3, T4 value4)
-        {
-            OnChannelRaised?.Invoke(value0, value1, value2, value3, value4);
-        }
-
-        public void BindCallBack(Action<T0, T1, T2, T3, T4> callback)
-        {
-            OnChannelRaised += callback;
-        }
-
-        public void UnbindCallBack(Action<T0, T1, T2, T3, T4> callback)
         {
             OnChannelRaised -= callback;
         }
