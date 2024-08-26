@@ -1,10 +1,11 @@
 using MasterProject.Debugging;
+using MasterProject.DiscordRPC;
 using System;
 using UnityEngine;
 
-namespace MasterProject.DiscordManager
+namespace MasterProject.Services
 {
-    public class DiscordRichPresenceManager : MonoBehaviour
+    public class DiscordRichPresenceService : BaseService, IDiscordRichPresenceService
     {
         private Discord.Discord m_discord;
         private Discord.LobbyManager m_lobbyManager;
@@ -13,17 +14,34 @@ namespace MasterProject.DiscordManager
         [SerializeField] private DiscordActivityDescriptor m_activity;
         public DiscordActivityDescriptor Activity => m_activity;
 
-        private void Awake()
+        public override void Initialize()
         {
+            base.Initialize();
             m_discord = new Discord.Discord(m_activity.ApplicationId, (UInt64)Discord.CreateFlags.Default);
             m_activityManager = m_discord.GetActivityManager();
             m_lobbyManager = m_discord.GetLobbyManager();
             UpdateActivity(m_activity, true);
         }
 
+        public override void BaseUpdate(float deltaTime)
+        {
+            m_discord.RunCallbacks();
+            m_lobbyManager.FlushNetwork();
+        }
+
+        public override void Unload()
+        {
+            m_discord.Dispose();
+        }
+
         public void UpdateActivity(Discord.Activity activity)
         {
             m_activityManager.UpdateActivity(activity, OnActivityUpdated);
+
+            void OnActivityUpdated(Discord.Result result)
+            {
+                DebugLogger.Info(this, $"Update Activity : {result}");
+            }
         }
 
         public void UpdateActivity(DiscordActivityDescriptor activityData, bool resetTimestamp = false)
@@ -49,43 +67,5 @@ namespace MasterProject.DiscordManager
                 Timestamps = timestamps,
             });
         }
-
-        private void OnActivityUpdated(Discord.Result result)
-        {
-            DebugLogger.Info(this, $"Update Activity : {result}");
-        }
-
-        private void Update()
-        {
-            m_discord.RunCallbacks();
-            m_lobbyManager.FlushNetwork();
-        }
-
-        private void OnDestroy()
-        {
-            m_discord.Dispose();
-        }
     }
-
-    #if UNITY_EDITOR
-    [UnityEditor.CustomEditor(typeof(DiscordRichPresenceManager)), UnityEditor.CanEditMultipleObjects]
-    public class DiscordRichPresenceManagerEditor : UnityEditor.Editor
-    {
-        private DiscordRichPresenceManager m_discordManager;
-
-        private void OnEnable()
-        {
-            m_discordManager = (DiscordRichPresenceManager)target;
-        }
-
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            if (Application.isPlaying && GUILayout.Button("Change Activity"))
-            {
-                m_discordManager.UpdateActivity(m_discordManager.Activity);
-            }
-        }
-    }
-    #endif
 }

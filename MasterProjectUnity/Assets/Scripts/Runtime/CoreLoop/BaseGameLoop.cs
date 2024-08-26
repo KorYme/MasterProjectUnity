@@ -37,7 +37,7 @@ namespace MasterProject
             m_servicesContainer.SetupOrders(UpdateServicesOrder, LateUpdateServicesOrder);
         }
 
-        private void GenerateInitialScenes()
+        protected virtual void GenerateInitialScenes()
         {
             if (m_servicesContainer.AllServices.TryGetValue(typeof(ISceneLoaderService), out IService service) &&
                 service is ISceneLoaderService sceneLoaderService)
