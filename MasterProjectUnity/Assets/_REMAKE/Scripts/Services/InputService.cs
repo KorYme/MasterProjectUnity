@@ -7,7 +7,10 @@ namespace TLNTH
 {
     public class InputService : BaseService, IInputService
     {
-        [SerializeField] private PlayerInput m_PlayerInput;
+        [Header("Service Container")]
+        [SerializeField] private InputServiceContainer m_referenceContainer;
+
+        [SerializeField] private PlayerInput m_playerInput;
 
         public Action<Vector2> OnMove { get; set; }
         public Action<Vector2> OnLook { get; set; }
@@ -16,7 +19,8 @@ namespace TLNTH
         public override void Initialize()
         {
             base.Initialize();
-            m_PlayerInput.enabled = true;
+            m_playerInput.enabled = true;
+            m_referenceContainer.SetupServiceRef(this);
         }
 
         public override void Unload()

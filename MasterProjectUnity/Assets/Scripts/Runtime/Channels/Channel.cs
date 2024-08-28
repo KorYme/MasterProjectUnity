@@ -22,9 +22,14 @@ namespace MasterProject.Channels
         {
             OnChannelRaised -= callback;
         }
+
+        public void Clear()
+        {
+            OnChannelRaised = null;
+        }
     }
 
-    //[CreateAssetMenu(menuName = "Channels/XXX Channel", order = 1)]
+    //[CreateAssetMenu(menuName = "Channels/XXX", order = 1, fileName = "XXX Channel")]
     public abstract class Channel<T> : ScriptableObject
     {
         private event Action<T> OnChannelRaised;
@@ -42,6 +47,11 @@ namespace MasterProject.Channels
         public void UnbindCallBack(Action<T> callback)
         {
             OnChannelRaised -= callback;
+        }
+
+        public void Clear()
+        {
+            OnChannelRaised = null;
         }
     }
 }

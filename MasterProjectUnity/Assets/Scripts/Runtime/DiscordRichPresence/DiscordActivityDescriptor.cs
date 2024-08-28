@@ -1,9 +1,8 @@
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace MasterProject.DiscordRPC
 {
-    [CreateAssetMenu(fileName = "discord_activity_setup", menuName = "ScriptableObjects/Discord Activity Setup")]
+    [CreateAssetMenu(fileName = "discord_activity_setup", menuName = "Content/Discord Activity Setup")]
     public class DiscordActivityDescriptor : ScriptableObject
     {
         public long ApplicationId;

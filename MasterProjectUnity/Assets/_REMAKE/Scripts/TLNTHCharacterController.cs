@@ -1,11 +1,12 @@
-using MasterProject.Utilities;
+using MasterProject.Services;
 using UnityEngine;
 
 namespace TLNTH
 {
     public class TLNTHCharacterController : MonoBehaviour
     {
-        [ServiceDepencency] private IInputService m_inputService;
+        [Header("Services References")]
+        [SerializeField] private ServiceContainerReadOnly<IInputService> m_inputServiceRef;
 
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Camera m_camera;
@@ -18,10 +19,10 @@ namespace TLNTH
 
         private Vector2 m_rotation;
 
-        private void Start()
+        public void Start()
         {
-            m_inputService.OnMove += Move;
-            m_inputService.OnLook += Look;
+            m_inputServiceRef.Service.OnMove += Move;
+            m_inputServiceRef.Service.OnLook += Look;
             m_rotation = Vector2.zero;
             Cursor.visible = false;
         }
