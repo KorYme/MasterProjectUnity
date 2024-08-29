@@ -6,7 +6,7 @@ namespace TLNTH
     public class TLNTHCharacterController : MonoBehaviour
     {
         [Header("Services References")]
-        [SerializeField] private ServiceContainerReadOnly<IInputService> m_inputServiceRef;
+        [SerializeField] private ReferenceContainerReadOnly<IInputService> m_inputServiceRef;
 
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Camera m_camera;
@@ -21,8 +21,8 @@ namespace TLNTH
 
         public void Start()
         {
-            m_inputServiceRef.Service.OnMove += Move;
-            m_inputServiceRef.Service.OnLook += Look;
+            m_inputServiceRef.Instance.OnMove += Move;
+            m_inputServiceRef.Instance.OnLook += Look;
             m_rotation = Vector2.zero;
             Cursor.visible = false;
         }

@@ -2,17 +2,17 @@ using UnityEngine;
 
 namespace MasterProject.Services
 {
-    public abstract class ServiceContainerReadOnly<T> : ScriptableObject where T : IService
+    public abstract class ReferenceContainerReadOnly<T> : ScriptableObject
     {
-        public T Service { get; protected set; }
+        public T Instance { get; protected set; }
     }
 
-    //[CreateAssetMenu(menuName = "Services Container/XXX", order = 0, fileName = "XXX Container")]
-    public class ServiceContainer<T> : ServiceContainerReadOnly<T> where T : IService
+    //[CreateAssetMenu(menuName = "Reference Container/XXX", order = 0, fileName = "XXX Container")]
+    public class ReferenceContainer<T> : ReferenceContainerReadOnly<T>
     {
-        public void SetupServiceRef(T serviceInstance)
+        public void SetupRef(T instanceRef)
         {
-            Service = serviceInstance;
+            Instance = instanceRef;
         }
     }
 }

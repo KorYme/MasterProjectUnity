@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace TLNTH
 {
-    [CreateAssetMenu(menuName = "Services Container/InputService", order = 0, fileName = "InputService Container")]
-    public class InputServiceContainer : ServiceContainer<IInputService>
+    [CreateAssetMenu(menuName = "Service Containers/InputService", order = 0, fileName = "InputService Container")]
+    public class InputServiceContainer : ReferenceContainer<IInputService>
     {
     }
 }
