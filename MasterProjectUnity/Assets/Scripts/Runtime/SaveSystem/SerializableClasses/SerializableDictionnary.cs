@@ -1,11 +1,10 @@
 using MasterProject.Debugging;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace KorYmeLibrary.SaveSystem
 {
-    [Serializable]
+    [System.Serializable]
     public class SerializableDictionnary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
         [SerializeField] private List<TKey> m_keys = new();

@@ -1,9 +1,9 @@
 namespace MasterProject.SaveSystem
 {
     [System.Serializable]
-    public class GameDataTemplate
+    public class BaseGameData
     {
-        public GameDataTemplate()
+        public BaseGameData()
         {
         }
     }

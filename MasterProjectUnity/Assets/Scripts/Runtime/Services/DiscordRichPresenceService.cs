@@ -36,7 +36,7 @@ namespace MasterProject.Services
 
         public void UpdateActivity(Discord.Activity activity)
         {
-            m_activityManager.UpdateActivity(activity, OnActivityUpdated);
+            m_activityManager?.UpdateActivity(activity, OnActivityUpdated);
 
             void OnActivityUpdated(Discord.Result result)
             {

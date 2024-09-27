@@ -1,5 +1,6 @@
 using MasterProject;
 using MasterProject.Services;
+using MasterProject.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,10 +10,7 @@ namespace TLNTH
     {
         [SerializeField] private SceneReference[] m_initialScenesToLaunch;
 
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
+        [ServiceDepencency] private IInputService m_InputService;
 
         void ISceneLoaderService.GenerateInitialScene()
         {

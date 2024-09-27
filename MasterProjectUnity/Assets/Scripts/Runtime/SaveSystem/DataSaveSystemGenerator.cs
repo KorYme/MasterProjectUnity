@@ -64,7 +64,6 @@ namespace MasterProject.SaveSystem
             m_dataClassName = "GameData";
         }
 
-        //[Button]
         public void GenerateSaveSystemFolder()
         {
             if (Directory.Exists(FolderPath))
@@ -76,7 +75,6 @@ namespace MasterProject.SaveSystem
             AssetDatabase.Refresh();
         }
 
-        //[Button]
         public void GenerateGameDataClass()
         {
             if (!Directory.Exists(FolderPath))
@@ -95,7 +93,6 @@ namespace MasterProject.SaveSystem
             AssetDatabase.Refresh();
         }
 
-        //[Button]
         public void AttachDataSaveManager()
         {
             if (!Directory.Exists(FolderPath))
@@ -125,5 +122,33 @@ namespace MasterProject.SaveSystem
         }
         #endif
         #endregion
+    }
+
+    [CustomEditor(typeof(DataSaveSystemGenerator))]
+    public class DataSaveSystemGeneratorEditor : Editor
+    {
+        private DataSaveSystemGenerator m_instance;
+
+        private void OnEnable()
+        {
+            m_instance = (DataSaveSystemGenerator)target;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            if (GUILayout.Button("Generate SaveSystem Folder"))
+            {
+                m_instance.GenerateSaveSystemFolder();
+            }
+            if (GUILayout.Button("Generate GameData Class"))
+            {
+                m_instance.GenerateGameDataClass();
+            }
+            //if (GUILayout.Button("Attach DataSave Manager"))
+            //{
+
+            //}
+        }
     }
 }

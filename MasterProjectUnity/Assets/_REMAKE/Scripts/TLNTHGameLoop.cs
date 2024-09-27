@@ -13,6 +13,7 @@ namespace TLNTH
         [SerializeField] private MusicService m_musicService;
         [SerializeField] private ErrorService m_errorService;
         [SerializeField] private SceneLoaderService m_sceneLoaderService;
+        [SerializeField] private DiscordRichPresenceService m_RPCDiscord;
 
         protected override IReadOnlyList<Type> InitializeServicesOrder => TLNTHServicesLoopOrder.InitializeServicesOrder;
 
@@ -26,6 +27,7 @@ namespace TLNTH
             container.BindWithPrefab<IMusicService>(m_musicService);
             container.BindWithPrefab<IErrorService>(m_errorService);
             container.BindWithInstance<ISceneLoaderService>(m_sceneLoaderService);
+            container.BindWithInstance<IDiscordRichPresenceService>(m_RPCDiscord);
         }
     }
 }

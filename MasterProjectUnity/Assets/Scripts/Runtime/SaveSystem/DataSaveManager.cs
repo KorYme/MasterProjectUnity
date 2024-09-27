@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MasterProject.SaveSystem
 {
-    public class DataSaveManager<T> : MonoBehaviour where T : GameDataTemplate, new()
+    public class DataSaveManager<T> : MonoBehaviour where T : BaseGameData, new()
     {
         #region FIELDS
         public static DataSaveManager<T> Instance { get; private set; }
@@ -36,7 +36,7 @@ namespace MasterProject.SaveSystem
                 return;
             }
             Instance = this;
-            m_saveFileDataHandler = new SaveFileDataHandler<T>(Application.persistentDataPath, m_fileName, m_encryptionType);
+            m_saveFileDataHandler = new SaveFileDataHandler<T>(m_fileName, m_encryptionType);
             m_dataHasBeenLoaded = false;
             LoadGame();
         }
@@ -73,7 +73,6 @@ namespace MasterProject.SaveSystem
         public void NewGame()
         {
             m_gameData = new T();
-            m_allSaveData.ForEach(x => x.InitializeData());
         }
 
         public void LoadGame(bool isLoadForced = false)

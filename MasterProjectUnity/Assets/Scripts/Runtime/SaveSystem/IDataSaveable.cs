@@ -3,11 +3,6 @@ namespace MasterProject.SaveSystem
     public interface IDataSaveable<T>
     {
         /// <summary>
-        /// Will be called if no data has been found inside the device, instead of LoadData()
-        /// </summary>
-        void InitializeData();
-
-        /// <summary>
         /// Will be called at the loading of the game, allows you to get your data back from the save class
         /// </summary>
         /// <param name="gameData">Class containing all of your data</param>
