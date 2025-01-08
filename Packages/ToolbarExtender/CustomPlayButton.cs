@@ -16,16 +16,16 @@ namespace ASze.CustomPlayButton
         const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
         const string ICONS_PATH = "Packages/Editor/ToolbarExtender/CustomPlayButton/Icons/";
 
-        private static SceneBookmark bookmark = null;
-        private static SceneAsset selectedScene = null;
+        private static SceneBookmark bookmark;
+        private static SceneAsset selectedScene;
 
 
-        static GUIContent customSceneContent;
-        static GUIContent gameSceneContent;
+        private static GUIContent customSceneContent;
+        private static GUIContent gameSceneContent;
 
-        static Rect buttonRect;
-        static VisualElement toolbarElement;
-        static SceneAsset lastScene = null;
+        private static Rect buttonRect;
+        private static VisualElement toolbarElement;
+        private static SceneAsset lastScene;
 
         public static SceneBookmark Bookmark
         {
@@ -45,7 +45,7 @@ namespace ASze.CustomPlayButton
 
         public static SceneAsset SelectedScene
         {
-            get { return selectedScene; }
+            get => selectedScene; 
             set
             {
                 selectedScene = value;
@@ -85,12 +85,8 @@ namespace ASze.CustomPlayButton
             ToolbarExtender.LeftToolbarGUI.Add(OnToolbarLeftGUI);
             EditorApplication.update += OnUpdate;
 
-            if (bookmark == null)
-            {
-                bookmark = AssetDatabase.LoadAssetAtPath<SceneBookmark>(SETTING_PATH);
-                Bookmark?.RemoveNullValue();
-            }
-
+            bookmark = AssetDatabase.LoadAssetAtPath<SceneBookmark>(SETTING_PATH);
+            Bookmark?.RemoveNullValue();
             string savedScenePath = EditorPrefs.GetString(GetEditorPrefKey(), "");
             selectedScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(savedScenePath);
             if (selectedScene == null && EditorBuildSettings.scenes.Length > 0)
