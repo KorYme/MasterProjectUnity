@@ -12,9 +12,9 @@ namespace ASze.CustomPlayButton
     [InitializeOnLoad]
     public static class CustomPlayButton
     {
-        const string FOLDER_PATH = "Assets/Scripts/Editor/ToolbarExtender/CustomPlayButton/";
-        const string SETTING_PATH = FOLDER_PATH + "BookmarkSettings/BookmarkSetting.asset";
-        const string ICONS_PATH = FOLDER_PATH + "Icons/";
+        const string FOLDER_PATH = "Assets/ToolbarExtender/Editor/";
+        const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
+        const string ICONS_PATH = "Packages/Editor/ToolbarExtender/CustomPlayButton/Icons/";
 
         private static SceneBookmark bookmark = null;
         private static SceneAsset selectedScene = null;
