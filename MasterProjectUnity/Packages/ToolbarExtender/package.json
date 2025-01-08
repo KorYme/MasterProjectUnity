@@ -2,9 +2,8 @@
   "name": "com.koryme.unity-toolbar-extender",
   "version": "1.0.0",
   "displayName": "Toolbar Extender",
-  "description": "Extend the Unity Toolbar with your own Editor UI code. Based on Marijn Zwemmer work here : ",
+  "description": "Extend the Unity Toolbar with your own Editor UI code. Based on Marijn Zwemmer work here : https://github.com/marijnz/unity-toolbar-extender/",
   "unity": "2022.3",
-  "dependencies": {},
   "keywords": [
     "toolbar",
     "extender",
