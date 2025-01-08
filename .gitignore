@@ -78,3 +78,6 @@ MasterProjectUnity/ProjectSettings/Packages/com.unity.testtools.codecoverage/Set
 
 # Rider
 .idea/ 
+
+# Toolbar extender files
+Assets/ToolbarExtender/
