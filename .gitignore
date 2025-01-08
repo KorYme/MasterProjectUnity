@@ -75,3 +75,6 @@ MasterProjectUnity/ProjectSettings/Packages/com.unity.testtools.codecoverage/Set
 # Package ignored assets (settings, ...)
 **/ToolbarExtender/CustomPlayButton/BookmarkSettings/*
 **/ToolbarExtender/CustomPlayButton/BookmarkSettings.meta
+
+# Rider
+.idea/ 
