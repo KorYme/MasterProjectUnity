@@ -1,7 +1,5 @@
 # MasterProject
 
----
-
 This unity project is meant to prototype and create packages that can be used in future projects.
 
 ## Packages
