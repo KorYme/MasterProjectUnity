@@ -12,7 +12,7 @@ namespace ASze.CustomPlayButton
     [InitializeOnLoad]
     public static class CustomPlayButton
     {
-        const string FOLDER_PATH = "Assets/ToolbarExtender/Editor/";
+        const string FOLDER_PATH = "Assets/Editor/ToolbarExtender/";
         const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
         const string ICONS_PATH = "Packages/Editor/ToolbarExtender/CustomPlayButton/Icons/";
 
@@ -31,14 +31,16 @@ namespace ASze.CustomPlayButton
         {
             get
             {
-                if (bookmark == null)
+                if (bookmark != null) return bookmark;
+                bookmark = AssetDatabase.LoadAssetAtPath<SceneBookmark>(SETTING_PATH);
+                if (bookmark != null) return bookmark;
+                bookmark = ScriptableObject.CreateInstance<SceneBookmark>();
+                if (!Directory.Exists(FOLDER_PATH))
                 {
-                    bookmark = ScriptableObject.CreateInstance<SceneBookmark>();
-                    if (!Directory.Exists(FOLDER_PATH))
-                        Directory.CreateDirectory(FOLDER_PATH);
-                    AssetDatabase.CreateAsset(bookmark, SETTING_PATH);
-                    AssetDatabase.Refresh();
-                }
+                    Directory.CreateDirectory(FOLDER_PATH);
+                } 
+                AssetDatabase.CreateAsset(bookmark, SETTING_PATH);
+                AssetDatabase.Refresh();
                 return bookmark;
             }
         }
@@ -84,8 +86,7 @@ namespace ASze.CustomPlayButton
         {
             ToolbarExtender.LeftToolbarGUI.Add(OnToolbarLeftGUI);
             EditorApplication.update += OnUpdate;
-
-            bookmark = AssetDatabase.LoadAssetAtPath<SceneBookmark>(SETTING_PATH);
+            
             Bookmark?.RemoveNullValue();
             string savedScenePath = EditorPrefs.GetString(GetEditorPrefKey(), "");
             selectedScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(savedScenePath);
