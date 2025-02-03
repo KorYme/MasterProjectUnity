@@ -5,8 +5,8 @@ on:
     - cron: '0 3 * * *' #Hour of automatic build
   workflow_dispatch:
   push:
-    branches:
-      - CI_Test
+    tags:
+      - '**'
 
 # Secrets to setup
 # UNITY_EMAIL => Email of the account to build
