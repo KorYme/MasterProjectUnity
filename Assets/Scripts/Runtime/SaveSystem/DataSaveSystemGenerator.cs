@@ -88,7 +88,7 @@ namespace MasterProject.SaveSystem
                 DebugLogger.Warning(this, "There is already one class named this way in " + m_FolderName);
                 return;
             }
-            // Écriture du code généré dans un fichier
+            // ï¿½criture du code gï¿½nï¿½rï¿½ dans un fichier
             File.WriteAllText(Path, m_ClassCode);
             AssetDatabase.Refresh();
         }
@@ -122,33 +122,5 @@ namespace MasterProject.SaveSystem
         }
         #endif
         #endregion
-    }
-
-    [CustomEditor(typeof(DataSaveSystemGenerator))]
-    public class DataSaveSystemGeneratorEditor : Editor
-    {
-        private DataSaveSystemGenerator m_instance;
-
-        private void OnEnable()
-        {
-            m_instance = (DataSaveSystemGenerator)target;
-        }
-
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            if (GUILayout.Button("Generate SaveSystem Folder"))
-            {
-                m_instance.GenerateSaveSystemFolder();
-            }
-            if (GUILayout.Button("Generate GameData Class"))
-            {
-                m_instance.GenerateGameDataClass();
-            }
-            //if (GUILayout.Button("Attach DataSave Manager"))
-            //{
-
-            //}
-        }
     }
 }
