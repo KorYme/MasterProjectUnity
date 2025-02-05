@@ -1,0 +1,15 @@
+{
+  "name": "com.koryme.unity-scene-reference-utils",
+  "version": "1.0.0",
+  "displayName": "Scene Reference Utils",
+  "description": "Add a SceneReference struct which serialize a SceneAsset and make it compilable in build.",
+  "unity": "2022.3",
+  "keywords": [
+    "scene",
+    "reference"
+  ],
+  "author": {
+    "name": "KorYme",
+    "url": "https://github.com/KorYme/MasterProjectUnity"
+  }
+}

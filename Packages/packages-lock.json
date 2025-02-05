@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.koryme.unity-scene-reference-utils": {
+      "version": "file:SceneReferenceUtils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.koryme.unity-toolbar-extender": {
       "version": "file:ToolbarExtender",
       "depth": 0,
@@ -221,11 +227,11 @@
       "url": "https://packages.unity.com"
     },
     "net.tnrd.nsubstitute": {
-      "version": "5.1.0",
+      "version": "https://github.com/Thundernerd/Unity3D-NSubstitute.git",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {},
-      "url": "https://package.openupm.com"
+      "hash": "449712b25ae237eb5da2d958dd72a5432051e192"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

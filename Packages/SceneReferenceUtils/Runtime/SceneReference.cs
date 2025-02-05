@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MasterProject
+namespace SceneReferenceUtils
 {
     [System.Serializable]
     public struct SceneReference

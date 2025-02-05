@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MasterProject.Editor
+namespace SceneReferenceUtils.Editor
 {
     [CustomPropertyDrawer(typeof(SceneReference))]
     public class SceneReferenceEditor : PropertyDrawer
