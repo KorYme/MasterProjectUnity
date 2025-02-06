@@ -82,6 +82,7 @@ jobs:
           #projectPath: Can be useful if the project is not at the repo root
 
       - name: Calculate duration
+        if: always()
         id: build-execution-time
         run: |
           printf -v now '%(%s)T'
@@ -105,8 +106,11 @@ jobs:
     if: always()
     needs: build
     steps:
-      - uses: benjlevesque/short-sha@v3.0
-        id: short-sha
+      - name: Get last commit data 
+        id: lastcommit
+        uses: nmbgeek/github-action-get-latest-commit@main
+        with:
+          repository: ${{ github.repository }}
       - name: Nightly Build Notify Discord Success
         if: ${{ needs.build.outputs.build-exit-code == '0' && github.event_name == 'schedule' }} 
         uses: tsickert/discord-webhook@v6.0.0
@@ -114,7 +118,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-author-icon-url: https://cdn1.iconfinder.com/data/icons/operating-system-flat-1/30/windows_7-512.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -123,7 +127,7 @@ jobs:
             The nightly build (${{ needs.build.outputs.build-version }}) succeeded in ${{ needs.build.outputs.build-execution-time }}s !
             
             Last commit :
-            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message || github.workflow_dispatch.head_commit.message }} - ${{ github.event.head_commit.author.name || github.workflow_dispatch.head_commit.author.name }}
+            [``${{ steps.lastcommit.outputs.shorthash }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ steps.lastcommit.outputs.description }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
             
@@ -139,7 +143,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-author-icon-url: https://cdn1.iconfinder.com/data/icons/operating-system-flat-1/30/windows_7-512.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Nightly Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -148,7 +152,7 @@ jobs:
             The nightly build failed... (in ${{ needs.build.outputs.build-execution-time }}s)
 
             Last commit :
-            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message || github.workflow_dispatch.head_commit.message }} - ${{ github.event.head_commit.author.name || github.workflow_dispatch.head_commit.author.name }}
+            [``${{ steps.lastcommit.outputs.shorthash }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ steps.lastcommit.outputs.description }}
             
             > Shhhhhhh... 
             > Don't tell them anything, they'll soon learn the news !
@@ -162,7 +166,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-author-icon-url: https://cdn1.iconfinder.com/data/icons/operating-system-flat-1/30/windows_7-512.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -171,7 +175,7 @@ jobs:
             The manual build (${{ needs.build.outputs.build-version }}) succeeded in ${{ needs.build.outputs.build-execution-time }}s !
             
             Last commit :
-            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message || github.workflow_dispatch.head_commit.message }} - ${{ github.event.head_commit.author.name || github.workflow_dispatch.head_commit.author.name }}
+            [``${{ steps.lastcommit.outputs.shorthash }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ steps.lastcommit.outputs.description }}
             
             [__Download the build__](${{ needs.build.outputs.build-url }})
              
@@ -187,7 +191,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           avatar-url: https://cdn-icons-png.flaticon.com/512/25/25231.png
           embed-author-name: UnityAutoBuilder
-          embed-author-icon-url: https://cdn.icon-icons.com/icons2/2235/PNG/512/windows_os_logo_icon_134674.png
+          embed-author-icon-url: https://cdn1.iconfinder.com/data/icons/operating-system-flat-1/30/windows_7-512.png
           embed-author-url: ${{ github.server_url }}/${{ github.repository }}
           embed-title: Manual Build
           embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -196,7 +200,7 @@ jobs:
             The manual build failed... (in ${{ needs.build.outputs.build-execution-time }}s)
             
             Last commit :
-            [``${{ steps.short-sha.outputs.sha }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ github.event.head_commit.message || github.workflow_dispatch.head_commit.message }} - ${{ github.event.head_commit.author.name || github.workflow_dispatch.head_commit.author.name }}
+            [``${{ steps.lastcommit.outputs.shorthash }}``](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.workflow_sha }}) ${{ steps.lastcommit.outputs.description }}
             
             > Do. Not. PANIK !
           embed-color: 15548997
