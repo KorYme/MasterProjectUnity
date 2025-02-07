@@ -48,7 +48,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
         with:
-          ref: ${{ vars.BRANCH_TO_BUILD || 'CI-Test' }} # The branch you want the build to be done with
+          ref: ${{ vars.BRANCH_TO_BUILD || 'CI_Test' }} # The branch you want the build to be done with
           lfs: true # Whether or not lfs needs to be used to build
 
       - name: Caching Library Data to speed up process
