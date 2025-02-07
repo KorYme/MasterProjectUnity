@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{BE128498-80D3-4DB9-8125-0DCC982A741C}" SchemaVersion="123">
+	<AudioObjects>
+		<WorkUnit Name="Default Work Unit" ID="{BE128498-80D3-4DB9-8125-0DCC982A741C}" PersistMode="Standalone">
+			<ChildrenList>
+				<Sound Name="cool" ID="{38555386-7CF3-422D-B805-BFB330146440}" ShortID="471521017">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{74D0FE18-C0D9-4664-87BF-7DEFFEBE3510}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{DD5107E4-93C9-41B2-A386-812293B9AEB3}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="cool" ID="{865DA6AD-640E-46F5-BA26-BBB4FC4A1E01}">
+							<Language>SFX</Language>
+							<AudioFile>cool.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="830026995"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="cool" ID="{865DA6AD-640E-46F5-BA26-BBB4FC4A1E01}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
+	</AudioObjects>
+</WwiseDocument>
