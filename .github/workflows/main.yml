@@ -11,13 +11,16 @@ on:
       - CI-Test
 
 # Secrets to setup
-# UNITY_EMAIL => Email of the account to build
-# UNITY_PASSWORD => Password of the account to build
-# UNITY_LICENSE => Content of the license to build (C:\ProgramData\Unity)
+# UNITY_EMAIL => Email of the unity account to build
+# UNITY_PASSWORD => Password of the unity account to build
+# UNITY_LICENSE => Content of the unity license to build (C:\ProgramData\Unity)
+# WWISE_EMAIL => Email of the audiokinetic account to build
+# WWISE_PASSWORD => Password of the audiokinetic account to build
 # DISCORD_WEBHOOK_URL => URL of the Discord webhook (without the /github at the end)
 
 # Variables to setup
 # BRANCH_TO_BUILD => The branch from which it must be built (it is optional, default value => main)
+# WWISE_VERSION => The version of wwise
 
 
 jobs:
@@ -51,6 +54,13 @@ jobs:
           ref: ${{ vars.BRANCH_TO_BUILD || 'CI_Test' }} # The branch you want the build to be done with
           lfs: true # Whether or not lfs needs to be used to build
 
+      - name: Setup Wwise SDK
+        uses: mashizora/setup-wwise@main
+        with:
+          wwise-version: ${{ vars.WWISE_VERSION }}
+          email: ${{ vars.WWISE_EMAIL }}
+          password: ${{ vars.WWISE_PASSWORD }}
+          
       - name: Caching Library Data to speed up process
         uses: actions/cache@v4.2.0
         with:
@@ -113,6 +123,7 @@ jobs:
         uses: nmbgeek/github-action-get-latest-commit@main
         with:
           repository: ${{ github.repository }}
+          branch: ${{ vars.BRANCH_TO_BUILD || 'main' }}
       - name: Nightly Build Notify Discord Success
         if: ${{ needs.build.outputs.build-exit-code == '0' && github.event_name == 'schedule' }} 
         uses: tsickert/discord-webhook@v6.0.0
