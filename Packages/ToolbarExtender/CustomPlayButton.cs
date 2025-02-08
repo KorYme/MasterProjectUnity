@@ -12,13 +12,12 @@ namespace ASze.CustomPlayButton
     [InitializeOnLoad]
     public static class CustomPlayButton
     {
-        const string FOLDER_PATH = "Assets/Editor/ToolbarExtender/";
-        const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
-        const string ICONS_PATH = "Packages/Editor/ToolbarExtender/CustomPlayButton/Icons/";
+        private const string FOLDER_PATH = "Assets/ToolbarExtender/Editor/";
+        private const string SETTING_PATH = FOLDER_PATH + "BookmarkSetting.asset";
+        private const string ICONS_PATH = "Packages/com.koryme.unity-toolbar-extender/Icons/";
 
         private static SceneBookmark bookmark;
         private static SceneAsset selectedScene;
-
 
         private static GUIContent customSceneContent;
         private static GUIContent gameSceneContent;
