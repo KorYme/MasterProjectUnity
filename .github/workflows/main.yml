@@ -8,7 +8,7 @@ on:
     tags:
       - '**'
     branches:
-      - CI-Test
+      - CI_Test
 
 # Secrets to setup
 # UNITY_EMAIL => Email of the unity account to build
@@ -60,6 +60,11 @@ jobs:
           wwise-version: ${{ vars.WWISE_VERSION }}
           email: ${{ vars.WWISE_EMAIL }}
           password: ${{ vars.WWISE_PASSWORD }}
+          
+      - name: Replace Wwise SDK path in Wwise project settings
+        uses: Mudlet/xmlstarlet-action@v1.2
+        with:
+          args: ed --inplace -u "../../MasterProjectUnity/MasterProjectUnity_WwiseProject/MasterProjectUnity_WwiseProject.wproj" -v "${{ env.WWISEROOT }}" "Assets/WwiseSettings.xml"
           
       - name: Caching Library Data to speed up process
         uses: actions/cache@v4.2.0
