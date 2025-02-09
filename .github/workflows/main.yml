@@ -45,8 +45,12 @@ jobs:
           #- Android # Build an Android .apk standalone app.
           #- WebGL # WebGL.
     steps:
-      # - name: Set Start Time
-      #   run: echo "START_TIME=$(TZ =":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
+      - name: Set Start Time with Timezone
+        shell: pwsh
+        run: |
+          $TimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Romance Standard Time")
+          $LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $TimeZone)
+          echo "START_TIME=$($LocalTime.ToString('yyyy_MM_dd_HH_mm_ss'))" >> $env:GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -72,10 +76,12 @@ jobs:
         if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.3.1
 
-      # - name: Set start timestamp
-      #   id: start-timestamp
-      #   run: |
-      #     printf 'timestamp=%(%s)T\n' >> "$GITHUB_OUTPUT"
+      - name: Set start timestamp
+        id: start-timestamp
+        shell: pwsh
+        run: |
+          $timestamp = [int][double]::Parse((Get-Date -UFormat %s))
+          "timestamp=$timestamp" >> $env:GITHUB_OUTPUT
       
       - name: Build project
         id: project-build
@@ -93,12 +99,15 @@ jobs:
           versioning: Semantic
           #projectPath: Can be useful if the project is not at the repo root
 
-      # - name: Calculate duration
-      #   if: always()
-      #   id: build-execution-time
-      #   run: |
-      #     printf -v now '%(%s)T'
-      #     printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
+      - name: Calculate duration
+        if: always()
+        id: build-execution-time
+        shell: pwsh
+        run: |
+          $now = [int][double]::Parse((Get-Date -UFormat %s))
+          $start = [int]${{ steps.start-timestamp.outputs.timestamp }}
+          $duration = $now - $start
+          "duration=$duration" >> $env:GITHUB_OUTPUT
       
       - name: Upload build as artifact
         id: build-upload
@@ -108,9 +117,9 @@ jobs:
           path: Builds/${{ matrix.targetPlatform }}
           retention-days: 7 #Day before artifact being destroyed
             
-      - name: Return License
-        if: always()
-        uses: game-ci/unity-return-license@v2.0.0
+      # - name: Return License  # Not useful on windows
+      #   if: always()
+      #   uses: game-ci/unity-return-license@v2.0.0
 
   notify:
     name: Notify Discord with build link
