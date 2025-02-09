@@ -26,7 +26,7 @@ on:
 jobs:
   build:
     name: Build unity project for Windows ✨
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     outputs:
       build-url: ${{ steps.build-upload.outputs.artifact-url }}
       build-exit-code: ${{ steps.project-build.outputs.engineExitCode }}
@@ -45,8 +45,8 @@ jobs:
           #- Android # Build an Android .apk standalone app.
           #- WebGL # WebGL.
     steps:
-      - name: Set Start Time
-        run: echo "START_TIME=$(TZ=":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
+      # - name: Set Start Time
+      #   run: echo "START_TIME=$(TZ =":Europe/Paris" date +'%Y_%m_%d_%H_%M_%S')" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -61,20 +61,6 @@ jobs:
           email: ${{ vars.WWISE_EMAIL }}
           password: ${{ vars.WWISE_PASSWORD }}
           
-      - name: Echo output of Wwise SDK location
-        run: |
-          str1="../../"
-          str2=$(echo "${WWISEROOT}" | cut -d'/' -f4-)
-          echo "GITHUB_WWISE_INSTALL_LINUX_PATH=$(echo "$str1$str2")" >> $GITHUB_ENV
-          echo ${{ env.GITHUB_WWISE_INSTALL_LINUX_PATH }}
-
-      - name: Replace Wwise SDK path in Wwise project settings
-        uses: Mudlet/xmlstarlet-action@v1.2
-        with:
-          args: ed -L -u "//WwiseInstallationPathMac" -v ${{ env.GITHUB_WWISE_INSTALL_LINUX_PATH }} "Assets/WwiseSettings.xml"
-          
-      - run: cat Assets/WwiseSettings.xml
-          
       - name: Caching Library Data to speed up process
         uses: actions/cache@v4.2.0
         with:
@@ -86,10 +72,10 @@ jobs:
         if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.3.1
 
-      - name: Set start timestamp
-        id: start-timestamp
-        run: |
-          printf 'timestamp=%(%s)T\n' >> "$GITHUB_OUTPUT"
+      # - name: Set start timestamp
+      #   id: start-timestamp
+      #   run: |
+      #     printf 'timestamp=%(%s)T\n' >> "$GITHUB_OUTPUT"
       
       - name: Build project
         id: project-build
@@ -100,19 +86,19 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          buildName: Build_${{ matrix.targetPlatform }}_${{ env.START_TIME }}
+          buildName: Build_${{ matrix.targetPlatform }}_ # ${{ env.START_TIME }}
           buildsPath: Builds
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           versioning: Semantic
           #projectPath: Can be useful if the project is not at the repo root
 
-      - name: Calculate duration
-        if: always()
-        id: build-execution-time
-        run: |
-          printf -v now '%(%s)T'
-          printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
+      # - name: Calculate duration
+      #   if: always()
+      #   id: build-execution-time
+      #   run: |
+      #     printf -v now '%(%s)T'
+      #     printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
       
       - name: Return License
         if: always()
@@ -122,7 +108,7 @@ jobs:
         id: build-upload
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: Build_${{ matrix.targetPlatform }}_${{ env.START_TIME }}
+          name: Build_${{ matrix.targetPlatform }}_ # ${{ env.START_TIME }}
           path: Builds/${{ matrix.targetPlatform }}
           retention-days: 7 #Day before artifact being destroyed
 
