@@ -62,12 +62,12 @@ jobs:
           password: ${{ vars.WWISE_PASSWORD }}
           
       - name: Echo output
-        run: echo ${{ env.WWISEROOT }}
+        run: echo "GITHUB_WWISE_INSTALL_LINUX_PATH=$("../../"(echo "${{ env.WWISEROOT }}" | cut -d'/' -f3-))" >> $GITHUB_ENV
         
       - name: Replace Wwise SDK path in Wwise project settings
         uses: Mudlet/xmlstarlet-action@v1.2
         with:
-          args: ed -L -u "//WwiseInstallationPathMac" -v "${{ env.WWISEROOT }}" "Assets/WwiseSettings.xml"
+          args: ed -L -u "//WwiseInstallationPathMac" -v "$GITHUB_WWISE_INSTALL_LINUX_PATH" "Assets/WwiseSettings.xml"
           
       - run: cat Assets/WwiseSettings.xml
           
