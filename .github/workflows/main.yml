@@ -62,16 +62,14 @@ jobs:
           password: ${{ vars.WWISE_PASSWORD }}
           
       - name: Echo output
-        run: echo "${{ env.WWISEROOT }}"
+        run: echo ${{ env.WWISEROOT }}
         
       - name: Replace Wwise SDK path in Wwise project settings
         uses: Mudlet/xmlstarlet-action@v1.2
         with:
-          args: ed -L -u "//WwiseProjectPath" -v "${{ env.WWISEROOT }}" "Assets/WwiseSettings.xml"
+          args: ed -L -u "//WwiseInstallationPathMac" -v "${{ env.WWISEROOT }}" "Assets/WwiseSettings.xml"
           
       - run: cat Assets/WwiseSettings.xml
-        
-      - run: echo ${{ github.workspace }}/${{ env.WWISEROOT }}
           
       - name: Caching Library Data to speed up process
         uses: actions/cache@v4.2.0
