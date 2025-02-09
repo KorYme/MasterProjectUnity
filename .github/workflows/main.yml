@@ -61,6 +61,9 @@ jobs:
           email: ${{ vars.WWISE_EMAIL }}
           password: ${{ vars.WWISE_PASSWORD }}
           
+      - name: Echo output
+        run: echo "${{ env.WWISEROOT }}"
+        
       - name: Replace Wwise SDK path in Wwise project settings
         uses: Mudlet/xmlstarlet-action@v1.2
         with:
