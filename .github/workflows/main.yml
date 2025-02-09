@@ -100,10 +100,6 @@ jobs:
       #     printf -v now '%(%s)T'
       #     printf duration=$((now - ${{ steps.start-timestamp.outputs.timestamp }})) >> "$GITHUB_OUTPUT"
       
-      - name: Return License
-        if: always()
-        uses: game-ci/unity-return-license@v2.0.0
-            
       - name: Upload build as artifact
         id: build-upload
         uses: actions/upload-artifact@v4.6.0
@@ -111,6 +107,10 @@ jobs:
           name: Build_${{ matrix.targetPlatform }}_ # ${{ env.START_TIME }}
           path: Builds/${{ matrix.targetPlatform }}
           retention-days: 7 #Day before artifact being destroyed
+            
+      - name: Return License
+        if: always()
+        uses: game-ci/unity-return-license@v2.0.0
 
   notify:
     name: Notify Discord with build link
