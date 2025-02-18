@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace ASze.CustomPlayButton
 {
@@ -24,14 +26,14 @@ namespace ASze.CustomPlayButton
         Vector2 scrollPosBuild;
         Vector2 scrollPosBookmark;
 
-        public EditorSelectScenePopup() : base()
+        public EditorSelectScenePopup()
         {
             InitStyles();
 
             bookmarkContent = EditorGUIUtility.IconContent("blendKeySelected", "Bookmark ScriptableObject");
 
             GetBuildScenes();
-            currentScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(EditorSceneManager.GetActiveScene().path);
+            currentScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneManager.GetActiveScene().path);
             CustomPlayButton.Bookmark.RemoveNullValue();
         }
 
@@ -227,15 +229,16 @@ namespace ASze.CustomPlayButton
 
         void GetBuildScenes()
         {
-            List<SceneAsset> buildSceneList = new List<SceneAsset>();
-            var settingScenes = EditorBuildSettings.scenes;
-            foreach (var settingScene in settingScenes)
-            {
-                string scenePath = AssetDatabase.GUIDToAssetPath(settingScene.guid.ToString());
-                var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-                if (scene != null) buildSceneList.Add(scene);
-            }
-            buildScenes = buildSceneList.ToArray();
+            buildScenes = LoadAssetsOfType<SceneAsset>("Assets/");
+        }
+        
+        public static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : Object
+        {
+            return AssetDatabase
+                .FindAssets($"t:{typeof(T).Name}", searchInFolders)
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadAssetAtPath<T>)
+                .ToArray();
         }
     }
 }
