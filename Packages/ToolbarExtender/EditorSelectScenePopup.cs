@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
@@ -103,7 +104,7 @@ namespace ASze.CustomPlayButton
             EditorGUILayout.BeginVertical();
 
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Scenes in Build", EditorStyles.boldLabel, GUILayout.Height(20.0f));
+            GUILayout.Label("Scenes in Project", EditorStyles.boldLabel, GUILayout.Height(20.0f));
             if (!CustomPlayButton.Bookmark.HasBookmark())
             {
                 GUILayout.FlexibleSpace();
@@ -229,7 +230,13 @@ namespace ASze.CustomPlayButton
 
         void GetBuildScenes()
         {
-            buildScenes = LoadAssetsOfType<SceneAsset>("Assets/");
+            ToolbarExtenderSettings asset = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(ToolbarExtenderSettings.toolbarExtenderSettingsPath);
+            buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty));
+            if (buildScenes.Length == 0)
+            {
+                buildScenes = LoadAssetsOfType<SceneAsset>("Assets/");
+                Debug.LogWarning("Using \"Assets/\" path instead.");
+            }
         }
         
         public static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : Object
