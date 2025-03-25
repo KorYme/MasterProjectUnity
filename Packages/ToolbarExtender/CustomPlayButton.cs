@@ -83,7 +83,9 @@ namespace ASze.CustomPlayButton
 
         static CustomPlayButton()
         {
+            ToolbarExtender.LeftToolbarGUI.Remove(OnToolbarLeftGUI);
             ToolbarExtender.LeftToolbarGUI.Add(OnToolbarLeftGUI);
+            EditorApplication.update -= OnUpdate;
             EditorApplication.update += OnUpdate;
             
             Bookmark?.RemoveNullValue();
