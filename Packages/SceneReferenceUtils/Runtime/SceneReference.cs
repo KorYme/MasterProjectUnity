@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 
 namespace SceneReferenceUtils
 {
-    [System.Serializable]
-    public struct SceneReference
+    [Serializable]
+    public struct SceneReference : IEquatable<SceneReference>
     {
 #if UNITY_EDITOR
         [SerializeField] private UnityEditor.SceneAsset m_sceneObject;
 #endif
-        [SerializeField] private string m_name;
+        [field: SerializeField] public string Name { get; private set; }
 
-        public string Name => m_name;
+        public bool Equals(SceneReference other)
+        {
+            return Name.Equals(other.Name);
+        }
     }
 }
