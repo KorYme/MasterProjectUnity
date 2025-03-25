@@ -22,10 +22,14 @@ namespace SceneReferenceUtils.Editor
                 if (m_sceneObjectProperty.objectReferenceValue != null)
                 {
                     m_nameProperty.stringValue = m_sceneObjectProperty.objectReferenceValue.name;
+                    currentPosition = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + MARGIN_HEIGHT, position.width, EditorGUIUtility.singleLineHeight * 2);
                     if (SceneUtility.GetBuildIndexByScenePath(AssetDatabase.GetAssetPath(m_sceneObjectProperty.objectReferenceValue)) < 0)
                     {
-                        currentPosition = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + MARGIN_HEIGHT, position.width, EditorGUIUtility.singleLineHeight * 2);
                         EditorGUI.HelpBox(currentPosition, "This scene isn't in the build settings.", MessageType.Warning);
+                    }
+                    else
+                    {
+                        EditorGUI.HelpBox(currentPosition, "This scene is in the build settings.", MessageType.Info);
                     }
                 }
             }
@@ -35,9 +39,7 @@ namespace SceneReferenceUtils.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SerializedProperty m_sceneObjectProperty = property.FindPropertyRelative("m_sceneObject");
-            return base.GetPropertyHeight(property, label) + 
-                (SceneUtility.GetBuildIndexByScenePath(AssetDatabase.GetAssetPath(m_sceneObjectProperty.objectReferenceValue)) < 0 
-                ? EditorGUIUtility.singleLineHeight * 2 + MARGIN_HEIGHT : 0);
+            return base.GetPropertyHeight(property, label) + EditorGUIUtility.singleLineHeight * 2 + MARGIN_HEIGHT;
         }
     }
 }
