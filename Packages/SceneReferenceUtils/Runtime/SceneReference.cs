@@ -1,14 +1,13 @@
-using System;
 using UnityEngine;
 
 namespace SceneReferenceUtils
 {
-    [Serializable]
-    public struct SceneReference : IEquatable<SceneReference>
+    [System.Serializable]
+    public struct SceneReference : System.IEquatable<SceneReference>
     {
-#if UNITY_EDITOR
-        [SerializeField] private UnityEditor.SceneAsset m_sceneObject;
-#endif
+        [SerializeField] private Object m_sceneObject;
+        public Object SceneObject => m_sceneObject;
+        
         [SerializeField] public string m_name;
         public string Name => m_name;
         
