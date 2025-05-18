@@ -24,5 +24,10 @@ namespace SceneReferenceUtils
         {
             return SceneManager.LoadSceneAsync(sceneRef.Name, parameters);
         }
+
+        public static AsyncOperation UnloadSceneAsync(this SceneReference sceneRef, UnloadSceneOptions mode = UnloadSceneOptions.None)
+        {
+            return SceneManager.UnloadSceneAsync(sceneRef.Name, mode);
+        }
     }
 }
