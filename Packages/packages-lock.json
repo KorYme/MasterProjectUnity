@@ -1,5 +1,20 @@
 {
   "dependencies": {
+    "com.koryme.unity-encryption-utils": {
+      "version": "file:EncryptionUtils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.koryme.unity-save-system": {
+      "version": "file:SaveSystem",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.koryme.unity-encryption-utils": "1.0.0"
+      }
+    },
     "com.koryme.unity-scene-reference-utils": {
       "version": "file:SceneReferenceUtils",
       "depth": 0,

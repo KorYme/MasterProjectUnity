@@ -1,0 +1,20 @@
+{
+  "name": "com.koryme.unity-save-system",
+  "version": "1.0.0",
+  "displayName": "Save System",
+  "description": "Customizable save system with class generator and serialization.",
+  "unity": "2022.3",
+  "keywords": [
+    "save",
+    "serialization",
+    "generator"
+  ],
+  "author": {
+    "name": "KorYme",
+    "url": "https://github.com/KorYme/MasterProjectUnity"
+  },
+  "dependencies": {
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.koryme.unity-encryption-utils": "1.0.0"
+  }
+}
