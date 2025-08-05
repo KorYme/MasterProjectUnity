@@ -1,0 +1,16 @@
+{
+    "name": "ManagerInjection.Samples",
+    "rootNamespace": "ManagerInjection.Samples",
+    "references": [
+        "GUID:a132d5f74b27c2e44816a5e8bc54b9b8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

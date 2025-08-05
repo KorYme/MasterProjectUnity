@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.koryme.manager-gameloop-archi": {
+      "version": "file:ManagerGameloopArchi",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "net.tnrd.nsubstitute": "5.1.0"
+      }
+    },
     "com.koryme.unity-encryption-utils": {
       "version": "file:EncryptionUtils",
       "depth": 0,
