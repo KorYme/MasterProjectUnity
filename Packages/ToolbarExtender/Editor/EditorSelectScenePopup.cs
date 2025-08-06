@@ -230,7 +230,7 @@ namespace ASze.CustomPlayButton
 
         void GetBuildScenes()
         {
-            ToolbarExtenderSettings asset = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(ToolbarExtenderSettings.toolbarExtenderSettingsPath);
+            ToolbarExtenderSettings asset = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(ToolbarExtenderSettings.TOOLBAR_EXTENDER_SETTINGS_PATH);
             buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty));
             if (buildScenes.Length == 0)
             {

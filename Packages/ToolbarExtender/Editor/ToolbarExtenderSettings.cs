@@ -1,22 +1,24 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-class ToolbarExtenderSettings : ScriptableObject
+public class ToolbarExtenderSettings : ScriptableObject
 {
-    public const string toolbarExtenderSettingsPath = "Assets/ToolbarExtender/ToolbarExtenderSettings.asset";
+    public const string TOOLBAR_EXTENDER_SETTINGS_PATH = "Assets/ToolbarExtender/ToolbarExtenderSettings.asset";
 
     [SerializeField] private string folderToFocus;
     public string FolderToFocus => folderToFocus;
     
     internal static ToolbarExtenderSettings GetOrCreateSettings()
     {
-        var settings = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(toolbarExtenderSettingsPath);
+        var settings = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(TOOLBAR_EXTENDER_SETTINGS_PATH);
         if (settings == null)
         {
             settings = CreateInstance<ToolbarExtenderSettings>();
             settings.folderToFocus = string.Empty;
-            AssetDatabase.CreateAsset(settings, toolbarExtenderSettingsPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(TOOLBAR_EXTENDER_SETTINGS_PATH));
+            AssetDatabase.CreateAsset(settings, TOOLBAR_EXTENDER_SETTINGS_PATH);
             AssetDatabase.SaveAssets();
         }
         return settings;
@@ -28,7 +30,7 @@ class ToolbarExtenderSettings : ScriptableObject
     }
 }
 
-static class ToolbarExtenderSettingsIMGUIRegister
+public static class ToolbarExtenderSettingsIMGUIRegister
 {
     [SettingsProvider]
     public static SettingsProvider CreateToolbarExtenderSettingsProvider()

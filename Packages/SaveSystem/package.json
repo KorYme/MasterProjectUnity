@@ -14,7 +14,7 @@
     "url": "https://github.com/KorYme/MasterProjectUnity"
   },
   "dependencies": {
-    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.nuget.newtonsoft-json": "1.0.0",
     "com.koryme.unity-encryption-utils": "1.0.0"
   }
 }
