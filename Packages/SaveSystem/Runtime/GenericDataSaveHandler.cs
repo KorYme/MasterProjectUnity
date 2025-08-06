@@ -9,13 +9,13 @@ namespace SaveSystem
     public class GenericDataSaveHandler<T> : MonoBehaviour where T : new()
     {
         #region FIELDS
-        protected T _gameData;
+        public T GameData { get; protected set; }
 
         [Header("File Storage Config")]
         [SerializeField] protected DataSaveFileHandler<T> _dataSaveFileHandler;
 
         [Header("InGame Parameters")]
-        [SerializeField] protected bool m_saveOnQuit;
+        [SerializeField] protected bool _saveOnQuit;
         #endregion
 
         #region METHODS
@@ -27,14 +27,14 @@ namespace SaveSystem
 #if UNITY_EDITOR
         protected virtual void Reset()
         {
-            m_saveOnQuit = true;
+            _saveOnQuit = true;
         }
 #endif
 
 #if UNITY_EDITOR || UNITY_STANDALONE
         protected virtual void OnApplicationQuit()
         {
-            if (!m_saveOnQuit) return;
+            if (!_saveOnQuit) return;
             SaveGame();
         }
 #endif
@@ -62,17 +62,17 @@ namespace SaveSystem
                 GenerateNewGameData();
                 return;
             }
-            _gameData = data;
+            GameData = data;
         }
 
         public void GenerateNewGameData()
         {
-            _gameData = new T();
+            GameData = new T();
         }
         
         public void SaveGame()
         {
-            _dataSaveFileHandler.Save(_gameData);
+            _dataSaveFileHandler.Save(GameData);
         }
         #endregion
     }
