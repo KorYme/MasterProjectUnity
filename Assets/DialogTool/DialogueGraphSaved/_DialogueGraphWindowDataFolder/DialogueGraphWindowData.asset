@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844ef38d8e027c94aa605beda11e3703, type: 3}
+  m_Name: DialogueGraphWindowData
+  m_EditorClassIdentifier: 
+  <IsSaveOnLoad>k__BackingField: 1
+  <IsMinimapVisible>k__BackingField: 1
+  <FileName>k__BackingField: Test
+  <LastGraphData>k__BackingField: {fileID: 11400000, guid: 2df1c952fe359f64187c05591e1b39d4, type: 2}
