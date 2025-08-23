@@ -6,6 +6,7 @@ using UnityEditor.UIElements;
 using KorYmeLibrary.DialogueSystem.Utilities;
 using KorYmeLibrary.Utilities;
 using KorYmeLibrary.Utilities.Editor;
+using SerializationUtils;
 
 namespace KorYmeLibrary.DialogueSystem.Windows
 {
@@ -108,9 +109,9 @@ namespace KorYmeLibrary.DialogueSystem.Windows
                 _graphView.ToggleMinimapVisibility();
                 miniMapButton.AddClasses("ds-toolbar__button__selected");
             }
-            _onMiniMapVisibilityChanged += x => miniMapButton.ToggleInClassList("ds-toolbar__button__selected");
+            _onMiniMapVisibilityChanged += _ => miniMapButton.ToggleInClassList("ds-toolbar__button__selected");
 
-            _onGraphDataChange += x => graphFileField.SetValueWithoutNotify(GraphData);
+            _onGraphDataChange += _ => graphFileField.SetValueWithoutNotify(GraphData);
             _onFileNameChange += fileNameTextfield.SetValueWithoutNotify;
 
             toolbar.Add(graphFileField, saveButton, autoSavetoggle, clearButton, fileNameTextfield, newGraphButton, miniMapButton);

@@ -8,20 +8,20 @@
         "net.tnrd.nsubstitute": "5.1.0"
       }
     },
-    "com.koryme.unity-encryption-utils": {
-      "version": "file:EncryptionUtils",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
-    "com.koryme.unity-save-system": {
+    "com.koryme.save-system": {
       "version": "file:SaveSystem",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "1.0.0",
-        "com.koryme.unity-encryption-utils": "1.0.0"
+        "com.koryme.serialization-utils": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "1.0.0"
       }
+    },
+    "com.koryme.serialization-utils": {
+      "version": "file:SerializationUtils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.koryme.unity-scene-reference-utils": {
       "version": "file:SceneReferenceUtils",

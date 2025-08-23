@@ -1,4 +1,4 @@
-using EncryptionUtils;
+using SerializationUtils;
 using System;
 using System.IO;
 using Newtonsoft.Json;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SaveSystem
 {
-    [System.Serializable]
+    [Serializable]
     public class DataSaveFileHandler<T> where T : new()
     {
         #region CONSTS
@@ -57,7 +57,7 @@ namespace SaveSystem
         {
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(FullPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(FullPath) ?? throw new InvalidOperationException());
                 using FileStream stream = new FileStream(FullPath, FileMode.Create);
                 using StreamWriter writer = new StreamWriter(stream);
                 writer.Write(EncryptionUtilities.Encrypt(JsonConvert.SerializeObject(data, Formatting.Indented), _encryptionType, true, _encryptionString));

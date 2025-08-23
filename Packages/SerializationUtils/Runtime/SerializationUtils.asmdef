@@ -1,6 +1,6 @@
 {
-    "name": "EncryptionUtils",
-    "rootNamespace": "EncryptionUtils",
+    "name": "SerializationUtils",
+    "rootNamespace": "SerializationUtils",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
