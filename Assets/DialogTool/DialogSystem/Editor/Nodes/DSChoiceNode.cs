@@ -3,11 +3,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.Utilities;
-using KorYmeLibrary.Utilities.Editor;
-using KorYmeLibrary.DialogueSystem.Windows;
 using KorYmeLibrary.DialogueSystem.Interfaces;
 using System.Collections.Generic;
+using GraphTool.Utils;
+using GraphTool.Utils.Editor;
 
 namespace KorYmeLibrary.DialogueSystem
 {
@@ -30,7 +29,7 @@ namespace KorYmeLibrary.DialogueSystem
         {
             base.DrawMainContainer();
             Button addChoiceButton = UIElementUtility.CreateButton("Add Choice", () => CreateOutputPort());
-            addChoiceButton.AddClasses("ds-node__button");
+            addChoiceButton.AddClasses("node__button");
             mainContainer.Insert(2, addChoiceButton);
         }
 
@@ -51,13 +50,13 @@ namespace KorYmeLibrary.DialogueSystem
         protected override void DrawExtensionContainer()
         {
             VisualElement customDataContainer = new VisualElement();
-            customDataContainer.AddClasses("ds-node__custom-data-container");
+            customDataContainer.AddClasses("node__custom-data-container");
             Foldout textFoldout = UIElementUtility.CreateFoldout("Dialogue Text");
             TextField textTextField = UIElementUtility.CreateTextField(DerivedNodeData.DialogueText, null, 
                 callbackData => DerivedNodeData.DialogueText = callbackData.newValue);
             textTextField.AddClasses(
-                "ds-node__text-field",
-                "ds-node__quote-text-field"
+                "node__text-field",
+                "node__quote-text-field"
             );
             textTextField.multiline = true;
             textFoldout.Add(textTextField);
@@ -85,8 +84,8 @@ namespace KorYmeLibrary.DialogueSystem
             {
                 choicePortData.ChoiceText = callbackData.newValue;
             });
-            deleteChoiceButton.AddClasses("ds-node__button");
-            choiceTextField.AddClasses("ds-node__text-field", "ds-node__text-field__hidden", "ds-node__choice-text-field");
+            deleteChoiceButton.AddClasses("node__button");
+            choiceTextField.AddClasses("node__text-field", "node__text-field__hidden", "node__choice-text-field");
             outputPort.Add(deleteChoiceButton, choiceTextField);
             outputContainer.Add(outputPort);
             return outputPort;
@@ -114,7 +113,7 @@ namespace KorYmeLibrary.DialogueSystem
         {
             foreach (Port port in outputContainer.Children().OfType<Port>())
             {
-                Port otherPort = inputables.FirstOrDefault(inputable => inputable.ID == port.name)?.InputPort ?? null;
+                Port otherPort = inputables.FirstOrDefault(inputable => inputable.ID == port.name)?.InputPort;
                 if (otherPort is null) return;
                 _graphView.AddElement(port.ConnectTo(otherPort));
             }

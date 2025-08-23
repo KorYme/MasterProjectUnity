@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
+using GraphTool.Utils;
+using GraphTool.Utils.Editor;
+using KorYmeLibrary.DialogueSystem.Interfaces;
+using KorYmeLibrary.DialogueSystem.Windows;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
-using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.DialogueSystem.Windows;
-using KorYmeLibrary.DialogueSystem.Interfaces;
-using KorYmeLibrary.Utilities;
-using KorYmeLibrary.Utilities.Editor;
 
 namespace KorYmeLibrary.DialogueSystem
 {
@@ -19,8 +18,8 @@ namespace KorYmeLibrary.DialogueSystem
 
         public DSNode()
         {
-            mainContainer.AddClasses("ds-node__main-container");
-            extensionContainer.AddClasses("ds-node__extension-container");
+            mainContainer.AddClasses("node__main-container");
+            extensionContainer.AddClasses("node__extension-container");
         }
 
         public void InitializeElement(DSGraphView graphView, Vector2 position)
@@ -77,9 +76,9 @@ namespace KorYmeLibrary.DialogueSystem
                 callbackEvent => NodeData.ElementName = callbackEvent.newValue);
             titleContainer.Insert(0, dialogueNameTextField);
             dialogueNameTextField.AddClasses(
-                "ds-node__text-field",
-                "ds-node__text-field__hidden",
-                "ds-node__filename-text-field"
+                "node__text-field",
+                "node__text-field__hidden",
+                "node__filename-text-field"
             );
         }
 

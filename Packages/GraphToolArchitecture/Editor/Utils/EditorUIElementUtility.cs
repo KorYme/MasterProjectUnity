@@ -2,7 +2,7 @@ using System;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
-namespace KorYmeLibrary.Utilities.Editor
+namespace GraphTool.Utils.Editor
 {
     public static class EditorUIElementUtility
     {

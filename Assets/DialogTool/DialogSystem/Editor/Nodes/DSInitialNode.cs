@@ -1,12 +1,11 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using GraphTool.Utils.Editor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.Utilities.Editor;
 using KorYmeLibrary.DialogueSystem.Interfaces;
-using KorYmeLibrary.Utilities;
 
 namespace KorYmeLibrary.DialogueSystem
 {
@@ -32,7 +31,7 @@ namespace KorYmeLibrary.DialogueSystem
         protected Port CreateOutputPort(DSOutputPortData choicePortData)
         {
             Port outputPort = this.CreatePort(choicePortData.InputPortConnected?.ID ?? null);
-            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as DSNode)?.NodeData ?? null;
+            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as DSNode)?.NodeData;
             Label choiceTextField = new Label("First Dialogue");
             outputPort.Add(choiceTextField);
             outputContainer.Add(outputPort);
@@ -41,7 +40,7 @@ namespace KorYmeLibrary.DialogueSystem
 
         public void InitializeEdgeConnections(IEnumerable<IGraphInputable> inputables)
         {
-            Port otherPort = inputables.FirstOrDefault(inputable => inputable.ID == OutputPort.name)?.InputPort ?? null;
+            Port otherPort = inputables.FirstOrDefault(inputable => inputable.ID == OutputPort.name)?.InputPort;
             if (otherPort is null) return;
             _graphView.AddElement(OutputPort.ConnectTo(otherPort));
         }

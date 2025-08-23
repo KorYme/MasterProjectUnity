@@ -1,6 +1,6 @@
 using UnityEditor.Experimental.GraphView;
 
-namespace KorYmeLibrary.Utilities.Editor
+namespace GraphTool.Utils.Editor
 {
     public static class EditorGraphElementUtility
     {

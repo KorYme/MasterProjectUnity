@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.UIElements;
 
-namespace KorYmeLibrary.Utilities
+namespace GraphTool.Utils
 {
     public static class UIElementUtility
     {
