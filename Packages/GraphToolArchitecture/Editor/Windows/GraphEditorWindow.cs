@@ -10,19 +10,19 @@ using Object = UnityEngine.Object;
 
 namespace GraphTool.Editor
 {
-    public class GraphEditorWindow : UnityEditor.EditorWindow
+    public class GraphEditorWindow : EditorWindow
     {
         #region PROPERTIES_AND_FIELDS
-        DialogueGraphWindowData _dialogueGraphWindowData;
-        public DialogueGraphWindowData WindowData
+        GraphWindowSettings _graphWindowSettings;
+        public GraphWindowSettings GraphWindowSettings
         {
             get
             {
-                if (_dialogueGraphWindowData == null)
+                if (!_graphWindowSettings)
                 {
-                    _dialogueGraphWindowData = GraphSaveHandler.GetOrGenerateNewWindowData();
+                    _graphWindowSettings = GraphSaveHandler.GetOrGenerateNewWindowData();
                 }
-                return _dialogueGraphWindowData;
+                return _graphWindowSettings;
             }
         }
         GraphView _graphView;
@@ -34,7 +34,7 @@ namespace GraphTool.Editor
             {
                 if (value != _graphData)
                 {
-                    if (GraphData != null && WindowData.IsSaveOnLoad)
+                    if (GraphData != null && GraphWindowSettings.IsSaveOnLoad)
                     {
                         SaveData();
                     }
@@ -68,8 +68,8 @@ namespace GraphTool.Editor
         private void OnEnable()
         {
             GraphSaveHandler = new GraphSaveHandler();
-            _graphData = WindowData.LastGraphData;
-            _onGraphDataChange += value => { if (value) WindowData.LastGraphData = GraphData; };
+            _graphData = GraphWindowSettings.LastGraphData;
+            _onGraphDataChange += value => { if (value) GraphWindowSettings.LastGraphData = GraphData; };
             rootVisualElement.LoadAndAddStyleSheets("Variables");
             AddGraphView();
             AddToolbar();
@@ -96,15 +96,15 @@ namespace GraphTool.Editor
 
             ObjectField graphFileField = EditorUIElementUtility.CreateObjectField("Graph File :", typeof(GraphData), GraphData == null ? null : GraphData, ChangeGraphDataFile);
             Button saveButton = UIElementUtility.CreateButton("Save", SaveData);
-            Toggle autoSavetoggle = UIElementUtility.CreateToggle(WindowData.IsSaveOnLoad ,"Save on Load :", ChangeSaveOnLoad);
+            Toggle autoSavetoggle = UIElementUtility.CreateToggle(GraphWindowSettings.IsSaveOnLoad ,"Save on Load :", ChangeSaveOnLoad);
             Button clearButton = UIElementUtility.CreateButton("Clear", ClearGraph);
-            TextField fileNameTextfield = UIElementUtility.CreateTextField(WindowData.FileName, "New File Name :", ChangeFileName);
+            TextField fileNameTextfield = UIElementUtility.CreateTextField(GraphWindowSettings.FileName, "New File Name :", ChangeFileName);
             Button newGraphButton = UIElementUtility.CreateButton("New Graph", GenerateNewGraph);
             Button miniMapButton = UIElementUtility.CreateButton("Mini Map", ToggleMiniMap);
 
             saveButton.SetEnabled(GraphData != null);
             _onGraphDataChange += saveButton.SetEnabled;
-            if (WindowData.IsMinimapVisible)
+            if (GraphWindowSettings.IsMinimapVisible)
             {
                 _graphView.ToggleMinimapVisibility();
                 miniMapButton.AddClasses("toolbar__button__selected");
@@ -129,7 +129,7 @@ namespace GraphTool.Editor
             {
                 _graphView?.SaveGraph(GraphData);
                 EditorUtility.SetDirty(GraphData);
-                EditorUtility.SetDirty(WindowData);
+                EditorUtility.SetDirty(GraphWindowSettings);
                 AssetDatabase.SaveAssets();
                 Debug.Log($"The graph data {GraphData.name} has been saved.");
             }
@@ -147,22 +147,22 @@ namespace GraphTool.Editor
 
         private void ClearGraph() => _graphView?.ClearGraph();
         
-        private void ChangeSaveOnLoad(ChangeEvent<bool> callbackData) => WindowData.IsSaveOnLoad = callbackData.newValue;
-        private void ChangeFileName(ChangeEvent<string> callbackData) => WindowData.FileName = callbackData.newValue;
+        private void ChangeSaveOnLoad(ChangeEvent<bool> callbackData) => GraphWindowSettings.IsSaveOnLoad = callbackData.newValue;
+        private void ChangeFileName(ChangeEvent<string> callbackData) => GraphWindowSettings.FileName = callbackData.newValue;
 
         private void GenerateNewGraph()
         {
-            if (!WindowData.FileName.IsSerializableFriendly())
+            if (!GraphWindowSettings.FileName.IsSerializableFriendly())
             {
-                Debug.LogWarning($"The file name \"{WindowData.FileName}\" could not be serialized, all non serializable characters have been removed.");
-                WindowData.FileName = WindowData.FileName.RemoveNonSerializableCharacters();
-                _onFileNameChange?.Invoke(WindowData.FileName);
+                Debug.LogWarning($"The file name \"{GraphWindowSettings.FileName}\" could not be serialized, all non serializable characters have been removed.");
+                GraphWindowSettings.FileName = GraphWindowSettings.FileName.RemoveNonSerializableCharacters();
+                _onFileNameChange?.Invoke(GraphWindowSettings.FileName);
                 return;
             }
-            GraphData newGraphData = GraphSaveHandler.GenerateGraphDataFile(WindowData.FileName);
+            GraphData newGraphData = GraphSaveHandler.GenerateGraphDataFile(GraphWindowSettings.FileName);
             InitialNodeData initialNodeData = CreateInstance<InitialNodeData>();
             initialNodeData.ID = Guid.NewGuid().ToString();
-            GraphSaveHandler.SaveDataInProject(initialNodeData, WindowData.FileName);
+            GraphSaveHandler.SaveDataInProject(initialNodeData, GraphWindowSettings.FileName);
             newGraphData.InitialNode = initialNodeData;
             if (newGraphData != null)
             {
@@ -181,8 +181,8 @@ namespace GraphTool.Editor
 
         private void ToggleMiniMap()
         {
-            WindowData.IsMinimapVisible = _graphView.ToggleMinimapVisibility();
-            _onMiniMapVisibilityChanged?.Invoke(WindowData.IsMinimapVisible);
+            GraphWindowSettings.IsMinimapVisible = _graphView.ToggleMinimapVisibility();
+            _onMiniMapVisibilityChanged?.Invoke(GraphWindowSettings.IsMinimapVisible);
         }
         #endregion
     }

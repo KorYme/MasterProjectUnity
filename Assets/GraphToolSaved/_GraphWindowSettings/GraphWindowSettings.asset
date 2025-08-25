@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 844ef38d8e027c94aa605beda11e3703, type: 3}
-  m_Name: DialogueGraphWindowData
+  m_Name: GraphWindowSettings
   m_EditorClassIdentifier: 
   <IsSaveOnLoad>k__BackingField: 0
   <IsMinimapVisible>k__BackingField: 0
-  <FileName>k__BackingField: dazdad
-  <LastGraphData>k__BackingField: {fileID: 11400000, guid: 026fd1cfff5fbef45b1a2589182b2166, type: 2}
+  <FileName>k__BackingField: 
+  <LastGraphData>k__BackingField: {fileID: 0}

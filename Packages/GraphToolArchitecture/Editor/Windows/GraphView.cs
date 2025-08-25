@@ -97,10 +97,8 @@ namespace GraphTool.Editor
             switch (evt.target)
             {
                 case GraphNode node:
-                    if (node is IGraphInputable) evt.menu.AppendAction("Disconnect All Inputs Ports", action => (node as IGraphInputable).DisconnectAllInputPorts());
-                    if (node is IGraphOutputable) evt.menu.AppendAction("Disconnect All Outputs Ports", action => (node as IGraphOutputable).DisconnectAllOutputPorts());
-                    break;
-                default:
+                    if (node is IGraphInputable) evt.menu.AppendAction("Disconnect All Inputs Ports", _ => (node as IGraphInputable).DisconnectAllInputPorts());
+                    if (node is IGraphOutputable) evt.menu.AppendAction("Disconnect All Outputs Ports", _ => (node as IGraphOutputable).DisconnectAllOutputPorts());
                     break;
             }
             base.BuildContextualMenu(evt);

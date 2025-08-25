@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using SerializationUtils;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,8 +9,9 @@ namespace GraphTool.Editor
     public class GraphSaveHandler
     {
         #region CONSTANTS
-        readonly static string GRAPH_MAIN_FOLDER_PATH = Path.Combine("Assets", "DialogueGraphSaved");
-        readonly static string GRAPH_WINDOW_DATA_FOLDER_PATH = Path.Combine(GRAPH_MAIN_FOLDER_PATH, "_DialogueGraphWindowDataFolder");
+        readonly static string GRAPH_MAIN_FOLDER_PATH = Path.Combine("Assets", "GraphToolSaved");
+        readonly static string GRAPH_WINDOW_SETTINGS_FOLDER_PATH = Path.Combine(GRAPH_MAIN_FOLDER_PATH, $"_{nameof(GraphWindowSettings)}");
+        readonly static string GRAPH_WINDOW_SETTINGS_DATA_PATH = Path.Combine(GRAPH_WINDOW_SETTINGS_FOLDER_PATH, $"{nameof(GraphWindowSettings)}.asset");
         #endregion
 
         #region ASSET_CREATION_METHODS
@@ -19,32 +21,31 @@ namespace GraphTool.Editor
             {
                 Directory.CreateDirectory(Path.Combine(GRAPH_MAIN_FOLDER_PATH));
             }
-            if (!Directory.Exists(GRAPH_WINDOW_DATA_FOLDER_PATH))
+            if (!Directory.Exists(GRAPH_WINDOW_SETTINGS_FOLDER_PATH))
             {
-                Directory.CreateDirectory(Path.Combine(GRAPH_WINDOW_DATA_FOLDER_PATH));
+                Directory.CreateDirectory(Path.Combine(GRAPH_WINDOW_SETTINGS_FOLDER_PATH));
                 AssetDatabase.Refresh();
             }
         }
 
-        public DialogueGraphWindowData GetOrGenerateNewWindowData()
+        public GraphWindowSettings GetOrGenerateNewWindowData()
         {
             GenerateDSRootFolder();
-            string path = Path.Combine(GRAPH_WINDOW_DATA_FOLDER_PATH, "DialogueGraphWindowData") + ".asset";
-            if (!File.Exists(path))
+            if (!File.Exists(GRAPH_WINDOW_SETTINGS_DATA_PATH))
             {
-                DialogueGraphWindowData windowGraphData = ScriptableObject.CreateInstance<DialogueGraphWindowData>();
-                AssetDatabase.CreateAsset(windowGraphData, path);
-                return windowGraphData;
+                GraphWindowSettings graphWindowSettings = ScriptableObject.CreateInstance<GraphWindowSettings>();
+                AssetDatabase.CreateAsset(graphWindowSettings, GRAPH_WINDOW_SETTINGS_DATA_PATH);
+                return graphWindowSettings;
             }
             else
             {
-                return AssetDatabase.LoadAssetAtPath<DialogueGraphWindowData>(path);
+                return AssetDatabase.LoadAssetAtPath<GraphWindowSettings>(GRAPH_WINDOW_SETTINGS_DATA_PATH);
             }
         }
 
         public GraphData GenerateGraphDataFile(string fileName)
         {
-            if (fileName == "")
+            if (fileName.IsSerializableFriendly())
             {
                 Debug.LogWarning("Please choose a valid name before generating a new graph file");
                 return null;
