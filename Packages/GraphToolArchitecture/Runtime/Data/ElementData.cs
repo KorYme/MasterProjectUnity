@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace KorYmeLibrary.DialogueSystem
+namespace GraphTool
 {
-    public class DSElementData : ScriptableObject
+    public abstract class ElementData : ScriptableObject
     {
         [field: SerializeField] public string ElementName { get; set; } = "New Element";
         [field: SerializeField] public string ID {  get; set; }

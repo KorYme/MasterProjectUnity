@@ -1,38 +1,37 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using GraphTool.Editor.Interfaces;
 using GraphTool.Utils.Editor;
-using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.DialogueSystem.Interfaces;
-using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UIElements;
 
-namespace KorYmeLibrary.DialogueSystem.Windows
+namespace GraphTool.Editor
 {
-    public class DSGraphView : GraphView
+    public class GraphView : UnityEditor.Experimental.GraphView.GraphView
     {
         #region PROPERTIES_AND_FIELDS
-        DSSearchWindow _searchWindow;
+        SearchWindow _searchWindow;
         MiniMap _miniMap;
-        DSEditorWindow _dsEditorWindow;
+        GraphEditorWindow _graphEditorWindow;
 
-        IEnumerable<DSNode> _AllDSNodes => nodes.OfType<DSNode>();
-        DSInitialNode _initialNode;
+        IEnumerable<GraphNode> _AllDSNodes => nodes.OfType<GraphNode>();
+        InitialNode _initialNode;
         #endregion
 
         #region CONSTRUCTOR
-        public DSGraphView(DSEditorWindow dsEditorWindow)
+        public GraphView(GraphEditorWindow graphEditorWindow)
         {
-            _dsEditorWindow = dsEditorWindow;
+            _graphEditorWindow = graphEditorWindow;
             AddManipulators();
             AddSearchWindow();
             AddMinimap();
             AddStyles();
             AddMiniMapStyles();
             AddGridBackground();
-            _initialNode = CreateAndAddNode<DSInitialNode>(Vector2.zero);
+            _initialNode = CreateAndAddNode<InitialNode>(Vector2.zero);
         }
         #endregion
 
@@ -65,9 +64,9 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         protected void AddSearchWindow()
         {
             if (_searchWindow != null) return;
-            _searchWindow = ScriptableObject.CreateInstance<DSSearchWindow>();
+            _searchWindow = ScriptableObject.CreateInstance<SearchWindow>();
             _searchWindow.Initialize(this);
-            nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
+            nodeCreationRequest = context => UnityEditor.Experimental.GraphView.SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
         }
 
         public void AddGridBackground()
@@ -83,7 +82,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         public void ClearGraph()
         {
             DeleteElements(graphElements);
-            _initialNode = CreateAndAddNode<DSInitialNode>(Vector2.zero);
+            _initialNode = CreateAndAddNode<InitialNode>(Vector2.zero);
         }
         #endregion
 
@@ -97,7 +96,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         {
             switch (evt.target)
             {
-                case DSNode node:
+                case GraphNode node:
                     if (node is IGraphInputable) evt.menu.AppendAction("Disconnect All Inputs Ports", action => (node as IGraphInputable).DisconnectAllInputPorts());
                     if (node is IGraphOutputable) evt.menu.AppendAction("Disconnect All Outputs Ports", action => (node as IGraphOutputable).DisconnectAllOutputPorts());
                     break;
@@ -109,7 +108,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         #endregion
 
         #region NODES_AND_GROUPS_CREATION_METHODS
-        public T CreateAndAddNode<T>(Vector2 position) where T : DSNode, new()
+        public T CreateAndAddNode<T>(Vector2 position) where T : GraphNode, new()
         {
             T node = new T();
             node.InitializeElement(this, position);
@@ -118,7 +117,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             return node;
         }
 
-        public T CreateAndAddNode<T,Y>(Y data) where T: DSNode, new() where Y : DSNodeData, new()
+        public T CreateAndAddNode<T,Y>(Y data) where T: GraphNode, new() where Y : NodeData, new()
         {
             T node = new T();
             node.InitializeElement(this, data);
@@ -127,16 +126,16 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             return node;
         }
 
-        public T CreateAndAddGroup<T>(Vector2 position, IEnumerable<GraphElement> allChildren = null) where T : DSGroup, new()
+        public T CreateAndAddGroup<T>(Vector2 position, IEnumerable<GraphElement> allChildren = null) where T : GraphGroup, new()
         {
             T group = new T();
             group.InitializeElement(position);
-            group.AddElements((allChildren is null ? selection.OfType<DSNode>() : allChildren));
+            group.AddElements((allChildren is null ? selection.OfType<GraphNode>() : allChildren));
             AddElement(group);
             return group;
         }
 
-        public T CreateAndAddGroup<T>(DSGroupData data, IEnumerable<GraphElement> allChildren = null) where T : DSGroup, new()
+        public T CreateAndAddGroup<T>(GraphGroupData data, IEnumerable<GraphElement> allChildren = null) where T : GraphGroup, new()
         {
             T group = new T();
             group.InitializeElement(data);
@@ -147,7 +146,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         #endregion
 
         #region SAVE_AND_LOAD_METHODS
-        public void LoadGraph(DSGraphData graphData)
+        public void LoadGraph(GraphData graphData)
         {
             if (graphData == null) return;
             // Generate all nodes
@@ -157,22 +156,22 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             {
                 _initialNode.InitializeElement(this, graphData.InitialNode);
             }
-            foreach (DSNodeData nodeData in graphData.AllNodes)
+            foreach (NodeData nodeData in graphData.AllNodes)
             {
                 switch (nodeData)
                 {
-                    case DSChoiceNodeData choiceNodeData:
-                        CreateAndAddNode<DSChoiceNode, DSChoiceNodeData>(choiceNodeData);
+                    case ChoiceNodeData choiceNodeData:
+                        CreateAndAddNode<ChoiceNode, ChoiceNodeData>(choiceNodeData);
                         break;
                     default:
-                        CreateAndAddNode<DSNode, DSNodeData>(nodeData);
+                        CreateAndAddNode<GraphNode, NodeData>(nodeData);
                         break;
                 }
             }
             // Generate all groups
-            foreach (DSGroupData group in graphData.AllGroups)
+            foreach (GraphGroupData group in graphData.AllGroups)
             {
-                CreateAndAddGroup<DSGroup>(group, _AllDSNodes.Where(dsNode => group.ChildrenNodes.Contains(dsNode.NodeData)));
+                CreateAndAddGroup<GraphGroup>(group, _AllDSNodes.Where(dsNode => group.ChildrenNodes.Contains(dsNode.NodeData)));
             }
             // Link all nodes
             foreach (IGraphOutputable outputable in nodes.OfType<IGraphOutputable>())
@@ -181,11 +180,11 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             }
         }
 
-        public void SaveGraph(DSGraphData graphData)
+        public void SaveGraph(GraphData graphData)
         {
             if (graphData == null) return;
             // Place all nodes in the ready-to-remove-list
-            List<DSElementData> allRemovedData = new List<DSElementData>();
+            List<ElementData> allRemovedData = new List<ElementData>();
             allRemovedData.AddRange(graphData.AllNodes);
             allRemovedData.AddRange(graphData.AllGroups);
             graphData.AllNodes.Clear();
@@ -197,7 +196,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             {
                 switch (element)
                 {
-                    case DSInitialNode initialNode:
+                    case InitialNode initialNode:
                         if (graphData.InitialNode == null)
                         {
                             SaveDataInProject(initialNode.NodeData, graphData);
@@ -205,29 +204,27 @@ namespace KorYmeLibrary.DialogueSystem.Windows
                         graphData.InitialNode = _initialNode.DerivedData;
                         EditorUtility.SetDirty(initialNode.NodeData);
                         break;
-                    case DSNode node:
+                    case GraphNode node:
                         AddToNodes(node.NodeData, graphData, allRemovedData);
                         break;
-                    case DSGroup group:
-                        AddToGroups(group.GroupData, graphData, allRemovedData);
-                        break;
-                    default: 
+                    case GraphGroup group:
+                        AddToGroups(group.GraphGroupData, graphData, allRemovedData);
                         break;
                 }
                 element.Save();
             }
             // Delete all the nodes which doesn't exist anymore on the graph
-            foreach (DSElementData elementData in allRemovedData)
+            foreach (ElementData elementData in allRemovedData)
             {
                 if (elementData == null) continue;
                 AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(elementData));
             }
         }
 
-        protected void SaveDataInProject<T>(T elementData, DSGraphData graphData) where T : DSElementData
-            => _dsEditorWindow.GraphSaveHandler.SaveDataInProject(elementData, graphData.name);
+        protected void SaveDataInProject<T>(T elementData, GraphData graphData) where T : ElementData
+            => _graphEditorWindow.GraphSaveHandler.SaveDataInProject(elementData, graphData.name);
 
-        protected void AddToNodes<T>(T nodeData, DSGraphData graphData, List<DSElementData> allRemovedData) where T : DSNodeData
+        protected void AddToNodes<T>(T nodeData, GraphData graphData, List<ElementData> allRemovedData) where T : NodeData
         {
             if (!allRemovedData.Remove(nodeData))
             {
@@ -237,7 +234,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             EditorUtility.SetDirty(nodeData);
         }
 
-        protected void AddToGroups<T>(T groupData, DSGraphData graphData, List<DSElementData> allRemovedData) where T : DSGroupData
+        protected void AddToGroups<T>(T groupData, GraphData graphData, List<ElementData> allRemovedData) where T : GraphGroupData
         {
             if (!allRemovedData.Remove(groupData))
             {
@@ -275,8 +272,8 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             Vector2 worldMousePosition = mousePosition;
             if (isSearchWindow)
             {
-                worldMousePosition = _dsEditorWindow.rootVisualElement.ChangeCoordinatesTo(
-                    _dsEditorWindow.rootVisualElement.parent, mousePosition - _dsEditorWindow.position.position) + Vector2.down * 20;
+                worldMousePosition = _graphEditorWindow.rootVisualElement.ChangeCoordinatesTo(
+                    _graphEditorWindow.rootVisualElement.parent, mousePosition - _graphEditorWindow.position.position) + Vector2.down * 20;
             }
             return contentViewContainer.WorldToLocal(worldMousePosition);
         }

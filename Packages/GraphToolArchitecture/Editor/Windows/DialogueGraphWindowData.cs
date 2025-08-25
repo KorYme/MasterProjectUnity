@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace KorYmeLibrary.DialogueSystem.Windows
+namespace GraphTool.Editor
 {
-    public class DSDialogueGraphWindowData : ScriptableObject
+    public class DialogueGraphWindowData : ScriptableObject
     {
         [field: SerializeField] public bool IsSaveOnLoad { get; set; } = false;
         [field: SerializeField] public bool IsMinimapVisible { get; set; } = false;
         [field: SerializeField] public string FileName { get; set; } = "";
-        [field: SerializeField] public DSGraphData LastGraphData { get; set; } = null;
+        [field: SerializeField] public GraphData LastGraphData { get; set; } = null;
     }
 }

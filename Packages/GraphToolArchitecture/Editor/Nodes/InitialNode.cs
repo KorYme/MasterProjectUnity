@@ -1,26 +1,24 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using GraphTool.Editor.Interfaces;
 using GraphTool.Utils.Editor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.DialogueSystem.Interfaces;
 
-namespace KorYmeLibrary.DialogueSystem
+namespace GraphTool.Editor
 {
-    public class DSInitialNode : DSNode, IGraphOutputable
+    public class InitialNode : GraphNode, IGraphOutputable
     {
-        Action _savePortsAction = null;
-        public DSInitialNodeData DerivedData => NodeData as DSInitialNodeData;
+        Action _savePortsAction;
+        public InitialNodeData DerivedData => NodeData as InitialNodeData;
 
         Port OutputPort { get; set; }
 
-        public DSInitialNode() : base() { }
-
         protected override void GenerateNodeData()
         {
-            NodeData = ScriptableObject.CreateInstance<DSInitialNodeData>();
+            NodeData = ScriptableObject.CreateInstance<InitialNodeData>();
         }
 
         protected override void DrawOutputContainer()
@@ -28,10 +26,10 @@ namespace KorYmeLibrary.DialogueSystem
             OutputPort = CreateOutputPort(DerivedData.OutputNode);
         }
 
-        protected Port CreateOutputPort(DSOutputPortData choicePortData)
+        protected Port CreateOutputPort(OutputPortData choicePortData)
         {
             Port outputPort = this.CreatePort(choicePortData.InputPortConnected?.ID ?? null);
-            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as DSNode)?.NodeData;
+            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as GraphNode)?.NodeData;
             Label choiceTextField = new Label("First Dialogue");
             outputPort.Add(choiceTextField);
             outputContainer.Add(outputPort);

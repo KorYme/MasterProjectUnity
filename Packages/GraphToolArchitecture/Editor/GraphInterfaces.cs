@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
-namespace KorYmeLibrary.DialogueSystem.Interfaces
+namespace GraphTool.Editor.Interfaces
 {
     public interface IGraphSavable
     {

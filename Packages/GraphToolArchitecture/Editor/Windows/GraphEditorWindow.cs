@@ -1,33 +1,33 @@
 using System;
 using GraphTool.Utils;
 using GraphTool.Utils.Editor;
-using UnityEngine;
-using UnityEngine.UIElements;
+using SerializationUtils;
 using UnityEditor;
 using UnityEditor.UIElements;
-using KorYmeLibrary.DialogueSystem.Utilities;
-using SerializationUtils;
+using UnityEngine;
+using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
-namespace KorYmeLibrary.DialogueSystem.Windows
+namespace GraphTool.Editor
 {
-    public class DSEditorWindow : EditorWindow
+    public class GraphEditorWindow : UnityEditor.EditorWindow
     {
         #region PROPERTIES_AND_FIELDS
-        DSDialogueGraphWindowData _dsDialogueGraphWindowData;
-        public DSDialogueGraphWindowData WindowData
+        DialogueGraphWindowData _dialogueGraphWindowData;
+        public DialogueGraphWindowData WindowData
         {
             get
             {
-                if (_dsDialogueGraphWindowData == null)
+                if (_dialogueGraphWindowData == null)
                 {
-                    _dsDialogueGraphWindowData = GraphSaveHandler.GetOrGenerateNewWindowData();
+                    _dialogueGraphWindowData = GraphSaveHandler.GetOrGenerateNewWindowData();
                 }
-                return _dsDialogueGraphWindowData;
+                return _dialogueGraphWindowData;
             }
         }
-        DSGraphView _graphView;
-        DSGraphData _graphData;
-        public DSGraphData GraphData
+        GraphView _graphView;
+        GraphData _graphData;
+        public GraphData GraphData
         {
             get => _graphData;
             set
@@ -44,7 +44,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
                 }
             }
         }
-        public DSGraphSaveHandler GraphSaveHandler { get; private set; }
+        public GraphSaveHandler GraphSaveHandler { get; private set; }
 
         event Action<bool> _onGraphDataChange;
         event Action<string> _onFileNameChange;
@@ -62,12 +62,12 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         [MenuItem("Window/Dialog System/Dialogue Graph")]
         public static void OpenGraphWindow()
         {
-            GetWindow<DSEditorWindow>("Dialogue Graph");
+            GetWindow<GraphEditorWindow>("Dialogue Graph");
         }
 
         private void OnEnable()
         {
-            GraphSaveHandler = new DSGraphSaveHandler();
+            GraphSaveHandler = new GraphSaveHandler();
             _graphData = WindowData.LastGraphData;
             _onGraphDataChange += value => { if (value) WindowData.LastGraphData = GraphData; };
             rootVisualElement.LoadAndAddStyleSheets("Variables");
@@ -85,7 +85,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         #region MAIN_VISUAL_ELEMENT_CREATION
         private void AddGraphView()
         {
-            _graphView = new DSGraphView(this);
+            _graphView = new GraphView(this);
             _graphView.StretchToParentSize();
             rootVisualElement.Add(_graphView);
         }
@@ -94,7 +94,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         {
             Toolbar toolbar = new Toolbar();
 
-            ObjectField graphFileField = EditorUIElementUtility.CreateObjectField("Graph File :", typeof(DSGraphData), GraphData == null ? null : GraphData, ChangeGraphDataFile);
+            ObjectField graphFileField = EditorUIElementUtility.CreateObjectField("Graph File :", typeof(GraphData), GraphData == null ? null : GraphData, ChangeGraphDataFile);
             Button saveButton = UIElementUtility.CreateButton("Save", SaveData);
             Toggle autoSavetoggle = UIElementUtility.CreateToggle(WindowData.IsSaveOnLoad ,"Save on Load :", ChangeSaveOnLoad);
             Button clearButton = UIElementUtility.CreateButton("Clear", ClearGraph);
@@ -121,7 +121,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
         #endregion
 
         #region TOOLBAR_METHODS
-        private void ChangeGraphDataFile(ChangeEvent<UnityEngine.Object> callbackData) => GraphData = callbackData.newValue as DSGraphData;
+        private void ChangeGraphDataFile(ChangeEvent<Object> callbackData) => GraphData = callbackData.newValue as GraphData;
 
         private void SaveData()
         {
@@ -159,8 +159,8 @@ namespace KorYmeLibrary.DialogueSystem.Windows
                 _onFileNameChange?.Invoke(WindowData.FileName);
                 return;
             }
-            DSGraphData newGraphData = GraphSaveHandler.GenerateGraphDataFile(WindowData.FileName);
-            DSInitialNodeData initialNodeData = CreateInstance<DSInitialNodeData>();
+            GraphData newGraphData = GraphSaveHandler.GenerateGraphDataFile(WindowData.FileName);
+            InitialNodeData initialNodeData = CreateInstance<InitialNodeData>();
             initialNodeData.ID = Guid.NewGuid().ToString();
             GraphSaveHandler.SaveDataInProject(initialNodeData, WindowData.FileName);
             newGraphData.InitialNode = initialNodeData;

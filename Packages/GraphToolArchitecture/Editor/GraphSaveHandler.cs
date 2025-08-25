@@ -1,22 +1,15 @@
 using System;
 using System.IO;
-using UnityEngine;
 using UnityEditor;
-using KorYmeLibrary.DialogueSystem.Windows;
+using UnityEngine;
 
-namespace KorYmeLibrary.DialogueSystem.Utilities
+namespace GraphTool.Editor
 {
-    public class DSGraphSaveHandler
+    public class GraphSaveHandler
     {
         #region CONSTANTS
         readonly static string GRAPH_MAIN_FOLDER_PATH = Path.Combine("Assets", "DialogueGraphSaved");
         readonly static string GRAPH_WINDOW_DATA_FOLDER_PATH = Path.Combine(GRAPH_MAIN_FOLDER_PATH, "_DialogueGraphWindowDataFolder");
-        #endregion
-
-        #region CONSTRUCTOR
-        public DSGraphSaveHandler()
-        {
-        }
         #endregion
 
         #region ASSET_CREATION_METHODS
@@ -33,23 +26,23 @@ namespace KorYmeLibrary.DialogueSystem.Utilities
             }
         }
 
-        public DSDialogueGraphWindowData GetOrGenerateNewWindowData()
+        public DialogueGraphWindowData GetOrGenerateNewWindowData()
         {
             GenerateDSRootFolder();
             string path = Path.Combine(GRAPH_WINDOW_DATA_FOLDER_PATH, "DialogueGraphWindowData") + ".asset";
             if (!File.Exists(path))
             {
-                DSDialogueGraphWindowData windowGraphData = ScriptableObject.CreateInstance<DSDialogueGraphWindowData>();
+                DialogueGraphWindowData windowGraphData = ScriptableObject.CreateInstance<DialogueGraphWindowData>();
                 AssetDatabase.CreateAsset(windowGraphData, path);
                 return windowGraphData;
             }
             else
             {
-                return AssetDatabase.LoadAssetAtPath<DSDialogueGraphWindowData>(path);
+                return AssetDatabase.LoadAssetAtPath<DialogueGraphWindowData>(path);
             }
         }
 
-        public DSGraphData GenerateGraphDataFile(string fileName)
+        public GraphData GenerateGraphDataFile(string fileName)
         {
             if (fileName == "")
             {
@@ -59,7 +52,7 @@ namespace KorYmeLibrary.DialogueSystem.Utilities
             GenerateDSRootFolder();
             if (!File.Exists(Path.Combine(GRAPH_MAIN_FOLDER_PATH, fileName) + ".asset"))
             {
-                DSGraphData graphData = ScriptableObject.CreateInstance<DSGraphData>();
+                GraphData graphData = ScriptableObject.CreateInstance<GraphData>();
                 AssetDatabase.CreateAsset(graphData, Path.Combine(GRAPH_MAIN_FOLDER_PATH, fileName) + ".asset");
                 AssetDatabase.SaveAssets();
                 if (!Directory.Exists(Path.Combine(GRAPH_MAIN_FOLDER_PATH, fileName)))
@@ -75,11 +68,11 @@ namespace KorYmeLibrary.DialogueSystem.Utilities
         #endregion
 
         #region SAVE_AND_LOAD_UTILITIES
-        public bool SaveDataInProject<T>(T elementData, string graphName) where T : DSElementData
+        public bool SaveDataInProject<T>(T elementData, string graphName) where T : ElementData
         {
             Type tmpType = elementData.GetType();
             string path = "";
-            while (tmpType != typeof(DSElementData))
+            while (tmpType != typeof(ElementData))
             {
                 path = Path.Combine(tmpType.Name, path);
                 tmpType = tmpType.BaseType;
@@ -100,11 +93,11 @@ namespace KorYmeLibrary.DialogueSystem.Utilities
             return false;
         }
 
-        public void RemoveDataFromProject<T>(T elementData) where T : DSElementData
+        public void RemoveDataFromProject<T>(T elementData) where T : ElementData
         {
             Type tmpType = typeof(T);
             string path = "";
-            while (tmpType != typeof(DSElementData))
+            while (tmpType != typeof(ElementData))
             {
                 path = Path.Combine(tmpType.Name, path);
                 tmpType = tmpType.BaseType;

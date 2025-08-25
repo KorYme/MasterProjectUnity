@@ -1,28 +1,27 @@
 using System;
+using GraphTool.Editor.Interfaces;
 using GraphTool.Utils;
 using GraphTool.Utils.Editor;
-using KorYmeLibrary.DialogueSystem.Interfaces;
-using KorYmeLibrary.DialogueSystem.Windows;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace KorYmeLibrary.DialogueSystem
+namespace GraphTool.Editor
 {
-    public class DSNode : Node, IGraphSavable
+    public class GraphNode : Node, IGraphSavable
     {
-        public DSNodeData NodeData { get; protected set; }
-        protected DSGraphView _graphView;
+        public NodeData NodeData { get; protected set; }
+        protected GraphView _graphView;
         private Action _onNodeDataChanged;
 
-        public DSNode()
+        public GraphNode()
         {
             mainContainer.AddClasses("node__main-container");
             extensionContainer.AddClasses("node__extension-container");
         }
 
-        public void InitializeElement(DSGraphView graphView, Vector2 position)
+        public void InitializeElement(GraphView graphView, Vector2 position)
         {
             GenerateNodeData();
             InitializeNodeDataFields();
@@ -30,7 +29,7 @@ namespace KorYmeLibrary.DialogueSystem
             SetPosition(new Rect(position, Vector2.zero));
         }
 
-        public void InitializeElement(DSGraphView graphView, DSNodeData data)
+        public void InitializeElement(GraphView graphView, NodeData data)
         {
             NodeData = data;
             _onNodeDataChanged?.Invoke();
@@ -40,7 +39,7 @@ namespace KorYmeLibrary.DialogueSystem
 
         protected virtual void GenerateNodeData()
         {
-            NodeData = ScriptableObject.CreateInstance<DSNodeData>();
+            NodeData = ScriptableObject.CreateInstance<NodeData>();
         }
 
         protected virtual void InitializeNodeDataFields()
@@ -85,7 +84,7 @@ namespace KorYmeLibrary.DialogueSystem
         protected virtual void DrawMainContainer()
         {
             Foldout scriptableReferenceFoldout = UIElementUtility.CreateFoldout("Scriptable Reference", true);
-            ObjectField dataScriptable = EditorUIElementUtility.CreateObjectField(null, typeof(DSNodeData), NodeData);
+            ObjectField dataScriptable = EditorUIElementUtility.CreateObjectField(null, typeof(NodeData), NodeData);
             _onNodeDataChanged += () => dataScriptable.SetValueWithoutNotify(NodeData);
             dataScriptable.SetEnabled(false);
             scriptableReferenceFoldout.Add(dataScriptable);

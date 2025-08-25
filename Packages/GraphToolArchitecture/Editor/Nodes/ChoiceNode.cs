@@ -3,26 +3,24 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.DialogueSystem.Interfaces;
 using System.Collections.Generic;
+using GraphTool.Editor.Interfaces;
 using GraphTool.Utils;
 using GraphTool.Utils.Editor;
 
-namespace KorYmeLibrary.DialogueSystem
+namespace GraphTool.Editor
 {
-    public class DSChoiceNode : DSNode, IGraphSavable, IGraphInputable, IGraphOutputable
+    public class ChoiceNode : GraphNode, IGraphInputable, IGraphOutputable
     {
-        public DSChoiceNodeData DerivedNodeData => NodeData as DSChoiceNodeData;
-        Action _savePortsAction = null;
+        public ChoiceNodeData DerivedNodeData => NodeData as ChoiceNodeData;
+        Action _savePortsAction;
 
         public string ID => NodeData.ID;
         public Port InputPort { get; protected set; }
 
-        public DSChoiceNode() : base() { }
-
         protected override void GenerateNodeData()
         {
-            NodeData = ScriptableObject.CreateInstance<DSChoiceNodeData>();
+            NodeData = ScriptableObject.CreateInstance<ChoiceNodeData>();
         }
 
         protected override void DrawMainContainer()
@@ -66,19 +64,19 @@ namespace KorYmeLibrary.DialogueSystem
 
         protected Port CreateOutputPort(string choiceText = "New Choice")
         {
-            DSOutputPortData portData = new DSOutputPortData(choiceText);
+            OutputPortData portData = new OutputPortData(choiceText);
             DerivedNodeData.OutputNodes.Add(portData);
             return CreateOutputPort(portData);
         }
 
-        protected Port CreateOutputPort(DSOutputPortData choicePortData)
+        protected Port CreateOutputPort(OutputPortData choicePortData)
         {
             Port outputPort = this.CreatePort(choicePortData.InputPortConnected?.ID ?? null);
-            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as DSNode)?.NodeData ?? null;
+            _savePortsAction += () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as GraphNode)?.NodeData;
             Button deleteChoiceButton = UIElementUtility.CreateButton("X",
                 () => RemoveChoicePort(outputPort),
                 () => DerivedNodeData.OutputNodes.Remove(choicePortData),
-                () => _savePortsAction -= () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as DSNode)?.NodeData ?? null
+                () => _savePortsAction -= () => choicePortData.InputPortConnected = (outputPort.connections?.FirstOrDefault()?.input.node as GraphNode)?.NodeData
             );
             TextField choiceTextField = UIElementUtility.CreateTextField(choicePortData.ChoiceText, null, callbackData =>
             {

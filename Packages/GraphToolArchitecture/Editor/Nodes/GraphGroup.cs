@@ -1,20 +1,18 @@
 using System;
 using System.Linq;
-using UnityEngine;
+using GraphTool.Editor.Interfaces;
 using UnityEditor.Experimental.GraphView;
-using KorYmeLibrary.DialogueSystem.Interfaces;
+using UnityEngine;
 
-namespace KorYmeLibrary.DialogueSystem
+namespace GraphTool.Editor
 {
-    public class DSGroup : Group, IGraphSavable
+    public class GraphGroup : Group, IGraphSavable
     {
-        public DSGroupData GroupData { get; protected set; }
+        public GraphGroupData GraphGroupData { get; protected set; }
 
-        public DSGroup() { }
-
-        public void InitializeElement(DSGroupData groupData)
+        public void InitializeElement(GraphGroupData graphGroupData)
         {
-            GroupData = groupData;
+            GraphGroupData = graphGroupData;
             InitializeFieldsWithGroupData();
         }
 
@@ -27,19 +25,19 @@ namespace KorYmeLibrary.DialogueSystem
 
         protected virtual void GenerateGroupData()
         {
-            GroupData = ScriptableObject.CreateInstance<DSGroupData>();
+            GraphGroupData = ScriptableObject.CreateInstance<GraphGroupData>();
         }
 
         protected virtual void InitializeGroupDataFields(Vector2 position)
         {
-            GroupData.ID = Guid.NewGuid().ToString();
-            GroupData.Position = position;
+            GraphGroupData.ID = Guid.NewGuid().ToString();
+            GraphGroupData.Position = position;
         }
 
         void InitializeFieldsWithGroupData()
         {
-            SetPosition(new Rect(GroupData.Position, Vector2.zero));
-            title = GroupData.ElementName;
+            SetPosition(new Rect(GraphGroupData.Position, Vector2.zero));
+            title = GraphGroupData.ElementName;
         }
 
         public void RemoveAllSubElements() => RemoveElements(containedElements);
@@ -47,13 +45,13 @@ namespace KorYmeLibrary.DialogueSystem
         protected override void OnGroupRenamed(string oldName, string newName)
         {
             base.OnGroupRenamed(oldName, newName);
-            GroupData.ElementName = newName;
+            GraphGroupData.ElementName = newName;
         }
 
         public void Save()
         {
-            GroupData.Position = GetPosition().position;
-            GroupData.ChildrenNodes = containedElements.OfType<DSNode>().Select(node => node.NodeData).ToList();
+            GraphGroupData.Position = GetPosition().position;
+            GraphGroupData.ChildrenNodes = containedElements.OfType<GraphNode>().Select(node => node.NodeData).ToList();
         }
     }
 }
