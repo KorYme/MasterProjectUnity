@@ -70,7 +70,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             GraphSaveHandler = new DSGraphSaveHandler();
             _graphData = WindowData.LastGraphData;
             _onGraphDataChange += value => { if (value) WindowData.LastGraphData = GraphData; };
-            rootVisualElement.LoadAndAddStyleSheets("DSVariables.uss");
+            rootVisualElement.LoadAndAddStyleSheets("Variables");
             AddGraphView();
             AddToolbar();
             LoadData();
@@ -115,7 +115,7 @@ namespace KorYmeLibrary.DialogueSystem.Windows
             _onFileNameChange += fileNameTextfield.SetValueWithoutNotify;
 
             toolbar.Add(graphFileField, saveButton, autoSavetoggle, clearButton, fileNameTextfield, newGraphButton, miniMapButton);
-            toolbar.LoadAndAddStyleSheets("DSToolbarStyles.uss");
+            toolbar.LoadAndAddStyleSheets("ToolbarStyles");
             rootVisualElement.Add(toolbar);
         }
         #endregion

@@ -250,8 +250,8 @@ namespace KorYmeLibrary.DialogueSystem.Windows
 
         #region STYLES_ADDITION_METHODS
         protected void AddStyles() => this.LoadAndAddStyleSheets(
-            "DSGraphViewStyles.uss",
-            "DSNodeStyles.uss"
+            "GraphViewStyles",
+            "NodeStyles"
         );
 
         protected void AddMiniMapStyles()
