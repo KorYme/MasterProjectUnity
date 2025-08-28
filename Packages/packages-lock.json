@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.haito-koryme.simple-graph": {
+      "version": "file:SimpleGraph",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.koryme.serialization-utils": "1.1.0"
+      }
+    },
     "com.koryme.graph-tool-architecture": {
       "version": "file:GraphToolArchitecture",
       "depth": 0,

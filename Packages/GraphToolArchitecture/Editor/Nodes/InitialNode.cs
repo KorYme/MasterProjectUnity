@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphTool.Editor.Interfaces;
-using GraphTool.Utils.Editor;
+using GraphTool.Editor.Utils;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;

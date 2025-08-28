@@ -6,7 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using System.Collections.Generic;
 using GraphTool.Editor.Interfaces;
 using GraphTool.Utils;
-using GraphTool.Utils.Editor;
+using GraphTool.Editor.Utils;
 
 namespace GraphTool.Editor
 {

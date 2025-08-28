@@ -2,9 +2,9 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace GraphTool.Utils.Editor
+namespace GraphTool.Editor.Utils
 {
-    public static class EditorUIStyleUtility
+    public static class UIStyleEditorUtility
     {
         private const string RESOURCES_PATH = "StyleSheets";
         

@@ -1,10 +1,8 @@
 {
-    "name": "GraphTool.Utils.Editor",
-    "rootNamespace": "GraphTool.Editor.Utils",
+    "name": "SimpleGraph.Utils",
+    "rootNamespace": "SimpleGraph.Utils",
     "references": [],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

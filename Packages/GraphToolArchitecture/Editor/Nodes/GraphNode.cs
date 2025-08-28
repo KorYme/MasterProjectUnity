@@ -1,7 +1,7 @@
 using System;
 using GraphTool.Editor.Interfaces;
 using GraphTool.Utils;
-using GraphTool.Utils.Editor;
+using GraphTool.Editor.Utils;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -84,7 +84,7 @@ namespace GraphTool.Editor
         protected virtual void DrawMainContainer()
         {
             Foldout scriptableReferenceFoldout = UIElementUtility.CreateFoldout("Scriptable Reference", true);
-            ObjectField dataScriptable = EditorUIElementUtility.CreateObjectField(null, typeof(NodeData), NodeData);
+            ObjectField dataScriptable = UIElementEditorUtility.CreateObjectField(null, typeof(NodeData), NodeData);
             _onNodeDataChanged += () => dataScriptable.SetValueWithoutNotify(NodeData);
             dataScriptable.SetEnabled(false);
             scriptableReferenceFoldout.Add(dataScriptable);
