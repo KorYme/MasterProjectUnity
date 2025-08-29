@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SimpleGraph.Editor.Nodes;
 using SimpleGraph.Editor.Utils;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -27,17 +28,22 @@ namespace SimpleGraph.Editor
             }
         }
         
-        protected virtual string[] StyleSheets => new[]
+        public virtual IEnumerable<string> UsedNodesAssemblies()
         {
-            "GraphViewStyles",
-            "NodeStyles"
-        };
+            yield return typeof(SimpleNode).Assembly.FullName;
+        }
+
+        protected virtual IEnumerable<string> GetStyleSheets()
+        {
+            yield return "GraphViewStyles";
+            yield return "NodeStyles";
+        }
         
         public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow)
         {
             _graphEditorWindow =  graphEditorWindow;
         }
-
+        
         public virtual void Initialize()
         {
             AddManipulators();
@@ -59,7 +65,7 @@ namespace SimpleGraph.Editor
         protected virtual void AddSearchWindow()
         {
             if (_searchWindow) return;
-            _searchWindow = ScriptableObject.CreateInstance<SimpleSearchWindow>();
+            _searchWindow = ScriptableObject.CreateInstance<SimpleSearchWindow>().Initialize(this);
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
         }
         
@@ -77,7 +83,7 @@ namespace SimpleGraph.Editor
             Add(_miniMap);
         }
         
-        protected void AddStyles() => this.LoadAndAddStyleSheets(StyleSheets);
+        protected void AddStyles() => this.LoadAndAddStyleSheets(GetStyleSheets().ToArray());
         
         protected virtual void AddMiniMapStyles()
         {
@@ -104,12 +110,40 @@ namespace SimpleGraph.Editor
             IsMinimapVisible = !IsMinimapVisible;
         }
 
+        #region NODES_AND_GROUPS_CREATION_METHODS
+        
+        public SimpleNode CreateAndAddNode(Type nodeType, Vector2 position)
+        {
+            object node = Activator.CreateInstance(nodeType);
+            if (node is not SimpleNode simpleNode)
+            {
+                Debug.LogError($"The Node type was not a derived class or the {nameof(SimpleNode)} class");
+                return null;
+            }
+            simpleNode.Initialize(this, position);
+            simpleNode.Draw();
+            AddElement(simpleNode);
+            return simpleNode;
+        }
+        #endregion
+        
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            // Add Disconnect Node Options
+            base.BuildContextualMenu(evt);
+        }
+
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
             return ports.Where(port => port.node != startPort.node && port.direction != startPort.direction).ToList();
         }
         
         #region UTILITIES
+        public IManipulator GenerateContextMenuManipulator(string funcName, Func<Vector2, GraphElement> func)
+            => new ContextualMenuManipulator(menuEvent => 
+                menuEvent.menu.AppendAction(funcName, action => 
+                    func(GetLocalMousePosition(action.eventInfo.localMousePosition))));
+        
         public Vector2 GetLocalMousePosition(Vector2 mousePosition, bool isSearchWindow = false)
         {
             Vector2 worldMousePosition = mousePosition;

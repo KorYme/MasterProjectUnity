@@ -1,4 +1,3 @@
-using System;
 using GraphTool.Utils;
 using SimpleGraph.Editor.Utils;
 using UnityEditor;
@@ -38,11 +37,6 @@ namespace SimpleGraph.Editor
 
             Button miniMapButton = UIElementUtility.CreateButton("Mini Map", _graphView.ToggleMinimapVisibility);
             
-            if (_graphView.IsMinimapVisible)
-            {
-                _graphView.ToggleMinimapVisibility();
-                miniMapButton.AddClasses("toolbar__button__selected");
-            }
             _graphView.OnMiniMapVisibilityChanged += isVisible =>
             {
                 if (isVisible)
@@ -54,6 +48,7 @@ namespace SimpleGraph.Editor
                     miniMapButton.RemoveFromClassList("toolbar__button__selected");
                 }
             };
+            _graphView.IsMinimapVisible = false;
 
             toolbar.Add(miniMapButton);
             toolbar.LoadAndAddStyleSheets("ToolbarStyles");
