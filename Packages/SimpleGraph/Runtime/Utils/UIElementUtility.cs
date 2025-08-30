@@ -13,13 +13,19 @@ namespace GraphTool.Utils
             }
             return element;
         }
-
-        public static TextField CreateTextField(string initialValue = null, string labelValue = null, EventCallback<ChangeEvent<string>> onChangedCallback = null)
+        
+        public static TextField CreateTextField(string initialValue = null, string labelValue = null, EventCallback<ChangeEvent<string>> onChangedCallback = null, bool isSelectable = true, bool multiLine = false)
         {
             TextField textField = new TextField()
             {
                 value = initialValue,
                 label = labelValue,
+                isReadOnly = true,
+                textSelection =
+                {
+                    isSelectable = isSelectable
+                }, 
+                multiline = multiLine,
             };
             if (onChangedCallback != null)
             {
@@ -30,13 +36,13 @@ namespace GraphTool.Utils
 
         public static TextField CreateTextArea(string initialValue = null, string labelValue = null, EventCallback<ChangeEvent<string>> onChangedCallback = null)
         {
-            TextField textField = CreateTextField(initialValue, labelValue, onChangedCallback);
-            textField.multiline = true;
-            return textField;
+            return CreateTextField(initialValue, labelValue, onChangedCallback, multiLine: true);;
         }
 
         public static Foldout CreateFoldout(string title, bool collapsed = false)
-            => new Foldout(){ text = title, value = !collapsed };
+        { 
+            return new Foldout(){ text = title, value = !collapsed };
+        } 
 
         public static Button CreateButton(string title, params Action[] onClickCallbacks)
         {

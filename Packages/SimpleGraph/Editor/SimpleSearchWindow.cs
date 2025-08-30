@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using SimpleGraph.Editor.Nodes;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace SimpleGraph.Editor
 {
@@ -33,8 +33,9 @@ namespace SimpleGraph.Editor
 
         private SimpleGraphView _graphView;
         private Texture2D _spacingIcon;
-        
-        public static List<SearchContextElement> Elements;
+        public VisualElement Target { get; set; }
+
+        private static List<SearchContextElement> _elements;
         #endregion
         
         #region METHODS
@@ -53,30 +54,28 @@ namespace SimpleGraph.Editor
             List<SearchTreeEntry> tree =  new List<SearchTreeEntry>();
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Create Element")));
             
-            Elements = new List<SearchContextElement>();
+            _elements = new List<SearchContextElement>();
             
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            string[] usedAssembliesNames = _graphView.GetNodeDataAssembliesForGraphEditor();
 
             foreach (Assembly assembly in assemblies)
             {
-                if (!_graphView.UsedNodesAssemblies().Contains(assembly.FullName)) continue;
+                if (!usedAssembliesNames.Contains(assembly.FullName)) continue;
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (!type.IsAbstract && typeof(SimpleNode).IsAssignableFrom(type) && type.CustomAttributes.Count() > 0)
-                    {
-                        Attribute attribute = type.GetCustomAttribute(typeof(SimpleNodeInfoAttribute));
-                        if (attribute != null && attribute is SimpleNodeInfoAttribute simpleAttribute)
-                        {
-                            if (string.IsNullOrEmpty(simpleAttribute.MenuItem)) continue;
+                    if (type.IsAbstract || !typeof(SimpleNodeData).IsAssignableFrom(type) || !type.CustomAttributes.Any()) continue;
+                    
+                    Attribute attribute = type.GetCustomAttribute(typeof(SimpleNodeInfoAttribute));
+                    if (attribute is not SimpleNodeInfoAttribute simpleAttribute) continue;
+                    if (string.IsNullOrEmpty(simpleAttribute.MenuItem)) continue;
 
-                            Elements.Add(new SearchContextElement(type, simpleAttribute.MenuItem));
-                        }
-                    }
+                    _elements.Add(new SearchContextElement(type, simpleAttribute.MenuItem));
                 }
             }
             
             // Sort by name
-            Elements.Sort((entry1, entry2) =>
+            _elements.Sort((entry1, entry2) =>
             {
                 string[] splits1 = entry1.Title.Split('/');
                 string[] splits2 = entry2.Title.Split('/');
@@ -84,21 +83,20 @@ namespace SimpleGraph.Editor
                 {
                     if (i >= splits2.Length) return 1;
                     
-                    int value = String.Compare(splits1[i], splits2[i], StringComparison.Ordinal);
-                    if (value != 0)
-                    {
-                        // Make sure that leaves go before nodes
-                        if (splits1[i].Length != splits2[i].Length && (i == splits1.Length - 1 || i == splits2.Length - 1))
-                            return splits1.Length < splits2.Length ? 1 : -1;
-                        return value;
-                    }
+                    int value = string.Compare(splits1[i], splits2[i], StringComparison.Ordinal);
+                    if (value == 0) continue;
+                    
+                    // Make sure that leaves go before nodes
+                    if (splits1[i].Length != splits2[i].Length && (i == splits1.Length - 1 || i == splits2.Length - 1))
+                        return splits1.Length < splits2.Length ? 1 : -1;
+                    return value;
                 }
                 return 0;
             });
             
             List<string> groups = new List<string>();
 
-            foreach (SearchContextElement element in Elements)
+            foreach (SearchContextElement element in _elements)
             {
                 string[] entryTitle = element.Title.Split('/');
 
@@ -125,13 +123,11 @@ namespace SimpleGraph.Editor
             return tree;
         }
 
-        bool ISearchWindowProvider.OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
+        bool ISearchWindowProvider.OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {
-            // TODO : Search through all classes and generate node with reflection
-            if (SearchTreeEntry.userData is SearchContextElement contextElement)
+            if (searchTreeEntry.userData is SearchContextElement contextElement)
             {
-                _graphView.CreateAndAddNode(contextElement.TargetType, _graphView.GetLocalMousePosition(context.screenMousePosition));
-                Debug.Log($"You tried to create a node of type {contextElement.TargetType} and title {contextElement.Title}.");
+                _graphView.CreateNewNode(contextElement.TargetType, _graphView.GetGraphMousePosition(context.screenMousePosition));
             }
             return IS_WINDOW_CLOSED_ON_ENTRY_SELECTED;
         }

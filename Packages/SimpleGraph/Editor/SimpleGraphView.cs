@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SimpleGraph.Editor.Nodes;
 using SimpleGraph.Editor.Utils;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -11,9 +11,15 @@ namespace SimpleGraph.Editor
 {
     public class SimpleGraphView : GraphView
     {
-        protected readonly SimpleGraphEditorWindow _graphEditorWindow;
-        protected MiniMap _miniMap;
-        protected SimpleSearchWindow _searchWindow;
+        private readonly SerializedObject _serializedObject;
+        private readonly SimpleGraphData _simpleGraphData;
+        private readonly SimpleGraphEditorWindow _graphEditorWindow;
+        
+        private MiniMap _miniMap;
+        private SimpleSearchWindow _searchWindow;
+        
+        private List<SimpleNode> _graphNodes  = new List<SimpleNode>();
+        private Dictionary<string, SimpleNode> _nodeDictionnary =  new Dictionary<string, SimpleNode>();
         
         public event Action<bool> OnMiniMapVisibilityChanged;
 
@@ -28,23 +34,17 @@ namespace SimpleGraph.Editor
             }
         }
         
-        public virtual IEnumerable<string> UsedNodesAssemblies()
-        {
-            yield return typeof(SimpleNode).Assembly.FullName;
-        }
-
-        protected virtual IEnumerable<string> GetStyleSheets()
-        {
-            yield return "GraphViewStyles";
-            yield return "NodeStyles";
-        }
-        
-        public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow)
+        public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow, SerializedObject serializedObject)
         {
             _graphEditorWindow =  graphEditorWindow;
+            _serializedObject = serializedObject;
+            _simpleGraphData = (SimpleGraphData)_serializedObject.targetObject;
+            Initialize();
+            DrawNodes();
         }
-        
-        public virtual void Initialize()
+
+        #region INITIALIZATION_STEPS
+        private void Initialize()
         {
             AddManipulators();
             AddSearchWindow();
@@ -54,22 +54,29 @@ namespace SimpleGraph.Editor
             AddGridBackground();
         }
 
-        protected virtual void AddManipulators()
+        private void AddManipulators()
         {
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
+            this.AddManipulator(new ClickSelector());
         }
         
-        protected virtual void AddSearchWindow()
+        private void AddSearchWindow()
         {
             if (_searchWindow) return;
             _searchWindow = ScriptableObject.CreateInstance<SimpleSearchWindow>().Initialize(this);
-            nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
+
+            nodeCreationRequest = NodeCreationRequest;
+            void NodeCreationRequest(NodeCreationContext context)
+            {
+                _searchWindow.Target = context.target;
+                SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
+            }
         }
         
-        protected virtual void AddMinimap()
+        private void AddMinimap()
         {
             _miniMap = new MiniMap()
             {
@@ -82,10 +89,17 @@ namespace SimpleGraph.Editor
             _miniMap.SetPosition(new Rect(15, 50, 200, 125));
             Add(_miniMap);
         }
+
+        private void AddStyles()
+        {
+            this.LoadAndAddStyleSheets(new []
+            {
+                "GraphViewStyles",
+                "NodeStyles",
+            });
+        } 
         
-        protected void AddStyles() => this.LoadAndAddStyleSheets(GetStyleSheets().ToArray());
-        
-        protected virtual void AddMiniMapStyles()
+        private void AddMiniMapStyles()
         {
             // In the future it should be added in the .uss file
             _miniMap.style.backgroundColor = new StyleColor(new Color32(29,29,29,255));
@@ -95,64 +109,71 @@ namespace SimpleGraph.Editor
             _miniMap.style.borderRightColor = new StyleColor(new Color32(51,51,51,255));
         }
         
-        protected void AddGridBackground()
+        private void AddGridBackground()
         {
             GridBackground gridBackground = new GridBackground()
             {
-                name = "Background"
+                name = "Grid"
             };
             gridBackground.StretchToParentSize();
             Insert(0, gridBackground);
         }
+        #endregion
+
+        #region NODES_AND_GROUPS_METHODS
+
+        private void DrawNodes()
+        {
+            foreach (SimpleNodeData nodeData in _simpleGraphData.Nodes)
+            {
+                AddNodeToGraph(nodeData);
+            }
+        }
+        
+        public void CreateNewNode(Type nodeDataType, Vector2 position)
+        {
+            object nodeData = Activator.CreateInstance(nodeDataType);
+            if (nodeData is not SimpleNodeData simpleNodeData)
+            {
+                Debug.LogError($"The Node data type was not a derived class or the {nameof(SimpleNodeData)} class");
+                return;
+            }
+            Undo.RecordObject(_serializedObject.targetObject, "Added Node");
+            
+            simpleNodeData.Position = new Rect(position, Vector2.zero);
+            _simpleGraphData.Nodes.Add(simpleNodeData);
+            _serializedObject.Update();
+
+            AddNodeToGraph(simpleNodeData);
+        }
+
+        private void AddNodeToGraph(SimpleNodeData simpleNodeData)
+        {
+            SimpleNode simpleNode = new SimpleNode(this, simpleNodeData);
+            simpleNode.Draw();
+            _graphNodes.Add(simpleNode);
+            _nodeDictionnary.Add(simpleNodeData.Id, simpleNode);
+            AddElement(simpleNode);
+        }
+        #endregion
+
+        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+        {
+            // TODO : Still need to create port for specific type
+            return ports.Where(port => port.node != startPort.node && port.direction != startPort.direction).ToList();
+        }
+        
+        #region UTILITIES
+        public string[] GetNodeDataAssembliesForGraphEditor() => _graphEditorWindow.CurrentGraphData.GetAllNodeDataAssembliesForGraphEditor().ToArray();
         
         public void ToggleMinimapVisibility()
         {
             IsMinimapVisible = !IsMinimapVisible;
         }
-
-        #region NODES_AND_GROUPS_CREATION_METHODS
         
-        public SimpleNode CreateAndAddNode(Type nodeType, Vector2 position)
+        public Vector2 GetGraphMousePosition(Vector2 screenMousePosition)
         {
-            object node = Activator.CreateInstance(nodeType);
-            if (node is not SimpleNode simpleNode)
-            {
-                Debug.LogError($"The Node type was not a derived class or the {nameof(SimpleNode)} class");
-                return null;
-            }
-            simpleNode.Initialize(this, position);
-            simpleNode.Draw();
-            AddElement(simpleNode);
-            return simpleNode;
-        }
-        #endregion
-        
-        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
-        {
-            // Add Disconnect Node Options
-            base.BuildContextualMenu(evt);
-        }
-
-        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
-        {
-            return ports.Where(port => port.node != startPort.node && port.direction != startPort.direction).ToList();
-        }
-        
-        #region UTILITIES
-        public IManipulator GenerateContextMenuManipulator(string funcName, Func<Vector2, GraphElement> func)
-            => new ContextualMenuManipulator(menuEvent => 
-                menuEvent.menu.AppendAction(funcName, action => 
-                    func(GetLocalMousePosition(action.eventInfo.localMousePosition))));
-        
-        public Vector2 GetLocalMousePosition(Vector2 mousePosition, bool isSearchWindow = false)
-        {
-            Vector2 worldMousePosition = mousePosition;
-            if (isSearchWindow)
-            {
-                worldMousePosition = _graphEditorWindow.rootVisualElement.ChangeCoordinatesTo(
-                    _graphEditorWindow.rootVisualElement.parent, mousePosition - _graphEditorWindow.position.position) + Vector2.down * 20;
-            }
-            return contentViewContainer.WorldToLocal(worldMousePosition);
+            return contentViewContainer.WorldToLocal(this.ChangeCoordinatesTo(this, screenMousePosition - _graphEditorWindow.position.position));
         }
         #endregion
     }

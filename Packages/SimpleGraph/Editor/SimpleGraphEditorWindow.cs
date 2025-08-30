@@ -1,34 +1,61 @@
 using GraphTool.Utils;
 using SimpleGraph.Editor.Utils;
+using Unity.Collections;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SimpleGraph.Editor
 {
     public class SimpleGraphEditorWindow : EditorWindow
     {
+        [field: SerializeField] 
+        public SimpleGraphData CurrentGraphData { get; private set; }
+        
+        [SerializeField] 
+        private SerializedObject _serializedObject;
+        
+        [SerializeField] 
         protected SimpleGraphView _graphView;
         
-        [MenuItem("Window/SimpleGraph")]
-        public static void OpenGraphWindow()
+        public static void Open(SimpleGraphData newGraphData)
         {
-            GetWindow<SimpleGraphEditorWindow>("Simple Graph");
+            SimpleGraphEditorWindow[] windows = Resources.FindObjectsOfTypeAll<SimpleGraphEditorWindow>();
+            foreach (SimpleGraphEditorWindow w in windows)
+            {
+                if (w.CurrentGraphData == newGraphData)
+                {
+                    w.Focus();
+                    return;
+                }
+            }
+            SimpleGraphEditorWindow window = GetWindow<SimpleGraphEditorWindow>(typeof(SimpleGraphEditorWindow), typeof(SceneView));
+            window.titleContent = new GUIContent(newGraphData.name, EditorGUIUtility.ObjectContent(null, typeof(SimpleGraphData)).image);
+            window.Load(newGraphData);
         }
 
-        private void OnEnable()
+        public override void SaveChanges()
         {
-            rootVisualElement.LoadAndAddStyleSheets("Variables");
-            AddGraphView();
-            AddToolbar();
+            AssetDatabase.SaveAssets();
+            base.SaveChanges();
+        }
+
+        private void Load(SimpleGraphData newGraphData)
+        {
+            CurrentGraphData = newGraphData;
+            DrawGraph();
         }
         
-        private void AddGraphView()
+        private void DrawGraph()
         {
-            _graphView = new SimpleGraphView(this);
-            _graphView.Initialize();
+            rootVisualElement.Clear();
+            rootVisualElement.LoadAndAddStyleSheets("Variables");
+            _serializedObject = new SerializedObject(CurrentGraphData);
+            _graphView = new SimpleGraphView(this, _serializedObject);
             _graphView.StretchToParentSize();
             rootVisualElement.Add(_graphView);
+            AddToolbar();
         }
         
         private void AddToolbar()
