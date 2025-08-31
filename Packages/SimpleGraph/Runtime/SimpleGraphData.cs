@@ -7,7 +7,7 @@ namespace SimpleGraph
     [CreateAssetMenu(fileName = "SimpleGraphData", menuName = "SimpleGraph/SimpleGraphData")]
     public class SimpleGraphData : ScriptableObject
     {
-        [field: SerializeReference] public List<SimpleNodeData> Nodes { get; set; } = new List<SimpleNodeData>();
+        [field: SerializeReference] public List<SimpleNodeData> Nodes { get; protected set; } = new List<SimpleNodeData>();
 
         public virtual IEnumerable<string> GetAllNodeDataAssembliesForGraphEditor()
         {

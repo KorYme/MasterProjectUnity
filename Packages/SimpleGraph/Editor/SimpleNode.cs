@@ -10,12 +10,12 @@ namespace SimpleGraph.Editor
     public class SimpleNode : Node
     {
         private readonly SimpleGraphView _graphView;
-        private readonly SimpleNodeData _nodeData;
+        public readonly SimpleNodeData NodeData;
         
         public SimpleNode(SimpleGraphView graphView, SimpleNodeData nodeData)
         {
             _graphView = graphView;
-            _nodeData = nodeData;
+            NodeData = nodeData;
             InitializeNode();
         }
 
@@ -24,9 +24,9 @@ namespace SimpleGraph.Editor
             mainContainer.AddClasses("node__main-container");
             extensionContainer.AddClasses("node__extension-container");
             
-            SetPosition(_nodeData.Position);
+            SetPosition(NodeData.Position);
 
-            Type typeInfo = _nodeData.GetType();
+            Type typeInfo = NodeData.GetType();
             SimpleNodeInfoAttribute info = typeInfo.GetCustomAttribute<SimpleNodeInfoAttribute>();
             title = info.NodeName;
             name = typeInfo.Name;
@@ -37,7 +37,13 @@ namespace SimpleGraph.Editor
                 this.AddToClassList(depth.ToLower().Replace(" ", "-"));
             }
         }
+
+        public void SavePosition()
+        {
+            NodeData.Position = GetPosition();
+        }
         
+        #region CONTAINERS_DRAWERS
         public void Draw()
         {
             DrawTitleContainer(titleContainer);
@@ -63,5 +69,6 @@ namespace SimpleGraph.Editor
         private void DrawOutputContainer(VisualElement container) { }
 
         private void DrawExtensionContainer(VisualElement container) { }
+        #endregion
     }
 }

@@ -1,7 +1,7 @@
 using GraphTool.Utils;
 using SimpleGraph.Editor.Utils;
-using Unity.Collections;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,15 +10,6 @@ namespace SimpleGraph.Editor
 {
     public class SimpleGraphEditorWindow : EditorWindow
     {
-        [field: SerializeField] 
-        public SimpleGraphData CurrentGraphData { get; private set; }
-        
-        [SerializeField] 
-        private SerializedObject _serializedObject;
-        
-        [SerializeField] 
-        protected SimpleGraphView _graphView;
-        
         public static void Open(SimpleGraphData newGraphData)
         {
             SimpleGraphEditorWindow[] windows = Resources.FindObjectsOfTypeAll<SimpleGraphEditorWindow>();
@@ -30,17 +21,25 @@ namespace SimpleGraph.Editor
                     return;
                 }
             }
-            SimpleGraphEditorWindow window = GetWindow<SimpleGraphEditorWindow>(typeof(SimpleGraphEditorWindow), typeof(SceneView));
+            SimpleGraphEditorWindow window = CreateWindow<SimpleGraphEditorWindow>(typeof(SimpleGraphEditorWindow), typeof(SceneView));
             window.titleContent = new GUIContent(newGraphData.name, EditorGUIUtility.ObjectContent(null, typeof(SimpleGraphData)).image);
             window.Load(newGraphData);
         }
+        
+        [field: SerializeField] 
+        public SimpleGraphData CurrentGraphData { get; private set; }
+        
+        [SerializeField] 
+        private SerializedObject _serializedObject;
+        
+        [SerializeField] 
+        protected SimpleGraphView _graphView;
 
-        public override void SaveChanges()
-        {
-            AssetDatabase.SaveAssets();
-            base.SaveChanges();
+        private void OnEnable()
+        { 
+            DrawGraph();
         }
-
+        
         private void Load(SimpleGraphData newGraphData)
         {
             CurrentGraphData = newGraphData;
@@ -49,15 +48,33 @@ namespace SimpleGraph.Editor
         
         private void DrawGraph()
         {
+            if (!CurrentGraphData) return;
+            
             rootVisualElement.Clear();
             rootVisualElement.LoadAndAddStyleSheets("Variables");
             _serializedObject = new SerializedObject(CurrentGraphData);
             _graphView = new SimpleGraphView(this, _serializedObject);
             _graphView.StretchToParentSize();
+            _graphView.graphViewChanged += GraphViewChanged;
             rootVisualElement.Add(_graphView);
             AddToolbar();
         }
+
+        private GraphViewChange GraphViewChanged(GraphViewChange graphViewChange)
+        {
+            hasUnsavedChanges = true;
+            EditorUtility.SetDirty(CurrentGraphData);
+            
+            return graphViewChange;
+        }
         
+        public override void SaveChanges()
+        {
+            base.SaveChanges();
+            AssetDatabase.SaveAssets();
+        }
+
+
         private void AddToolbar()
         {
             Toolbar toolbar = new Toolbar();

@@ -2,6 +2,7 @@ using System;
 
 namespace SimpleGraph
 {
+    [AttributeUsage(AttributeTargets.Class, Inherited=true, AllowMultiple=false)]
     public class SimpleNodeInfoAttribute : Attribute
     {
         public string NodeName { get; private set; }

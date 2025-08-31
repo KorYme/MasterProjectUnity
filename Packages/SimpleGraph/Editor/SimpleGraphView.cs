@@ -12,7 +12,7 @@ namespace SimpleGraph.Editor
     public class SimpleGraphView : GraphView
     {
         private readonly SerializedObject _serializedObject;
-        private readonly SimpleGraphData _simpleGraphData;
+        private readonly SimpleGraphData _graphData;
         private readonly SimpleGraphEditorWindow _graphEditorWindow;
         
         private MiniMap _miniMap;
@@ -38,9 +38,59 @@ namespace SimpleGraph.Editor
         {
             _graphEditorWindow =  graphEditorWindow;
             _serializedObject = serializedObject;
-            _simpleGraphData = (SimpleGraphData)_serializedObject.targetObject;
+            _graphData = (SimpleGraphData)_serializedObject.targetObject;
             Initialize();
             DrawNodes();
+            
+            Undo.undoRedoEvent += UndoRedoEvent;
+            graphViewChanged += OnGraphViewChangedEvent;
+        }
+
+        ~SimpleGraphView()
+        {
+            Undo.undoRedoEvent -= UndoRedoEvent;
+        }
+        
+        
+        private void UndoRedoEvent(in UndoRedoInfo undo)
+        {
+            // TODO : Still need to fix
+            // if (undo.undoName.Contains("Node"))
+            // {
+            //     foreach (SimpleNode node in nodes)
+            //     {
+            //         if (_graphNodes.Contains(node)) continue;
+            //         RemoveElement(node);
+            //     }
+            // }
+        }
+
+        private GraphViewChange OnGraphViewChangedEvent(GraphViewChange graphViewChange)
+        {
+            if (graphViewChange.movedElements != null)
+            {
+                // Undo.RecordObject(_serializedObject.targetObject, "Nodes Moved");
+                List<SimpleNode> nodesToMove = graphViewChange.movedElements.OfType<SimpleNode>().ToList();
+                foreach (SimpleNode simpleNode in nodesToMove)
+                {
+                    simpleNode.SavePosition();
+                }
+            }
+            
+            if (graphViewChange.elementsToRemove != null)
+            {
+                List<SimpleNode> nodesToRemove = graphViewChange.elementsToRemove.OfType<SimpleNode>().ToList();
+                if (nodesToRemove.Count > 0)
+                {
+                    // Undo.RecordObject(_serializedObject.targetObject, "Nodes Removed");
+                    for (int i = nodesToRemove.Count - 1; i >= 0; i--)
+                    {
+                        RemoveNode(nodesToRemove[i]);
+                    }
+                }
+            }
+
+            return graphViewChange;
         }
 
         #region INITIALIZATION_STEPS
@@ -121,10 +171,17 @@ namespace SimpleGraph.Editor
         #endregion
 
         #region NODES_AND_GROUPS_METHODS
+        private void RemoveNode(SimpleNode node)
+        {
+            _graphData.Nodes.Remove(node.NodeData);
+            _nodeDictionnary.Remove(node.NodeData.Id);
+            _graphNodes.Remove(node);
+            _serializedObject.Update();
+        }
 
         private void DrawNodes()
         {
-            foreach (SimpleNodeData nodeData in _simpleGraphData.Nodes)
+            foreach (SimpleNodeData nodeData in _graphData.Nodes)
             {
                 AddNodeToGraph(nodeData);
             }
@@ -138,10 +195,10 @@ namespace SimpleGraph.Editor
                 Debug.LogError($"The Node data type was not a derived class or the {nameof(SimpleNodeData)} class");
                 return;
             }
-            Undo.RecordObject(_serializedObject.targetObject, "Added Node");
+            Undo.RecordObject(_serializedObject.targetObject, "Node Created");
             
             simpleNodeData.Position = new Rect(position, Vector2.zero);
-            _simpleGraphData.Nodes.Add(simpleNodeData);
+            _graphData.Nodes.Add(simpleNodeData);
             _serializedObject.Update();
 
             AddNodeToGraph(simpleNodeData);
