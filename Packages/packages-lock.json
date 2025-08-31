@@ -8,14 +8,6 @@
         "com.koryme.serialization-utils": "1.1.0"
       }
     },
-    "com.koryme.graph-tool-architecture": {
-      "version": "file:GraphToolArchitecture",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.koryme.serialization-utils": "1.1.0"
-      }
-    },
     "com.koryme.manager-gameloop-archi": {
       "version": "file:ManagerGameloopArchitecture",
       "depth": 0,
