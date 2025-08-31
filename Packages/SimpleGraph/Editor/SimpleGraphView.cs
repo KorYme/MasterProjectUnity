@@ -4,6 +4,7 @@ using System.Linq;
 using SimpleGraph.Editor.Utils;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,7 +12,7 @@ namespace SimpleGraph.Editor
 {
     public class SimpleGraphView : GraphView
     {
-        private readonly SerializedObject _serializedObject;
+        public readonly SerializedObject GraphSerializedObject;
         private readonly SimpleGraphData _graphData;
         private readonly SimpleGraphEditorWindow _graphEditorWindow;
         
@@ -34,23 +35,27 @@ namespace SimpleGraph.Editor
             }
         }
         
-        public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow, SerializedObject serializedObject)
+        public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow, SerializedObject graphSerializedObject)
         {
             _graphEditorWindow =  graphEditorWindow;
-            _serializedObject = serializedObject;
-            _graphData = (SimpleGraphData)_serializedObject.targetObject;
+            GraphSerializedObject = graphSerializedObject;
+            _graphData = (SimpleGraphData)GraphSerializedObject.targetObject;
             Initialize();
             DrawNodes();
             
-            Undo.undoRedoEvent += UndoRedoEvent;
-            graphViewChanged += OnGraphViewChangedEvent;
+            // Undo.undoRedoEvent += UndoRedoEvent;
+            // graphViewChanged += OnGraphViewChangedEvent;
         }
 
-        ~SimpleGraphView()
+        // ~SimpleGraphView()
+        // {
+        //     Undo.undoRedoEvent -= UndoRedoEvent;
+        // }
+
+        public void SetDirty()
         {
-            Undo.undoRedoEvent -= UndoRedoEvent;
+            _graphEditorWindow.SetDirty();
         }
-        
         
         private void UndoRedoEvent(in UndoRedoInfo undo)
         {
@@ -142,11 +147,7 @@ namespace SimpleGraph.Editor
 
         private void AddStyles()
         {
-            this.LoadAndAddStyleSheets(new []
-            {
-                "GraphViewStyles",
-                "NodeStyles",
-            });
+            this.LoadAndAddStyleSheets(_graphData.GetStylesheetsForGraphEditor().ToArray());
         } 
         
         private void AddMiniMapStyles()
@@ -176,7 +177,7 @@ namespace SimpleGraph.Editor
             _graphData.Nodes.Remove(node.NodeData);
             _nodeDictionnary.Remove(node.NodeData.Id);
             _graphNodes.Remove(node);
-            _serializedObject.Update();
+            GraphSerializedObject.Update();
         }
 
         private void DrawNodes()
@@ -185,6 +186,7 @@ namespace SimpleGraph.Editor
             {
                 AddNodeToGraph(nodeData);
             }
+            Bind();
         }
         
         public void CreateNewNode(Type nodeDataType, Vector2 position)
@@ -195,11 +197,11 @@ namespace SimpleGraph.Editor
                 Debug.LogError($"The Node data type was not a derived class or the {nameof(SimpleNodeData)} class");
                 return;
             }
-            Undo.RecordObject(_serializedObject.targetObject, "Node Created");
+            // Undo.RecordObject(GraphSerializedObject.targetObject, "Node Created");
             
             simpleNodeData.Position = new Rect(position, Vector2.zero);
             _graphData.Nodes.Add(simpleNodeData);
-            _serializedObject.Update();
+            GraphSerializedObject.Update();
 
             AddNodeToGraph(simpleNodeData);
         }
@@ -207,10 +209,16 @@ namespace SimpleGraph.Editor
         private void AddNodeToGraph(SimpleNodeData simpleNodeData)
         {
             SimpleNode simpleNode = new SimpleNode(this, simpleNodeData);
-            simpleNode.Draw();
             _graphNodes.Add(simpleNode);
             _nodeDictionnary.Add(simpleNodeData.Id, simpleNode);
             AddElement(simpleNode);
+            Bind();
+        }
+
+        private void Bind()
+        {
+            GraphSerializedObject.Update();
+            this.Bind(GraphSerializedObject);
         }
         #endregion
 

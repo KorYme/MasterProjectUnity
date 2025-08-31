@@ -1,8 +1,10 @@
 using System;
 using System.Reflection;
 using GraphTool.Utils;
+using SimpleGraph.Editor.Utils;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace SimpleGraph.Editor
@@ -11,7 +13,8 @@ namespace SimpleGraph.Editor
     {
         private readonly SimpleGraphView _graphView;
         public readonly SimpleNodeData NodeData;
-        
+        private SerializedProperty _serializedProperty;
+
         public SimpleNode(SimpleGraphView graphView, SimpleNodeData nodeData)
         {
             _graphView = graphView;
@@ -36,6 +39,8 @@ namespace SimpleGraph.Editor
             {
                 this.AddToClassList(depth.ToLower().Replace(" ", "-"));
             }
+
+            Draw();
         }
 
         public void SavePosition()
@@ -44,7 +49,7 @@ namespace SimpleGraph.Editor
         }
         
         #region CONTAINERS_DRAWERS
-        public void Draw()
+        private void Draw()
         {
             DrawTitleContainer(titleContainer);
 
@@ -68,7 +73,56 @@ namespace SimpleGraph.Editor
 
         private void DrawOutputContainer(VisualElement container) { }
 
-        private void DrawExtensionContainer(VisualElement container) { }
+        private void DrawExtensionContainer(VisualElement container)
+        {
+            Type typeInfo = NodeData.GetType();
+            MemberInfo[] memberInfos = typeInfo.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (MemberInfo memberInfo in memberInfos)
+            {
+                if (memberInfo.GetCustomAttribute<ExposedPropertyAttribute>() is { } exposedPropertyAttribute)
+                {
+                    PropertyField propertyField = DrawProperty(memberInfo, container);
+                    propertyField.RegisterValueChangeCallback(_ => _graphView.SetDirty());
+                }
+            }
+        }
+
+
+        #endregion
+        
+        #region PROPERTIES_DRAWERS
+        private PropertyField DrawProperty(MemberInfo memberInfo, VisualElement container)
+        {
+            if (_serializedProperty == null)
+            {
+                FetchSerializedProperty();
+            }
+            SerializedProperty property = _serializedProperty.FindPropertyRelative(memberInfo.GetRelativePropertyPath());
+            PropertyField propertyField = new PropertyField(property)
+            {
+                bindingPath = property.propertyPath,
+            };
+            container.Add(propertyField);
+            return propertyField;
+        }
+
+        private void FetchSerializedProperty()
+        {
+            SerializedProperty nodes = _graphView.GraphSerializedObject.FindProperty(ReflectionEditorUtility.GetPropertyPropertyPath("Nodes"));
+            if (nodes.isArray)
+            {
+                int size = nodes.arraySize;
+                for (int i = 0; i < size; i++)
+                {
+                    SerializedProperty element = nodes.GetArrayElementAtIndex(i);
+                    SerializedProperty elementId = element.FindPropertyRelative(ReflectionEditorUtility.GetPropertyPropertyPath("Id"));
+                    if (elementId.stringValue.Equals(NodeData.Id))
+                    {
+                        _serializedProperty = element;
+                    }
+                }
+            }
+        }
         #endregion
     }
 }

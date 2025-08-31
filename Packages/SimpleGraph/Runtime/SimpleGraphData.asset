@@ -13,29 +13,41 @@ MonoBehaviour:
   m_Name: SimpleGraphData
   m_EditorClassIdentifier: 
   <Nodes>k__BackingField:
-  - rid: 3959953411249537024
-  - rid: 3959953411249537025
+  - rid: 3959953411249537029
+  - rid: 3959953411249537032
   references:
     version: 2
     RefIds:
-    - rid: 3959953411249537024
+    - rid: 3959953411249537029
       type: {class: DebugNodeData, ns: SimpleGraph, asm: SimpleGraph}
       data:
-        <Id>k__BackingField: 7ad46f19-0008-4e7c-af85-e557a2f93432
+        <Id>k__BackingField: 597d5a1d-ec23-43d5-863f-b8676cbf1fa3
         <Position>k__BackingField:
           serializedVersion: 2
-          x: 673
-          y: 160
-          width: 118
-          height: 44
-        <DebugValue>k__BackingField: 
-    - rid: 3959953411249537025
-      type: {class: SimpleNodeData, ns: SimpleGraph, asm: SimpleGraph}
+          x: 571
+          y: 273
+          width: 158
+          height: 80
+        <DebugValue>k__BackingField: dadad
+        _debugValueFloat: 0
+        _debugValueList: []
+    - rid: 3959953411249537032
+      type: {class: DebugNodeData, ns: SimpleGraph, asm: SimpleGraph}
       data:
-        <Id>k__BackingField: 218a652f-7c90-4eda-b7a2-5c0a5241e000
+        <Id>k__BackingField: dca9a599-f811-4d31-a390-f34093296570
         <Position>k__BackingField:
           serializedVersion: 2
-          x: 882
-          y: -1
-          width: 119
-          height: 44
+          x: 781
+          y: 405
+          width: 0
+          height: 0
+        <DebugValue>k__BackingField: dadad
+        _debugValueFloat: 59.3
+        _debugValueList:
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}

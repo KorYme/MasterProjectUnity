@@ -62,10 +62,14 @@ namespace SimpleGraph.Editor
 
         private GraphViewChange GraphViewChanged(GraphViewChange graphViewChange)
         {
+            SetDirty();
+            return graphViewChange;
+        }
+
+        public new void SetDirty()
+        {
             hasUnsavedChanges = true;
             EditorUtility.SetDirty(CurrentGraphData);
-            
-            return graphViewChange;
         }
         
         public override void SaveChanges()
