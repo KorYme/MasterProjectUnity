@@ -12,7 +12,7 @@ namespace SimpleGraph.Editor
 {
     public class SimpleGraphView : GraphView
     {
-        public readonly SerializedObject GraphSerializedObject;
+        private readonly SerializedObject _graphSerializedObject;
         private readonly SimpleGraphData _graphData;
         private readonly SimpleGraphEditorWindow _graphEditorWindow;
         
@@ -38,8 +38,8 @@ namespace SimpleGraph.Editor
         public SimpleGraphView(SimpleGraphEditorWindow graphEditorWindow, SerializedObject graphSerializedObject)
         {
             _graphEditorWindow =  graphEditorWindow;
-            GraphSerializedObject = graphSerializedObject;
-            _graphData = (SimpleGraphData)GraphSerializedObject.targetObject;
+            _graphSerializedObject = graphSerializedObject;
+            _graphData = (SimpleGraphData)_graphSerializedObject.targetObject;
             Initialize();
             DrawNodes();
             
@@ -177,7 +177,7 @@ namespace SimpleGraph.Editor
             _graphData.Nodes.Remove(node.NodeData);
             _nodeDictionnary.Remove(node.NodeData.Id);
             _graphNodes.Remove(node);
-            GraphSerializedObject.Update();
+            _graphSerializedObject.Update();
         }
 
         private void DrawNodes()
@@ -201,14 +201,15 @@ namespace SimpleGraph.Editor
             
             simpleNodeData.Position = new Rect(position, Vector2.zero);
             _graphData.Nodes.Add(simpleNodeData);
-            GraphSerializedObject.Update();
+            _graphSerializedObject.Update();
 
             AddNodeToGraph(simpleNodeData);
         }
 
         private void AddNodeToGraph(SimpleNodeData simpleNodeData)
         {
-            SimpleNode simpleNode = new SimpleNode(this, simpleNodeData);
+            SimpleNode simpleNode = new SimpleNode(simpleNodeData, _graphSerializedObject);
+            simpleNode.OnNodeModified += SetDirty;
             _graphNodes.Add(simpleNode);
             _nodeDictionnary.Add(simpleNodeData.Id, simpleNode);
             AddElement(simpleNode);
@@ -217,8 +218,8 @@ namespace SimpleGraph.Editor
 
         private void Bind()
         {
-            GraphSerializedObject.Update();
-            this.Bind(GraphSerializedObject);
+            _graphSerializedObject.Update();
+            this.Bind(_graphSerializedObject);
         }
         #endregion
 

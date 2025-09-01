@@ -11,14 +11,16 @@ namespace SimpleGraph.Editor
 {
     public class SimpleNode : Node
     {
-        private readonly SimpleGraphView _graphView;
         public readonly SimpleNodeData NodeData;
+        private readonly SerializedObject _graphSerializedObject;
         private SerializedProperty _serializedProperty;
 
-        public SimpleNode(SimpleGraphView graphView, SimpleNodeData nodeData)
+        public event Action OnNodeModified;
+
+        public SimpleNode(SimpleNodeData nodeData, SerializedObject graphSerializedObject)
         {
-            _graphView = graphView;
             NodeData = nodeData;
+            _graphSerializedObject = graphSerializedObject;
             InitializeNode();
         }
 
@@ -82,7 +84,7 @@ namespace SimpleGraph.Editor
                 if (memberInfo.GetCustomAttribute<ExposedPropertyAttribute>() is { } exposedPropertyAttribute)
                 {
                     PropertyField propertyField = DrawProperty(memberInfo, container);
-                    propertyField.RegisterValueChangeCallback(_ => _graphView.SetDirty());
+                    propertyField.RegisterValueChangeCallback(_ => OnNodeModified?.Invoke());
                 }
             }
         }
@@ -108,7 +110,7 @@ namespace SimpleGraph.Editor
 
         private void FetchSerializedProperty()
         {
-            SerializedProperty nodes = _graphView.GraphSerializedObject.FindProperty(ReflectionEditorUtility.GetPropertyPropertyPath("Nodes"));
+            SerializedProperty nodes = _graphSerializedObject.FindProperty(ReflectionEditorUtility.GetPropertyPropertyPath("Nodes"));
             if (nodes.isArray)
             {
                 int size = nodes.arraySize;
