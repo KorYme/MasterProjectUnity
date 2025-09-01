@@ -42,9 +42,9 @@ namespace SimpleGraph.Editor
             _graphData = (SimpleGraphData)_graphSerializedObject.targetObject;
             Initialize();
             DrawNodes();
+            graphViewChanged += OnGraphViewChangedEvent;
             
             // Undo.undoRedoEvent += UndoRedoEvent;
-            // graphViewChanged += OnGraphViewChangedEvent;
         }
 
         // ~SimpleGraphView()
@@ -57,8 +57,8 @@ namespace SimpleGraph.Editor
             _graphEditorWindow.SetDirty();
         }
         
-        private void UndoRedoEvent(in UndoRedoInfo undo)
-        {
+        // private void UndoRedoEvent(in UndoRedoInfo undo)
+        // {
             // TODO : Still need to fix
             // if (undo.undoName.Contains("Node"))
             // {
@@ -68,7 +68,7 @@ namespace SimpleGraph.Editor
             //         RemoveElement(node);
             //     }
             // }
-        }
+        // }
 
         private GraphViewChange OnGraphViewChangedEvent(GraphViewChange graphViewChange)
         {

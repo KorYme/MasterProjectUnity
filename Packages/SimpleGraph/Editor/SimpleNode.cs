@@ -5,6 +5,7 @@ using SimpleGraph.Editor.Utils;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SimpleGraph.Editor
@@ -84,6 +85,11 @@ namespace SimpleGraph.Editor
                 if (memberInfo.GetCustomAttribute<ExposedPropertyAttribute>() is { } exposedPropertyAttribute)
                 {
                     PropertyField propertyField = DrawProperty(memberInfo, container);
+                    if (propertyField == null)
+                    {
+                        Debug.LogError($"The Property {memberInfo.Name} could not be found.");
+                        continue;
+                    }
                     propertyField.RegisterValueChangeCallback(_ => OnNodeModified?.Invoke());
                 }
             }
@@ -95,10 +101,9 @@ namespace SimpleGraph.Editor
         #region PROPERTIES_DRAWERS
         private PropertyField DrawProperty(MemberInfo memberInfo, VisualElement container)
         {
-            if (_serializedProperty == null)
-            {
-                FetchSerializedProperty();
-            }
+            _serializedProperty = GetSerializedProperty();
+            if (_serializedProperty == null) return null;
+            
             SerializedProperty property = _serializedProperty.FindPropertyRelative(memberInfo.GetRelativePropertyPath());
             PropertyField propertyField = new PropertyField(property)
             {
@@ -108,8 +113,9 @@ namespace SimpleGraph.Editor
             return propertyField;
         }
 
-        private void FetchSerializedProperty()
+        private SerializedProperty GetSerializedProperty()
         {
+            if (_serializedProperty != null) return _serializedProperty;
             SerializedProperty nodes = _graphSerializedObject.FindProperty(ReflectionEditorUtility.GetPropertyPropertyPath("Nodes"));
             if (nodes.isArray)
             {
@@ -120,10 +126,11 @@ namespace SimpleGraph.Editor
                     SerializedProperty elementId = element.FindPropertyRelative(ReflectionEditorUtility.GetPropertyPropertyPath("Id"));
                     if (elementId.stringValue.Equals(NodeData.Id))
                     {
-                        _serializedProperty = element;
+                        return element;
                     }
                 }
             }
+            return null;
         }
         #endregion
     }

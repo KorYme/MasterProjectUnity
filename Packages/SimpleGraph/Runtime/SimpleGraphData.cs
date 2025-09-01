@@ -8,6 +8,11 @@ namespace SimpleGraph
     {
         [field: SerializeReference] public List<SimpleNodeData> Nodes { get; protected set; } = new List<SimpleNodeData>();
 
+        /// <summary>
+        /// Name of each assembly to include nodes from inside this graph<br />
+        /// Choose only one class per assembly and type "yield return typeof(CLASS_CHOSEN).Assembly.FullName;"
+        /// </summary>
+        /// <returns></returns>
         public virtual IEnumerable<string> GetAllNodeDataAssembliesForGraphEditor()
         {
             yield return typeof(SimpleNodeData).Assembly.FullName;
