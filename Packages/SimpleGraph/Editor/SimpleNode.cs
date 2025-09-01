@@ -71,10 +71,108 @@ namespace SimpleGraph.Editor
         private void DrawTitleContainer(VisualElement container) { }
 
         private void DrawMainContainer(VisualElement container) { }
-        
-        private void DrawInputContainer(VisualElement container) { }
 
-        private void DrawOutputContainer(VisualElement container) { }
+        private void DrawInputContainer(VisualElement container)
+        {
+            Type typeInfo = NodeData.GetType();
+            MemberInfo[] memberInfos = typeInfo.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (MemberInfo memberInfo in memberInfos)
+            {
+                if(memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not { PortDirection: Direction.Input } exposedPortAttribute) continue;
+                
+                Type portDataType = null;
+                
+                switch (memberInfo.MemberType)
+                {
+                    case MemberTypes.Field:
+                        
+                        FieldInfo fieldInfo = memberInfo as FieldInfo;
+                        if(fieldInfo == null) continue;
+                        
+                        if (fieldInfo.FieldType.IsGenericType
+                            && fieldInfo.FieldType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
+                        {
+                            portDataType = fieldInfo.FieldType.GenericTypeArguments[0];
+                        }
+                        
+                        break;
+                    case MemberTypes.Property:
+                        
+                        PropertyInfo propertyInfo = memberInfo as PropertyInfo;
+                        if(propertyInfo == null) continue;
+                        
+                        if (propertyInfo.PropertyType.IsGenericType
+                            && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
+                        {
+                            portDataType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                        }
+                        
+                        break;
+                    default:
+                        continue;
+                }
+                
+                if(portDataType == null) continue;
+                
+                Port.Capacity capacity = exposedPortAttribute.PortDirection == Direction.Input
+                    ? Port.Capacity.Single
+                    : Port.Capacity.Multi;
+                    
+                SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
+                inputContainer.Add(simplePort);
+            }
+        }
+
+        private void DrawOutputContainer(VisualElement container)
+        {
+            Type typeInfo = NodeData.GetType();
+            MemberInfo[] memberInfos = typeInfo.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (MemberInfo memberInfo in memberInfos)
+            {
+                if(memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not { PortDirection: Direction.Output } exposedPortAttribute) continue;
+                
+                Type portDataType = null;
+                
+                switch (memberInfo.MemberType)
+                {
+                    case MemberTypes.Field:
+                        
+                        FieldInfo fieldInfo = memberInfo as FieldInfo;
+                        if(fieldInfo == null) continue;
+                        
+                        if (fieldInfo.FieldType.IsGenericType
+                            && fieldInfo.FieldType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
+                        {
+                            portDataType = fieldInfo.FieldType.GenericTypeArguments[0];
+                        }
+                        
+                        break;
+                    case MemberTypes.Property:
+                        
+                        PropertyInfo propertyInfo = memberInfo as PropertyInfo;
+                        if(propertyInfo == null) continue;
+                        
+                        if (propertyInfo.PropertyType.IsGenericType
+                            && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
+                        {
+                            portDataType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                        }
+                        
+                        break;
+                    default:
+                        continue;
+                }
+                
+                if(portDataType == null) continue;
+                
+                Port.Capacity capacity = exposedPortAttribute.PortDirection == Direction.Input
+                    ? Port.Capacity.Single
+                    : Port.Capacity.Multi;
+                    
+                SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
+                outputContainer.Add(simplePort);
+            }
+        }
 
         private void DrawExtensionContainer(VisualElement container)
         {
