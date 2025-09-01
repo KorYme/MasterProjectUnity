@@ -119,7 +119,8 @@ namespace SimpleGraph.Editor
                     : Port.Capacity.Multi;
                     
                 SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
-                inputContainer.Add(simplePort);
+               
+                container.Add(simplePort);
             }
         }
 
@@ -170,7 +171,8 @@ namespace SimpleGraph.Editor
                     : Port.Capacity.Multi;
                     
                 SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
-                outputContainer.Add(simplePort);
+                
+                container.Add(simplePort);
             }
         }
 

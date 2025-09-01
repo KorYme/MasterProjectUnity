@@ -12,7 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e1ea00813284544bc210924135c0e8, type: 3}
   m_Name: SimpleGraphData
   m_EditorClassIdentifier: 
-  <Nodes>k__BackingField: []
+  <Nodes>k__BackingField:
+  - rid: 1555520914921357312
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 1555520914921357312
+      type: {class: DebugNodeData, ns: SimpleGraph, asm: SimpleGraph}
+      data:
+        <Id>k__BackingField: c379330d-bcfb-4661-b25b-37073b88be22
+        <Position>k__BackingField:
+          serializedVersion: 2
+          x: 456
+          y: 170.40001
+          width: 168.79999
+          height: 172.79999
+        <DebugValue>k__BackingField: 
+        _debugValueFloat: 0
+        _debugValueList: []
