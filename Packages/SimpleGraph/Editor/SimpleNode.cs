@@ -78,7 +78,7 @@ namespace SimpleGraph.Editor
             MemberInfo[] memberInfos = typeInfo.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             foreach (MemberInfo memberInfo in memberInfos)
             {
-                if(memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not { PortDirection: Direction.Input } exposedPortAttribute) continue;
+                if (memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not ExposedInputPortAttribute) continue;
                 
                 Type portDataType = null;
                 
@@ -86,8 +86,7 @@ namespace SimpleGraph.Editor
                 {
                     case MemberTypes.Field:
                         
-                        FieldInfo fieldInfo = memberInfo as FieldInfo;
-                        if(fieldInfo == null) continue;
+                        if (memberInfo is not FieldInfo fieldInfo) continue;
                         
                         if (fieldInfo.FieldType.IsGenericType
                             && fieldInfo.FieldType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
@@ -98,8 +97,7 @@ namespace SimpleGraph.Editor
                         break;
                     case MemberTypes.Property:
                         
-                        PropertyInfo propertyInfo = memberInfo as PropertyInfo;
-                        if(propertyInfo == null) continue;
+                        if (memberInfo is not PropertyInfo propertyInfo) continue;
                         
                         if (propertyInfo.PropertyType.IsGenericType
                             && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
@@ -112,14 +110,10 @@ namespace SimpleGraph.Editor
                         continue;
                 }
                 
-                if(portDataType == null) continue;
-                
-                Port.Capacity capacity = exposedPortAttribute.PortDirection == Direction.Input
-                    ? Port.Capacity.Single
-                    : Port.Capacity.Multi;
+                if (portDataType == null) continue;
                     
-                SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
-               
+                SimplePort simplePort = new SimplePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, portDataType);
+                
                 container.Add(simplePort);
             }
         }
@@ -130,7 +124,7 @@ namespace SimpleGraph.Editor
             MemberInfo[] memberInfos = typeInfo.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             foreach (MemberInfo memberInfo in memberInfos)
             {
-                if(memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not { PortDirection: Direction.Output } exposedPortAttribute) continue;
+                if (memberInfo.GetCustomAttribute<ExposedPortAttribute>() is not ExposedOutputPortAttribute) continue;
                 
                 Type portDataType = null;
                 
@@ -139,7 +133,7 @@ namespace SimpleGraph.Editor
                     case MemberTypes.Field:
                         
                         FieldInfo fieldInfo = memberInfo as FieldInfo;
-                        if(fieldInfo == null) continue;
+                        if (fieldInfo == null) continue;
                         
                         if (fieldInfo.FieldType.IsGenericType
                             && fieldInfo.FieldType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
@@ -151,7 +145,7 @@ namespace SimpleGraph.Editor
                     case MemberTypes.Property:
                         
                         PropertyInfo propertyInfo = memberInfo as PropertyInfo;
-                        if(propertyInfo == null) continue;
+                        if (propertyInfo == null) continue;
                         
                         if (propertyInfo.PropertyType.IsGenericType
                             && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(SimplePortData<>))
@@ -164,13 +158,9 @@ namespace SimpleGraph.Editor
                         continue;
                 }
                 
-                if(portDataType == null) continue;
-                
-                Port.Capacity capacity = exposedPortAttribute.PortDirection == Direction.Input
-                    ? Port.Capacity.Single
-                    : Port.Capacity.Multi;
+                if (portDataType == null) continue;
                     
-                SimplePort simplePort = new SimplePort(Orientation.Horizontal, exposedPortAttribute.PortDirection, capacity, portDataType);
+                SimplePort simplePort = new SimplePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, portDataType);
                 
                 container.Add(simplePort);
             }

@@ -6,5 +6,7 @@ namespace SimpleGraph
     public class SimplePortData<T>
     {
         public T PortData { get; set; }
+        
+        public static implicit operator T(SimplePortData<T> d) => d.PortData;
     }
 }
