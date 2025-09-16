@@ -13,20 +13,34 @@ MonoBehaviour:
   m_Name: SimpleGraphData
   m_EditorClassIdentifier: 
   <Nodes>k__BackingField:
-  - rid: 1555520914921357312
+  - rid: 4211850111645908992
+  - rid: 4211850111645908993
   references:
     version: 2
     RefIds:
-    - rid: 1555520914921357312
+    - rid: 4211850111645908992
       type: {class: DebugNodeData, ns: SimpleGraph, asm: SimpleGraph}
       data:
-        <Id>k__BackingField: c379330d-bcfb-4661-b25b-37073b88be22
+        <Id>k__BackingField: ed6bee44-fa8f-47f7-bf95-a929db0eaf2a
         <Position>k__BackingField:
           serializedVersion: 2
-          x: 456
-          y: 170.40001
-          width: 168.79999
-          height: 172.79999
+          x: 219
+          y: 29
+          width: 167
+          height: 200
+        <DebugValue>k__BackingField: 
+        _debugValueFloat: 0
+        _debugValueList: []
+    - rid: 4211850111645908993
+      type: {class: DebugNodeData, ns: SimpleGraph, asm: SimpleGraph}
+      data:
+        <Id>k__BackingField: 759c3f66-8024-4c6a-8794-a77fcd6174b8
+        <Position>k__BackingField:
+          serializedVersion: 2
+          x: 524
+          y: 29
+          width: 167
+          height: 200
         <DebugValue>k__BackingField: 
         _debugValueFloat: 0
         _debugValueList: []

@@ -7,10 +7,14 @@ namespace SimpleGraph
     public class DebugNodeData : SimpleNodeData
     {
         [SerializeField, ExposedInputPort] 
+        private SimplePortData<int> _testIntInputPort;
+        [SerializeField, ExposedInputPort] 
         private SimplePortData<float> _testInputPort;
         [field:SerializeField, ExposedInputPort] 
-        public SimplePortData<string> TestInputPort { get; private set; }
+        public SimplePortData<Vector2> TestInputPort { get; private set; }
         
+        [SerializeField, ExposedOutputPort] 
+        private SimplePortData<float> _testFloatOutputPort;
         [SerializeField, ExposedOutputPort]
         private SimplePortData<Vector2> _testOutputPort;
         [field:SerializeField, ExposedOutputPort] 

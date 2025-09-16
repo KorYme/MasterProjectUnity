@@ -225,8 +225,9 @@ namespace SimpleGraph.Editor
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
-            // TODO : Still need to create port for specific type
-            return ports.Where(port => port.node != startPort.node && port.direction != startPort.direction).ToList();
+            return ports.Where(endPort => endPort.node != startPort.node 
+                                          && endPort.direction != startPort.direction 
+                                          && endPort.portType.IsCastableTo(startPort.portType)).ToList();
         }
         
         #region UTILITIES

@@ -82,9 +82,8 @@ namespace SimpleGraph.Editor
         private void AddToolbar()
         {
             Toolbar toolbar = new Toolbar();
-
-            Button miniMapButton = UIElementUtility.CreateButton("Mini Map", _graphView.ToggleMinimapVisibility);
             
+            Button miniMapButton = UIElementUtility.CreateButton("Mini Map", _graphView.ToggleMinimapVisibility);
             _graphView.OnMiniMapVisibilityChanged += isVisible =>
             {
                 if (isVisible)
@@ -97,8 +96,11 @@ namespace SimpleGraph.Editor
                 }
             };
             _graphView.IsMinimapVisible = false;
-
             toolbar.Add(miniMapButton);
+
+            Button pingGraphButton = UIElementUtility.CreateButton("Ping Graph", () => EditorGUIUtility.PingObject(CurrentGraphData));
+            toolbar.Add(pingGraphButton);
+
             toolbar.LoadAndAddStyleSheets("ToolbarStyles");
             rootVisualElement.Add(toolbar);
         }

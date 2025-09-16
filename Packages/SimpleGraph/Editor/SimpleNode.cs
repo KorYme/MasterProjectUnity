@@ -112,9 +112,8 @@ namespace SimpleGraph.Editor
                 
                 if (portDataType == null) continue;
                     
-                SimplePort simplePort = new SimplePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, portDataType);
-                
-                container.Add(simplePort);
+                Port port = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, portDataType);
+                container.Add(port);
             }
         }
 
@@ -159,10 +158,9 @@ namespace SimpleGraph.Editor
                 }
                 
                 if (portDataType == null) continue;
-                    
-                SimplePort simplePort = new SimplePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, portDataType);
                 
-                container.Add(simplePort);
+                Port port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, portDataType);
+                container.Add(port);
             }
         }
 
@@ -184,8 +182,6 @@ namespace SimpleGraph.Editor
                 }
             }
         }
-
-
         #endregion
         
         #region PROPERTIES_DRAWERS
