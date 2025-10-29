@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -21,7 +22,7 @@ namespace ASze.CustomPlayButton
         GUIStyle buttonStyle;
         GUIStyle selectedButtonStyle;
         GUIContent bookmarkContent;
-        SceneAsset[] buildScenes;
+        List<SceneAsset> buildScenes;
         SceneAsset currentScene;
 
         Vector2 scrollPosBuild;
@@ -75,7 +76,7 @@ namespace ASze.CustomPlayButton
         public override Vector2 GetWindowSize()
         {
             var width = COLLUMN_WIDTH * (CustomPlayButton.Bookmark.HasBookmark() ? 2 : 1);
-            var maxRow = Mathf.Max(buildScenes.Length, CustomPlayButton.Bookmark.bookmarks.Count, 1);
+            var maxRow = Mathf.Max(buildScenes.Count, CustomPlayButton.Bookmark.bookmarks.Count, 1);
             var height = Mathf.Min(COLLUMN_HEIGHT * (maxRow + 1), Screen.currentResolution.height * 0.5f);
             return new Vector2(width, height);
         }
@@ -115,10 +116,10 @@ namespace ASze.CustomPlayButton
             }
             EditorGUILayout.EndHorizontal();
 
-            if (buildScenes.Length > 0)
+            if (buildScenes.Count > 0)
             {
                 scrollPosBuild = EditorGUILayout.BeginScrollView(scrollPosBuild);
-                for (int i = 0; i < buildScenes.Length; i++)
+                for (int i = 0; i < buildScenes.Count; i++)
                 {
                     DrawSelection(buildScenes[i], i, true);
                 }
@@ -231,15 +232,16 @@ namespace ASze.CustomPlayButton
         void GetBuildScenes()
         {
             ToolbarExtenderSettings asset = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(ToolbarExtenderSettings.TOOLBAR_EXTENDER_SETTINGS_PATH);
-            buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty));
-            if (buildScenes.Length == 0)
+            buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty)).ToList();
+            buildScenes.Sort((x, y) => String.Compare(x.name, y.name, StringComparison.CurrentCulture));
+            if (buildScenes.Count == 0)
             {
-                buildScenes = LoadAssetsOfType<SceneAsset>("Assets/");
+                buildScenes = LoadAssetsOfType<SceneAsset>("Assets/").ToList();
                 Debug.LogWarning("Using \"Assets/\" path instead.");
             }
         }
         
-        public static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : Object
+        public static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : UnityEngine.Object
         {
             return AssetDatabase
                 .FindAssets($"t:{typeof(T).Name}", searchInFolders)
