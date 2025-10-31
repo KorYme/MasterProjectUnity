@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -12,12 +13,12 @@ public class ToolbarExtenderSettings : ScriptableObject
     
     internal static ToolbarExtenderSettings GetOrCreateSettings()
     {
-        var settings = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(TOOLBAR_EXTENDER_SETTINGS_PATH);
-        if (settings == null)
+        ToolbarExtenderSettings settings = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(TOOLBAR_EXTENDER_SETTINGS_PATH);
+        if (!settings)
         {
             settings = CreateInstance<ToolbarExtenderSettings>();
             settings.folderToFocus = string.Empty;
-            Directory.CreateDirectory(Path.GetDirectoryName(TOOLBAR_EXTENDER_SETTINGS_PATH));
+            Directory.CreateDirectory(Path.GetDirectoryName(TOOLBAR_EXTENDER_SETTINGS_PATH) ?? throw new ArgumentException($"The folder for {nameof(ToolbarExtenderSettings)} the couldn't be created."));
             AssetDatabase.CreateAsset(settings, TOOLBAR_EXTENDER_SETTINGS_PATH);
             AssetDatabase.SaveAssets();
         }
@@ -44,9 +45,14 @@ public static class ToolbarExtenderSettingsIMGUIRegister
             // Create the SettingsProvider and initialize its drawing (IMGUI) function in place:
             guiHandler = _ =>
             {
+                GUILayout.BeginVertical(new GUIStyle()
+                {
+                    margin = new RectOffset(10, 10, 10, 10),
+                });
                 SerializedObject settings = ToolbarExtenderSettings.GetSerializedSettings();
                 EditorGUILayout.PropertyField(settings.FindProperty("folderToFocus"), new GUIContent("Folder to Focus"));
                 settings.ApplyModifiedPropertiesWithoutUndo();
+                GUILayout.EndVertical();
             },
 
             // Populate the search keywords to enable smart search filtering and label highlighting:

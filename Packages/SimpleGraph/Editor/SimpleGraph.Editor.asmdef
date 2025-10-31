@@ -1,0 +1,20 @@
+{
+    "name": "SimpleGraph.Editor",
+    "rootNamespace": "SimpleGraph.Editor",
+    "references": [
+        "GUID:98d3d14d51918274ba8af49a48b01ce8",
+        "GUID:7777682572a260540afcc22e8062e049",
+        "GUID:2abe72c77b8423e4fba7895a2936720e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

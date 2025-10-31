@@ -1,4 +1,4 @@
-namespace EncryptionUtils
+namespace SerializationUtils
 {
     public static class EncryptionUtilities
     {
