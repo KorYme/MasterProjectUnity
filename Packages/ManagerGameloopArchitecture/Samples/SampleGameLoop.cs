@@ -19,11 +19,5 @@ namespace ManagerInjection.Samples
             SampleGlobals.WarningManager = container.Bind(_warningManagerBind);
             Debug.Log("All Managers Instantiated");
         }
-
-        protected override void UnbindManagers()
-        {
-            _testManagerBind.Unbind();
-            _warningManagerBind.Unbind();
-        }
     }
 }

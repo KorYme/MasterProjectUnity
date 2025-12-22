@@ -33,12 +33,15 @@ namespace ManagerInjection
         public IReadOnlyDictionary<Type, IManager> AllManagers => _allManagers;
         private Dictionary<Type, IManager> _allManagers;
 
+        protected event Action OnUnbindAll;
+
         private Transform m_transform;
 
         public BindingContainer(Transform transform = null)
         {
             _allManagers = new Dictionary<Type, IManager>();
             m_transform = transform;
+            OnUnbindAll = null;
         }
 
         public T Bind<T, Y>(ManagerBinder<T, Y> binder)
@@ -52,8 +55,12 @@ namespace ManagerInjection
                 BindingType.Mock => BindWithMockService<T>(),
                 _ => null,
             };
-            
-            (binder.ManagerReference as IManagerReferenceSetter<T>)?.SetManagerReference(newManager);
+
+            if (binder.ManagerReference is IManagerReferenceSetter<T> managerReferenceSetter)
+            {
+                managerReferenceSetter.SetManagerReference(newManager);
+                OnUnbindAll += managerReferenceSetter.UnsetManagerReference;
+            }
             return newManager;
         }
 
@@ -120,6 +127,12 @@ namespace ManagerInjection
             }
             mockManager = null;
             return true;
+        }
+
+        public void UnbindAll()
+        {
+            OnUnbindAll?.Invoke();
+            OnUnbindAll = null;
         }
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "com.koryme.manager-gameloop-archi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Manager Gameloop Architecture",
   "description": "Easy to use gameloop architectures with singleton workaround using injection and SOAP.",
   "unity": "2022.3",

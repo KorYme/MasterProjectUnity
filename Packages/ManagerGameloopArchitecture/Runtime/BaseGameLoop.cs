@@ -70,6 +70,10 @@ namespace ManagerInjection
         }
 
         protected virtual void LoadScenes() { }
-        protected abstract void UnbindManagers();
+
+        protected virtual void UnbindManagers()
+        {
+            _managersContainer.UnbindAll();
+        }
     }
 }
