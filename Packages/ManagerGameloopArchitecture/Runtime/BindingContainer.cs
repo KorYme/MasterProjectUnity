@@ -6,21 +6,6 @@ using UnityEngine;
 
 namespace ManagerInjection
 {
-    [Serializable]
-    public struct ManagerBinder<T, Y> where T : class, IManager where Y : BaseManager
-    {
-        [field: SerializeField] public BindingContainer.BindingType BindingType { get; private set; }
-        
-        [field: SerializeField] public Y Manager { get; private set; }
-        
-        [field: SerializeField] public SOManagerReference<T> ManagerReference { get; private set; }
-
-        public void Unbind()
-        {
-            (ManagerReference as IManagerReferenceSetter<T>)?.UnsetManagerReference();
-        }
-    }
-    
     public class BindingContainer
     {
         public enum BindingType
@@ -71,6 +56,7 @@ namespace ManagerInjection
                 return mockManager;
             }
             BaseManager managerInstance = UnityEngine.Object.Instantiate(managerPrefab, m_transform);
+            managerInstance.name = managerPrefab.name;
             _allManagers.Add(typeof(T), managerInstance);
             // Debug.Log($"{nameof(BindingContainer)} : {typeof(T).Name} has been binded with a prefab instance.");
             return managerInstance as T;
