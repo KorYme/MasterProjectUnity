@@ -7,67 +7,66 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-namespace ASze.CustomPlayButton
+namespace CustomPlayButton
 {
     public class EditorSelectScenePopup : PopupWindowContent
     {
-        const float COLLUMN_WIDTH = 200.0f;
-        const float COLLUMN_HEIGHT = 28f;
-        readonly GUILayoutOption[] ICON_LAYOUT = new GUILayoutOption[] {
+        private const float COLLUMN_WIDTH = 300.0f;
+        private const float COLLUMN_HEIGHT = 28f;
+        private readonly GUILayoutOption[] _iconLayout = new[] {
             GUILayout.Width(20.0f), GUILayout.Height(20.0f)
         };
 
+        private GUIStyle _titleButtonStyle;
+        private GUIStyle _buttonStyle;
+        private GUIStyle _selectedButtonStyle;
+        private GUIContent _bookmarkContent;
+        private List<SceneAsset> _buildScenes;
+        private SceneAsset _currentScene;
 
-        GUIStyle titleButtonStyle;
-        GUIStyle buttonStyle;
-        GUIStyle selectedButtonStyle;
-        GUIContent bookmarkContent;
-        List<SceneAsset> buildScenes;
-        SceneAsset currentScene;
-
-        Vector2 scrollPosBuild;
-        Vector2 scrollPosBookmark;
+        private Vector2 _scrollPosBuild;
+        private Vector2 _scrollPosBookmark;
 
         public EditorSelectScenePopup()
         {
             InitStyles();
 
-            bookmarkContent = EditorGUIUtility.IconContent("blendKeySelected", "Bookmark ScriptableObject");
+            _bookmarkContent = EditorGUIUtility.IconContent("blendKeySelected", "Bookmark ScriptableObject");
 
             GetBuildScenes();
-            currentScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneManager.GetActiveScene().path);
-            CustomPlayButton.Bookmark.RemoveNullValue();
+            _currentScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneManager.GetActiveScene().path);
+            SceneBookmarkSettings.instance.Refresh();
         }
 
-        void InitStyles()
+        private void InitStyles()
         {
-            var blankTex = MakeTex(new Color(0f, 0f, 0f, 0f));
-            var selectedTex = MakeTex(new Color(0f, 0f, 0f, 0.3f));
+            Texture2D blankTex = MakeTex(new Color(0f, 0f, 0f, 0f));
+            Texture2D selectedTex = MakeTex(new Color(0f, 0f, 0f, 0.3f));
 
-            var hoverState = new GUIStyleState()
+            GUIStyleState hoverState = new GUIStyleState()
             {
                 background = selectedTex,
                 textColor = GUI.skin.button.onHover.textColor,
             };
-            buttonStyle = new GUIStyle(GUI.skin.label)
+            _buttonStyle = new GUIStyle(GUI.skin.label)
             {
                 onHover = hoverState,
                 hover = hoverState,
             };
-            buttonStyle.normal.background = blankTex;
+            _buttonStyle.normal.background = blankTex;
 
-            selectedButtonStyle = new GUIStyle(buttonStyle);
-            selectedButtonStyle.normal.background = selectedTex;
+            _selectedButtonStyle = new GUIStyle(_buttonStyle);
+            _selectedButtonStyle.normal.background = selectedTex;
 
-            titleButtonStyle = new GUIStyle(EditorStyles.boldLabel);
-            titleButtonStyle.onHover = buttonStyle.onHover;
-            titleButtonStyle.hover = buttonStyle.hover;
-            titleButtonStyle.normal.background = blankTex;
+            _titleButtonStyle = new GUIStyle(EditorStyles.boldLabel);
+            _titleButtonStyle.onHover = _buttonStyle.onHover;
+            _titleButtonStyle.hover = _buttonStyle.hover;
+            _titleButtonStyle.normal.background = blankTex;
         }
 
         public static Texture2D MakeTex(Color col)
         {
-            var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             texture.SetPixel(0, 0, col);
             texture.Apply();
             return texture;
@@ -75,18 +74,10 @@ namespace ASze.CustomPlayButton
 
         public override Vector2 GetWindowSize()
         {
-            var width = COLLUMN_WIDTH * (CustomPlayButton.Bookmark.HasBookmark() ? 2 : 1);
-            var maxRow = Mathf.Max(buildScenes.Count, CustomPlayButton.Bookmark.bookmarks.Count, 1);
-            var height = Mathf.Min(COLLUMN_HEIGHT * (maxRow + 1), Screen.currentResolution.height * 0.5f);
+            float width = COLLUMN_WIDTH * (SceneBookmarkSettings.instance.ScenesCount > 0 ? 2 : 1);
+            int maxRow = Mathf.Max(_buildScenes.Count, SceneBookmarkSettings.instance.ScenesCount, 1);
+            float height = Mathf.Min(COLLUMN_HEIGHT * (maxRow + 1), Screen.currentResolution.height * 0.5f);
             return new Vector2(width, height);
-        }
-
-        public override void OnClose()
-        {
-            if (EditorUtility.IsDirty(CustomPlayButton.Bookmark))
-            {
-                AssetDatabase.SaveAssets();
-            }
         }
 
         public override void OnGUI(Rect rect)
@@ -100,29 +91,22 @@ namespace ASze.CustomPlayButton
                 editorWindow?.Repaint();
         }
 
-        void DrawBuildScenes()
+        private void DrawBuildScenes()
         {
             EditorGUILayout.BeginVertical();
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Scenes in Project", EditorStyles.boldLabel, GUILayout.Height(20.0f));
-            if (!CustomPlayButton.Bookmark.HasBookmark())
-            {
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button(bookmarkContent, buttonStyle, ICON_LAYOUT))
-                {
-                    Selection.activeObject = CustomPlayButton.Bookmark;
-                }
-            }
             EditorGUILayout.EndHorizontal();
 
-            if (buildScenes.Count > 0)
+            if (_buildScenes.Count > 0)
             {
-                scrollPosBuild = EditorGUILayout.BeginScrollView(scrollPosBuild);
-                for (int i = 0; i < buildScenes.Count; i++)
+                _scrollPosBuild = EditorGUILayout.BeginScrollView(_scrollPosBuild);
+                for (int i = 0; i < _buildScenes.Count; i++)
                 {
-                    DrawSelection(buildScenes[i], i, true);
+                    DrawSelection(_buildScenes[i], i, true);
                 }
+                SceneBookmarkSettings.instance.Refresh();
                 EditorGUILayout.EndScrollView();
             }
             else
@@ -132,32 +116,27 @@ namespace ASze.CustomPlayButton
             EditorGUILayout.EndVertical();
         }
 
-        void DrawBookmarkScenes()
+        private void DrawBookmarkScenes()
         {
-            var bookmarkSetting = CustomPlayButton.Bookmark;
-            if (!bookmarkSetting.HasBookmark()) return;
+            if (SceneBookmarkSettings.instance.ScenesCount <= 0) return;
 
             EditorGUILayout.BeginVertical(GUILayout.MinWidth(COLLUMN_WIDTH));
 
-            var content = new GUIContent(bookmarkContent);
-            content.text = "Bookmark";
-            if (GUILayout.Button(content, titleButtonStyle, GUILayout.Height(20.0f)))
-            {
-                Selection.activeObject = CustomPlayButton.Bookmark;
-            }
+            GUIContent content = new GUIContent(_bookmarkContent);
+            content.text = "Bookmarks";
+            GUILayout.Label(content, EditorStyles.boldLabel, GUILayout.Height(20.0f));
 
-
-            scrollPosBookmark = EditorGUILayout.BeginScrollView(scrollPosBookmark);
-            var bookmarks = new List<SceneAsset>(bookmarkSetting.bookmarks);
-            foreach (var bookmark in bookmarks)
+            _scrollPosBookmark = EditorGUILayout.BeginScrollView(_scrollPosBookmark);
+            foreach (SceneAsset bookmark in SceneBookmarkSettings.instance.Scenes)
             {
                 DrawSelection(bookmark);
             }
+            SceneBookmarkSettings.instance.Refresh();
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
         }
 
-        void DrawSelection(SceneAsset scene, int index = -1, bool bookmarkButton = false)
+        private void DrawSelection(SceneAsset scene, int index = -1, bool bookmarkButton = false)
         {
             if (scene == null) return;
 
@@ -165,83 +144,85 @@ namespace ASze.CustomPlayButton
 
             if (bookmarkButton)
             {
-                var bookmarks = CustomPlayButton.Bookmark.bookmarks;
-                var inBookmark = bookmarks.Contains(scene);
+                bool isInBookmark = SceneBookmarkSettings.instance.Contains(scene);
                 GUIContent content;
-                if (inBookmark)
-                    content = EditorGUIUtility.IconContent("blendKeySelected", "Unbookmark");
-                else
-                    content = EditorGUIUtility.IconContent("blendKeyOverlay", "Bookmark");
-                if (GUILayout.Button(content, buttonStyle, ICON_LAYOUT))
+                if (isInBookmark)
                 {
-                    if (inBookmark)
+                    content = EditorGUIUtility.IconContent("blendKeySelected", "Unbookmark");
+                }
+                else
+                {
+                    content = EditorGUIUtility.IconContent("blendKeyOverlay", "Bookmark");
+                }
+                if (GUILayout.Button(content, _buttonStyle, _iconLayout))
+                {
+                    if (isInBookmark)
                     {
-                        bookmarks.Remove(scene);
+                        SceneBookmarkSettings.instance.RemoveScene(scene);
                     }
                     else
                     {
-                        bookmarks.Add(scene);
+                        SceneBookmarkSettings.instance.AddScene(scene);
                     }
-                    bookmarks.RemoveAll(item => item == null);
-                    EditorUtility.SetDirty(CustomPlayButton.Bookmark);
                 }
             }
             else
             {
-                if (GUILayout.Button(EditorGUIUtility.IconContent("CrossIcon", "Unbookmark"), buttonStyle, ICON_LAYOUT))
+                if (GUILayout.Button(EditorGUIUtility.IconContent("CrossIcon", "Unbookmark"), _buttonStyle, _iconLayout))
                 {
-                    var bookmarks = CustomPlayButton.Bookmark.bookmarks;
-                    bookmarks.Remove(scene);
-                    bookmarks.RemoveAll(item => item == null);
-                    EditorUtility.SetDirty(CustomPlayButton.Bookmark);
+                    SceneBookmarkSettings.instance.RemoveScene(scene);
                 }
             }
 
-            GUIStyle style = currentScene == scene ? selectedButtonStyle : buttonStyle;
-            if (GUILayout.Button(EditorGUIUtility.IconContent("d_BuildSettings.SelectedIcon", "Open Scene"), style, ICON_LAYOUT))
+            GUIStyle style = _currentScene == scene ? _selectedButtonStyle : _buttonStyle;
+            if (index >= 0 && GUILayout.Button(EditorGUIUtility.IconContent("d_Folder Icon", "Ping Scene"), _buttonStyle, _iconLayout))
+            {
+                EditorGUIUtility.PingObject(scene);
+            }
+            if (GUILayout.Button(EditorGUIUtility.IconContent("d_BuildSettings.SelectedIcon", "Open Scene"), style, _iconLayout))
             {
                 OpenScene(scene);
             }
-
-            style = CustomPlayButton.SelectedScene == scene ? selectedButtonStyle : buttonStyle;
-            if (GUILayout.Button(index >= 0 ? $"{index}   {scene.name}" : scene.name, style))
+            
+            style = CustomPlayButton.SelectedScene == scene ? _selectedButtonStyle : _buttonStyle;
+            if (GUILayout.Button(scene.name, style))
             {
                 SelectScene(scene);
             }
             GUILayout.EndHorizontal();
         }
 
-        void SelectScene(SceneAsset scene)
+        private void SelectScene(SceneAsset scene)
         {
             CustomPlayButton.SelectedScene = scene;
             editorWindow.Close();
         }
 
-        void OpenScene(SceneAsset scene)
+        private void OpenScene(SceneAsset scene)
         {
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
-                var scenePath = AssetDatabase.GetAssetPath(scene);
+                string scenePath = AssetDatabase.GetAssetPath(scene);
                 EditorSceneManager.OpenScene(scenePath);
-                currentScene = scene;
+                _currentScene = scene;
                 // Recreate textures which are destoryed by OpenScene
                 InitStyles();
             }
         }
 
-        void GetBuildScenes()
+        private void GetBuildScenes()
         {
-            ToolbarExtenderSettings asset = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(ToolbarExtenderSettings.TOOLBAR_EXTENDER_SETTINGS_PATH);
-            buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty)).ToList();
-            buildScenes.Sort((x, y) => String.Compare(x.name, y.name, StringComparison.CurrentCulture));
-            if (buildScenes.Count == 0)
+            ToolbarExtenderSettings asset = ToolbarExtenderSettings.GetOrCreateSettings();
+            _buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty)).ToList();
+            _buildScenes.Sort((x, y) => String.Compare(x.name, y.name, StringComparison.CurrentCulture));
+            if (_buildScenes.Count == 0)
             {
-                buildScenes = LoadAssetsOfType<SceneAsset>("Assets/").ToList();
+                _buildScenes = LoadAssetsOfType<SceneAsset>("Assets/").ToList();
                 Debug.LogWarning("Using \"Assets/\" path instead.");
             }
         }
         
-        public static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : UnityEngine.Object
+        private static T[] LoadAssetsOfType<T>(params string[] searchInFolders) where T : UnityEngine.Object
         {
             return AssetDatabase
                 .FindAssets($"t:{typeof(T).Name}", searchInFolders)

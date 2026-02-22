@@ -9,8 +9,8 @@ namespace UnityToolbarExtender
 	[InitializeOnLoad]
 	public static class ToolbarExtender
 	{
-		static int m_toolCount;
-		static GUIStyle m_commandStyle = null;
+		private static int _toolCount;
+		private static GUIStyle _commandStyle;
 
 		public static readonly List<Action> LeftToolbarGUI = new List<Action>();
 		public static readonly List<Action> RightToolbarGUI = new List<Action>();
@@ -29,13 +29,13 @@ namespace UnityToolbarExtender
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 			
 #if UNITY_2019_3_OR_NEWER
-			m_toolCount = toolIcons != null ? ((int) toolIcons.GetValue(null)) : 8;
+			_toolCount = toolIcons != null ? ((int) toolIcons.GetValue(null)) : 8;
 #elif UNITY_2019_1_OR_NEWER
-			m_toolCount = toolIcons != null ? ((int) toolIcons.GetValue(null)) : 7;
+			_toolCount = toolIcons != null ? ((int) toolIcons.GetValue(null)) : 7;
 #elif UNITY_2018_1_OR_NEWER
-			m_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 6;
+			_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 6;
 #else
-			m_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 5;
+			_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 5;
 #endif
 	
 			ToolbarCallback.OnToolbarGUI = OnGUI;
@@ -44,17 +44,17 @@ namespace UnityToolbarExtender
 		}
 
 #if UNITY_2019_3_OR_NEWER
-		public const float space = 8;
+		public const float SPACE = 8;
 #else
-		public const float space = 10;
+		public const float SPACE = 10;
 #endif
-		public const float largeSpace = 20;
-		public const float buttonWidth = 32;
-		public const float dropdownWidth = 80;
+		public const float LARGE_SPACE = 20;
+		public const float BUTTON_WIDTH = 32;
+		public const float DROPDOWN_WIDTH = 80;
 #if UNITY_2019_1_OR_NEWER
-		public const float playPauseStopWidth = 140;
+		public const float PLAY_PAUSE_STOP_WIDTH = 140;
 #else
-		public const float playPauseStopWidth = 100;
+		public const float PLAY_PAUSE_STOP_WIDTH = 100;
 #endif
 
 		static void OnGUI()
@@ -62,21 +62,21 @@ namespace UnityToolbarExtender
 			// Create two containers, left and right
 			// Screen is whole toolbar
 
-			if (m_commandStyle == null)
+			if (_commandStyle == null)
 			{
-				m_commandStyle = new GUIStyle("CommandLeft");
+				_commandStyle = new GUIStyle("CommandLeft");
 			}
 
 			var screenWidth = EditorGUIUtility.currentViewWidth;
 
 			// Following calculations match code reflected from Toolbar.OldOnGUI()
-			float playButtonsPosition = Mathf.RoundToInt ((screenWidth - playPauseStopWidth) / 2);
+			float playButtonsPosition = Mathf.RoundToInt ((screenWidth - PLAY_PAUSE_STOP_WIDTH) / 2);
 
 			Rect leftRect = new Rect(0, 0, screenWidth, Screen.height);
-			leftRect.xMin += space; // Spacing left
-			leftRect.xMin += buttonWidth * m_toolCount; // Tool buttons
+			leftRect.xMin += SPACE; // Spacing left
+			leftRect.xMin += BUTTON_WIDTH * _toolCount; // Tool buttons
 #if UNITY_2019_3_OR_NEWER
-			leftRect.xMin += space; // Spacing between tools and pivot
+			leftRect.xMin += SPACE; // Spacing between tools and pivot
 #else
 			leftRect.xMin += largeSpace; // Spacing between tools and pivot
 #endif
@@ -85,28 +85,28 @@ namespace UnityToolbarExtender
 
 			Rect rightRect = new Rect(0, 0, screenWidth, Screen.height);
 			rightRect.xMin = playButtonsPosition;
-			rightRect.xMin += m_commandStyle.fixedWidth * 3; // Play buttons
+			rightRect.xMin += _commandStyle.fixedWidth * 3; // Play buttons
 			rightRect.xMax = screenWidth;
-			rightRect.xMax -= space; // Spacing right
-			rightRect.xMax -= dropdownWidth; // Layout
-			rightRect.xMax -= space; // Spacing between layout and layers
-			rightRect.xMax -= dropdownWidth; // Layers
+			rightRect.xMax -= SPACE; // Spacing right
+			rightRect.xMax -= DROPDOWN_WIDTH; // Layout
+			rightRect.xMax -= SPACE; // Spacing between layout and layers
+			rightRect.xMax -= DROPDOWN_WIDTH; // Layers
 #if UNITY_2019_3_OR_NEWER
-			rightRect.xMax -= space; // Spacing between layers and account
+			rightRect.xMax -= SPACE; // Spacing between layers and account
 #else
 			rightRect.xMax -= largeSpace; // Spacing between layers and account
 #endif
-			rightRect.xMax -= dropdownWidth; // Account
-			rightRect.xMax -= space; // Spacing between account and cloud
-			rightRect.xMax -= buttonWidth; // Cloud
-			rightRect.xMax -= space; // Spacing between cloud and collab
+			rightRect.xMax -= DROPDOWN_WIDTH; // Account
+			rightRect.xMax -= SPACE; // Spacing between account and cloud
+			rightRect.xMax -= BUTTON_WIDTH; // Cloud
+			rightRect.xMax -= SPACE; // Spacing between cloud and collab
 			rightRect.xMax -= 78; // Colab
 
 			// Add spacing around existing controls
-			leftRect.xMin += space;
-			leftRect.xMax -= space;
-			rightRect.xMin += space;
-			rightRect.xMax -= space;
+			leftRect.xMin += SPACE;
+			leftRect.xMax -= SPACE;
+			rightRect.xMin += SPACE;
+			rightRect.xMax -= SPACE;
 
 			// Add top and bottom margins
 #if UNITY_2019_3_OR_NEWER
@@ -138,7 +138,7 @@ namespace UnityToolbarExtender
 			{
 				GUILayout.BeginArea(rightRect);
 				GUILayout.BeginHorizontal();
-				foreach (var handler in RightToolbarGUI)
+				foreach (Action handler in RightToolbarGUI)
 				{
 					handler();
 				}
@@ -148,18 +148,20 @@ namespace UnityToolbarExtender
 			}
 		}
 		
-		public static void GUILeft() {
+		public static void GUILeft() 
+		{
 			GUILayout.BeginHorizontal();
-			foreach (var handler in LeftToolbarGUI)
+			foreach (Action handler in LeftToolbarGUI)
 			{
 				handler();
 			}
 			GUILayout.EndHorizontal();
 		}
 		
-		public static void GUIRight() {
+		public static void GUIRight() 
+		{
 			GUILayout.BeginHorizontal();
-			foreach (var handler in RightToolbarGUI)
+			foreach (Action handler in RightToolbarGUI)
 			{
 				handler();
 			}
