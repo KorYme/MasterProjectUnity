@@ -1,38 +1,21 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace CustomPlayButton
+namespace CustomPlayButton 
 {
-    public class ToolbarExtenderSettings : ScriptableObject
+    [FilePath("ProjectSettings/ToolbarExtenderSettings.asset", FilePathAttribute.Location.ProjectFolder)]
+    public class ToolbarExtenderSettings : ScriptableSingleton<ToolbarExtenderSettings>
     {
-        private const string TOOLBAR_EXTENDER_SETTINGS_PATH = "Assets/ToolbarExtender/ToolbarExtenderSettings.asset";
-
         // TODO : Add new sorting options (such as only use build settings scene or not, type of sorting...)
         // NICE TO HAVE : Create a choose your folder button
         [SerializeField] private string _folderToFocus;
         
         public string FolderToFocus => _folderToFocus;
-        
-        public static ToolbarExtenderSettings GetOrCreateSettings()
-        {
-            ToolbarExtenderSettings settings = AssetDatabase.LoadAssetAtPath<ToolbarExtenderSettings>(TOOLBAR_EXTENDER_SETTINGS_PATH);
-            if (!settings)
-            {
-                settings = CreateInstance<ToolbarExtenderSettings>();
-                settings._folderToFocus = string.Empty;
-                Directory.CreateDirectory(Path.GetDirectoryName(TOOLBAR_EXTENDER_SETTINGS_PATH) ?? throw new ArgumentException($"The folder for {nameof(ToolbarExtenderSettings)} the couldn't be created."));
-                AssetDatabase.CreateAsset(settings, TOOLBAR_EXTENDER_SETTINGS_PATH);
-                AssetDatabase.SaveAssets();
-            }
-            return settings;
-        }
 
-        internal static SerializedObject GetSerializedSettings()
+        public void SaveData()
         {
-            return new SerializedObject(GetOrCreateSettings());
+            Save(true);
         }
     }
 
@@ -54,9 +37,14 @@ namespace CustomPlayButton
                     {
                         margin = new RectOffset(10, 10, 10, 10),
                     });
-                    SerializedObject settings = ToolbarExtenderSettings.GetSerializedSettings();
+                    EditorGUI.BeginChangeCheck();
+                    SerializedObject settings = new SerializedObject(ToolbarExtenderSettings.instance);
                     EditorGUILayout.PropertyField(settings.FindProperty("_folderToFocus"), new GUIContent("Folder to Focus"));
                     settings.ApplyModifiedPropertiesWithoutUndo();
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        ToolbarExtenderSettings.instance.SaveData();
+                    }
                     GUILayout.EndVertical();
                 },
 

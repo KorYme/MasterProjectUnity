@@ -104,7 +104,7 @@ namespace CustomPlayButton
                 _scrollPosBuild = EditorGUILayout.BeginScrollView(_scrollPosBuild);
                 for (int i = 0; i < _buildScenes.Count; i++)
                 {
-                    DrawSelection(_buildScenes[i], i, true);
+                    DrawSelection(_buildScenes[i], true);
                 }
                 SceneBookmarkSettings.instance.Refresh();
                 EditorGUILayout.EndScrollView();
@@ -136,7 +136,7 @@ namespace CustomPlayButton
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawSelection(SceneAsset scene, int index = -1, bool bookmarkButton = false)
+        private void DrawSelection(SceneAsset scene, bool bookmarkButton = false)
         {
             if (scene == null) return;
 
@@ -175,7 +175,7 @@ namespace CustomPlayButton
             }
 
             GUIStyle style = _currentScene == scene ? _selectedButtonStyle : _buttonStyle;
-            if (index >= 0 && GUILayout.Button(EditorGUIUtility.IconContent("d_Folder Icon", "Ping Scene"), _buttonStyle, _iconLayout))
+            if (GUILayout.Button(EditorGUIUtility.IconContent("d_Folder Icon", "Ping Scene"), _buttonStyle, _iconLayout))
             {
                 EditorGUIUtility.PingObject(scene);
             }
@@ -212,8 +212,7 @@ namespace CustomPlayButton
 
         private void GetBuildScenes()
         {
-            ToolbarExtenderSettings asset = ToolbarExtenderSettings.GetOrCreateSettings();
-            _buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", asset?.FolderToFocus ?? string.Empty)).ToList();
+            _buildScenes = LoadAssetsOfType<SceneAsset>(Path.Combine("Assets", ToolbarExtenderSettings.instance?.FolderToFocus ?? string.Empty)).ToList();
             _buildScenes.Sort((x, y) => String.Compare(x.name, y.name, StringComparison.CurrentCulture));
             if (_buildScenes.Count == 0)
             {
