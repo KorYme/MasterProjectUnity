@@ -30,13 +30,13 @@ public class TestDebugTool : MonoBehaviour
         m_Timer += Time.deltaTime;
     }
 
-    [DebugMethod("Timer method")]
+    [DebugMethod("Timer method", DebugCategory.General)]
     private void TimerDisplay(DebugContext debugContext)
     {
         debugContext.DrawLabelBlock("Test Label", $"Timer: {m_Timer}");
     }
     
-    [DebugMethod("Toggle method")]
+    [DebugMethod("Toggle method", DebugCategory.Gameplay)]
     private void ToggleDisplay(DebugContext debugContext)
     {
         m_TestToggle = debugContext.DrawToggle("Test Toggle", m_TestToggle);

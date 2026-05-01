@@ -24,7 +24,7 @@ namespace AdvancedDebugTool
         public GUIStyle StyleLabelText { get; private set; }
         public GUIStyle StyleTextField { get; private set; }
         public GUIStyle StyleToggle { get; private set; }
-        public GUIStyle StyleHR { get; private set; }
+        public GUIStyle StyleSeparator { get; private set; }
         
         public DebugToolStyles()
         {
@@ -146,7 +146,7 @@ namespace AdvancedDebugTool
             StyleToggle.onNormal.textColor = new Color(.3f, .85f, .45f);
     
             // Span
-            StyleHR = new GUIStyle
+            StyleSeparator = new GUIStyle
             {
                 margin = new RectOffset(0, 0, 4, 4),
                 padding = new RectOffset(0, 0, 0, 0),

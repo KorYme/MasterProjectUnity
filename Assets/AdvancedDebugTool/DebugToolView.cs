@@ -20,6 +20,7 @@ namespace AdvancedDebugTool
         private Rect m_WindowRect;
         private Vector2 m_Scroll;
         private GUISkin m_PreviousSkin;
+        private DebugCategory m_DebugCategory;
 
         public event Action OnCloseRequest; 
 
@@ -63,44 +64,37 @@ namespace AdvancedDebugTool
 
         private void DrawWindow(int id)
         {
-            // Barre de statut
             DrawStatusBar();
 
-            // Zone scrollable
+            // TODO : Change dropdown
+            int value = m_DebugContext.DrawIntField("Category", (int)m_DebugCategory);
+            if (Enum.IsDefined(typeof(DebugCategory), value))
+            {
+                m_DebugCategory = (DebugCategory)value;
+            }
+            
+            // Scrollable area
             m_Scroll = GUILayout.BeginScrollView(m_Scroll);
             
-            // for (int i = 0; i < _categories.Count; i++)
-            // {
-            //     DrawCategory(i, group[0].Category, group);
-            //     GUILayout.Space(6f);
-            // }
-            
-            foreach (DebugTypeDefinition definition in m_DebugInfoProvider.GetDebugInfos())
+            foreach (DebugMethodInfoInstance methodInstance in m_DebugInfoProvider.GetDebugInfos(m_DebugCategory))
             {
-                definition.Instances.RemoveWhere(obj => obj == null);
-                foreach (object obj in definition.Instances)
+                GUILayout.BeginHorizontal(m_Styles.StyleCategoryBar);
+                if (!m_CategoryFoldouts.TryGetValue(methodInstance.Title, out bool isFoldedOut))
                 {
-                    foreach (DebugMethod method in definition.Methods)
-                    {
-                        GUILayout.BeginHorizontal(m_Styles.StyleCategoryBar);
-                        if (!m_CategoryFoldouts.TryGetValue(method.Title, out bool isFoldedOut))
-                        {
-                            m_CategoryFoldouts[method.Title] = isFoldedOut = false;
-                        }
-                        string arrow = isFoldedOut ? "▼  " : "▶  ";
-                        if (GUILayout.Button(arrow + method.Title, m_Styles.StyleCategoryLabel))
-                        {
-                            m_CategoryFoldouts[method.Title] = isFoldedOut = !isFoldedOut;
-                        }
-                        GUILayout.EndHorizontal();
-
-                        if (!isFoldedOut) continue;
-                        
-                        GUILayout.BeginVertical("box");
-                        method.Invoke(obj, m_Arguments);
-                        GUILayout.EndVertical();
-                    }
+                    m_CategoryFoldouts[methodInstance.Title] = isFoldedOut = false;
                 }
+                string arrow = isFoldedOut ? "▼  " : "▶  ";
+                if (GUILayout.Button(arrow + methodInstance.Title, m_Styles.StyleCategoryLabel))
+                {
+                    m_CategoryFoldouts[methodInstance.Title] = isFoldedOut = !isFoldedOut;
+                }
+                GUILayout.EndHorizontal();
+
+                if (!isFoldedOut) continue;
+                
+                GUILayout.BeginVertical("box");
+                methodInstance.Invoke(m_Arguments);
+                GUILayout.EndVertical();
             }
             
             GUILayout.EndScrollView();
@@ -109,28 +103,10 @@ namespace AdvancedDebugTool
             GUI.DragWindow(new Rect(0, 0, WINDOW_WIDTH, 24));
         }
         
-        // private void DrawCategory(int index, string title)
-        // {
-        //     // Header de catégorie (cliquable pour fold/unfold)
-        //     GUILayout.BeginHorizontal(m_Styles.StyleCategoryBar);
-        //     string arrow = m_CategoryFoldouts[index] ? "▼  " : "▶  ";
-        //     if (GUILayout.Button(arrow + title, m_Styles.StyleCategoryLabel))
-        //         m_CategoryFoldouts[index] = !m_CategoryFoldouts[index];
-        //     GUILayout.EndHorizontal();
-        //
-        //     if (!m_CategoryFoldouts[index]) return;
-        //
-        //     GUILayout.BeginVertical("box");    // utilise le style "box" du GUISkin
-        //
-        //     // TODO : DRAW HERE
-        //     
-        //     GUILayout.EndVertical();
-        // }
-        
         private void DrawStatusBar()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"{Time.frameCount}", m_Styles.StyleLabelText);
+            GUILayout.Label($"Frame n°{Time.frameCount}", m_Styles.StyleLabelText);
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("X", m_Styles.StyleButtonDanger, GUILayout.Width(72)))
             {
@@ -138,12 +114,12 @@ namespace AdvancedDebugTool
             }
             GUILayout.EndHorizontal();
 
-            DrawHR();
+            DrawSeparator();
         }
         
-        private void DrawHR()
+        private void DrawSeparator()
         {
-            GUILayout.Box(GUIContent.none, m_Styles.StyleHR, GUILayout.ExpandWidth(true), GUILayout.Height(1));
+            GUILayout.Box(GUIContent.none, m_Styles.StyleSeparator, GUILayout.ExpandWidth(true), GUILayout.Height(1));
             GUILayout.Space(4f);
         }
     }

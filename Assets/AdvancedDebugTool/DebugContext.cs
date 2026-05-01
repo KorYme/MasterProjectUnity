@@ -10,16 +10,21 @@ namespace AdvancedDebugTool
         {
             m_Styles = styles;
         }
+
+        // ================================
+        // Numeric fields 
+        // ================================
         
-        // Label title + text
-        public void DrawLabelBlock(string title, string body)
+        // Int field with label
+        public int DrawIntField(string label, int value)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(title, m_Styles.StyleLabelText, GUILayout.Width(110));
-            GUILayout.Label(body, m_Styles.StyleLabelText);
+            GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
+            string raw = GUILayout.TextField(value.ToString(), m_Styles.StyleTextField, GUILayout.Width(80));
             GUILayout.EndHorizontal();
+            return int.TryParse(raw, out int result) ? result : value;
         }
-
+        
         // Float field with label
         public float DrawFloatField(string label, float value)
         {
@@ -62,7 +67,20 @@ namespace AdvancedDebugTool
             string raw = GUILayout.TextField(value.ToString("F2"), m_Styles.StyleTextField, GUILayout.Width(56));
             return float.TryParse(raw, out float r) ? r : value;
         }
-
+        
+        // ================================
+        // Text fields 
+        // ================================
+        
+        // Label title + text
+        public void DrawLabelBlock(string title, string body)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(title, m_Styles.StyleLabelText, GUILayout.Width(110));
+            GUILayout.Label(body, m_Styles.StyleLabelText);
+            GUILayout.EndHorizontal();
+        }
+        
         // Simple text field
         public string DrawTextField(string label, string value)
         {
