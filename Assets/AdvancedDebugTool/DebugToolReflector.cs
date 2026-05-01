@@ -28,23 +28,15 @@ namespace AdvancedDebugTool
         IEnumerable<DebugTypeDefinition> GetDebugInfos();
     }
     
-    public class DebugToolHandler : IDebugInfoProvider
+    public class DebugToolReflector : IDebugInfoProvider
     {
         private const BindingFlags BINDING_FLAGS = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
         
         private Dictionary<Type, DebugTypeDefinition> m_Definitions = new Dictionary<Type, DebugTypeDefinition>();
         
-        private ILogger m_Logger;
-        
-        
         IEnumerable<DebugTypeDefinition> IDebugInfoProvider.GetDebugInfos()
         {
             return m_Definitions.Values;
-        }
-
-        public DebugToolHandler(ILogger logger)
-        {
-            m_Logger = logger;
         }
         
         public bool AddObjectToMenu(object objectToDebug)
@@ -95,7 +87,6 @@ namespace AdvancedDebugTool
                 if (methods.Length == 0)
                 {
                     m_Definitions[type] = null;
-                    m_Logger?.Log($"[Debug Tool Handler]: No methods with attribute {nameof(DebugMethodAttribute)} found for {type}.");
                     return false;
                 }
                 

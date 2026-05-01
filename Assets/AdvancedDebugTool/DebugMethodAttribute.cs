@@ -12,15 +12,4 @@ namespace AdvancedDebugTool
         
         public string MenuTitle { get; }
     }
-    
-    [JetBrains.Annotations.MeansImplicitUse]
-    public class DebugFieldAttribute : Attribute
-    {
-        public DebugFieldAttribute(string menuTitle)
-        {
-            MenuTitle = menuTitle;
-        }
-        
-        public string MenuTitle { get; }
-    }
 }
