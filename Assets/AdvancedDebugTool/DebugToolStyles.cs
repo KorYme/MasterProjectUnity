@@ -24,6 +24,9 @@ namespace AdvancedDebugTool
         public GUIStyle StyleLabelText { get; private set; }
         public GUIStyle StyleTextField { get; private set; }
         public GUIStyle StyleToggle { get; private set; }
+        public GUIStyle StyleDropdownItemSelected { get; set; }
+        public GUIStyle StyleDropdownItem { get; set; }
+        public GUIStyle StyleDropdownMenu { get; set; }
         public GUIStyle StyleSeparator { get; private set; }
         
         public DebugToolStyles()
@@ -145,6 +148,30 @@ namespace AdvancedDebugTool
             StyleToggle.normal.textColor  = colorMuted;
             StyleToggle.onNormal.textColor = new Color(.3f, .85f, .45f);
     
+            // Dropdown container
+            StyleDropdownMenu = new GUIStyle("box")
+            {
+                padding = new RectOffset(0, 0, 2, 2),
+                margin  = new RectOffset(114, 0, 0, 0), // aligne sous le bouton (offset du label)
+            };
+            StyleDropdownMenu.normal.background = bgMid;
+
+            // Dropdown item
+            StyleDropdownItem = new GUIStyle(StyleButton)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                padding   = new RectOffset(10, 10, 4, 4),
+                margin    = new RectOffset(0, 0, 0, 0),
+            };
+            StyleDropdownItem.normal.background = bgMid;
+            StyleDropdownItem.hover.background  = bgLight;
+
+            // Dropdown selected item
+            StyleDropdownItemSelected = new GUIStyle(StyleDropdownItem);
+            StyleDropdownItemSelected.normal.background = bgAccent;
+            StyleDropdownItemSelected.normal.textColor  = Color.white;
+            StyleDropdownItemSelected.hover.background  = bgAccent;
+            
             // Span
             StyleSeparator = new GUIStyle
             {

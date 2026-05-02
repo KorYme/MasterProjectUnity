@@ -1,4 +1,3 @@
-using System;
 using AdvancedDebugTool;
 using UnityEngine;
 
@@ -39,6 +38,6 @@ public class TestDebugTool : MonoBehaviour
     [DebugMethod("Toggle method", DebugCategory.Gameplay)]
     private void ToggleDisplay(DebugContext debugContext)
     {
-        m_TestToggle = debugContext.DrawToggle("Test Toggle", m_TestToggle);
+        // m_TestToggle = debugContext.DrawToggle("Test Toggle", m_TestToggle);
     }
 }

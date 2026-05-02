@@ -66,12 +66,7 @@ namespace AdvancedDebugTool
         {
             DrawStatusBar();
 
-            // TODO : Change dropdown
-            int value = m_DebugContext.DrawIntField("Category", (int)m_DebugCategory);
-            if (Enum.IsDefined(typeof(DebugCategory), value))
-            {
-                m_DebugCategory = (DebugCategory)value;
-            }
+            m_DebugContext.DrawEnumDropdown("Category", ref m_DebugCategory);
             
             // Scrollable area
             m_Scroll = GUILayout.BeginScrollView(m_Scroll);
