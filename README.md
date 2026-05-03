@@ -14,6 +14,12 @@ _To add these packages to your projects, use the link next to its name in the Un
 
 ---
 
+`Advanced Debug Tool` : https://github.com/KorYme/MasterProjectUnity.git?path=/Packages/AdvancedDebugTool
+
+> Easy to implement debug tool using Unity IMGui API.
+
+---
+
 `Manager Gameloop Architecture` : https://github.com/KorYme/MasterProjectUnity.git?path=/Packages/ManagerGameloopArchitecture
 
 > Easy to use gameloop architectures with singleton workaround using injection and SOAP.

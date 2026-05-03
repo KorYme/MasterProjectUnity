@@ -8,6 +8,12 @@
         "com.koryme.serialization-utils": "1.1.0"
       }
     },
+    "com.koryme.advanced-debug-tool": {
+      "version": "file:AdvancedDebugTool",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.koryme.manager-gameloop-archi": {
       "version": "file:ManagerGameloopArchitecture",
       "depth": 0,
