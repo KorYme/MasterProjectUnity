@@ -7,6 +7,9 @@ namespace AdvancedDebugTool
 {
     public class DebugToolStyles
     {
+        public const float MIN_DROPDOWN_HEIGHT = 0f;
+        public const float MAX_DROPDOWN_HEIGHT = 200f;
+        
         private const string FONT_RESOURCE_PATH = "DebugTool/Fonts/LiberationSans";
         private const string GUI_SKIN_PATH = "DebugTool/DebugToolStyles";
         private Dictionary<int, int> m_CachedTextureIndexes = new Dictionary<int, int>();
@@ -152,7 +155,7 @@ namespace AdvancedDebugTool
             StyleDropdownMenu = new GUIStyle("box")
             {
                 padding = new RectOffset(0, 0, 2, 2),
-                margin  = new RectOffset(0, 0, 0, 0), // aligne sous le bouton (offset du label)
+                margin  = new RectOffset(0, 0, 0, 0),
             };
             StyleDropdownMenu.normal.background = bgMid;
 

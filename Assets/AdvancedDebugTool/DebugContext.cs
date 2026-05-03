@@ -21,10 +21,11 @@ namespace AdvancedDebugTool
         private DebugToolStyles m_Styles;
         private readonly Dictionary<Type, object[]> m_EnumValues = new Dictionary<Type, object[]>();
 
-        private MethodContext m_CurrentDropdownMethod;
-            
         private MethodContext m_CurrentMethodContext;
         
+        private MethodContext m_CurrentDropdownMethod;
+        private Vector2 m_CurrentDropdownScroll;
+
         uint IMethodContextSetter.SetCurrentMethodContext(uint instanceId, uint methodId)
         {
             uint currentMethodId = m_CurrentMethodContext.MethodId;
@@ -155,15 +156,15 @@ namespace AdvancedDebugTool
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             if (GUILayout.Button("▾ " + options[selected], m_Styles.StyleTextField))
             {
-                m_CurrentDropdownMethod = m_CurrentDropdownMethod != m_CurrentMethodContext 
-                    ? m_CurrentMethodContext : default;
+                SetAsCurrentDropdown();
             }
             GUILayout.EndHorizontal();
             
             // Dropdown menu part
             if (m_CurrentDropdownMethod == m_CurrentMethodContext)
             {
-                GUILayout.BeginVertical(m_Styles.StyleDropdownMenu);
+                GUILayout.BeginVertical(m_Styles.StyleDropdownMenu, GUILayout.Height(GetDropdownHeight(options.Length)));
+                m_CurrentDropdownScroll = GUILayout.BeginScrollView(m_CurrentDropdownScroll);
                 for (int i = 0; i < options.Length; i++)
                 {
                     GUIStyle style = (i == selected)
@@ -180,6 +181,7 @@ namespace AdvancedDebugTool
                         m_CurrentDropdownMethod = default;
                     }
                 }
+                GUILayout.EndScrollView();
                 GUILayout.EndVertical();
             }
             return changed;
@@ -204,17 +206,16 @@ namespace AdvancedDebugTool
             GUILayout.BeginVertical("box");
             if (GUILayout.Button("▾ " + value.ToString(), m_Styles.StyleTextField))
             {
-                m_CurrentDropdownMethod = m_CurrentDropdownMethod != m_CurrentMethodContext 
-                    ? m_CurrentMethodContext : default;
+                SetAsCurrentDropdown();
             }
             
             // Dropdown menu part
             if (m_CurrentDropdownMethod == m_CurrentMethodContext)
             {
-                GUILayout.BeginVertical(m_Styles.StyleDropdownMenu);
-
+                GUILayout.BeginVertical(m_Styles.StyleDropdownMenu, GUILayout.Height(GetDropdownHeight(objectValues.Length)));
+                m_CurrentDropdownScroll = GUILayout.BeginScrollView(m_CurrentDropdownScroll);
                 foreach (TEnum enumValue in objectValues)
-                {
+                { 
                     bool isSelected = Equals(enumValue, value);
                     GUIStyle style = isSelected
                         ? m_Styles.StyleDropdownItemSelected
@@ -227,6 +228,7 @@ namespace AdvancedDebugTool
                         m_CurrentDropdownMethod = default;
                     }
                 }
+                GUILayout.EndScrollView();
                 GUILayout.EndVertical();
             }
             GUILayout.EndVertical();
@@ -234,6 +236,26 @@ namespace AdvancedDebugTool
             GUILayout.EndHorizontal();
             value = tmpValue;
             return changed;
+        }
+
+        private float GetDropdownHeight(int itemCount)
+        {
+            float dropdownMaxHeight = m_Styles.StyleDropdownItem.CalcHeight(GUIContent.none, 110f) * itemCount
+                                   + m_Styles.StyleDropdownMenu.padding.top + m_Styles.StyleDropdownMenu.padding.top;
+            return Mathf.Clamp(dropdownMaxHeight, DebugToolStyles.MIN_DROPDOWN_HEIGHT, DebugToolStyles.MAX_DROPDOWN_HEIGHT);
+        }
+
+        private void SetAsCurrentDropdown()
+        {
+            if (m_CurrentDropdownMethod != m_CurrentMethodContext)
+            {
+                m_CurrentDropdownMethod = m_CurrentMethodContext;
+                m_CurrentDropdownScroll = Vector2.zero;
+            }
+            else
+            {
+                m_CurrentDropdownMethod = default;
+            }
         }
 
         public bool DrawButton(string label)
