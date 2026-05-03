@@ -1,14 +1,37 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AdvancedDebugTool
 {
-    public class DebugContext
+    public interface IMethodContextSetter
     {
-        private DebugToolStyles m_Styles;        
-        private readonly Dictionary<string, bool> m_DropdownOpen = new Dictionary<string, bool>();
-        private readonly Dictionary<Type, string[]> m_EnumValues = new Dictionary<Type, string[]>();
+        /// <summary>
+        /// Change the method context
+        /// </summary>
+        /// <param name="instanceId">Index of the methodInstance</param>
+        /// <param name="methodId">Index of the method called of this methodInstance</param>
+        /// <returns>The current methodId, to store in case you'll come back to same instance</returns>
+        uint SetCurrentMethodContext(uint instanceId, uint methodId = 0);
+    }
+    
+    public class DebugContext : IMethodContextSetter
+    {
+        private DebugToolStyles m_Styles;
+        private readonly Dictionary<Type, object[]> m_EnumValues = new Dictionary<Type, object[]>();
+
+        private MethodContext m_CurrentDropdownMethod;
+            
+        private MethodContext m_CurrentMethodContext;
+        
+        uint IMethodContextSetter.SetCurrentMethodContext(uint instanceId, uint methodId)
+        {
+            uint currentMethodId = m_CurrentMethodContext.MethodId;
+            m_CurrentMethodContext.InstanceId = instanceId;
+            m_CurrentMethodContext.MethodId = methodId;
+            return currentMethodId;
+        }
         
         public DebugContext(DebugToolStyles styles)
         {
@@ -22,6 +45,7 @@ namespace AdvancedDebugTool
         // Int field with label
         public bool DrawIntField(string label, ref int value)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             string raw = GUILayout.TextField(value.ToString(), m_Styles.StyleTextField, GUILayout.Width(80));
@@ -37,6 +61,7 @@ namespace AdvancedDebugTool
         // Float field with label
         public bool DrawFloatField(string label, ref float value)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             string raw = GUILayout.TextField(value.ToString("F2"), m_Styles.StyleTextField, GUILayout.Width(80));
@@ -52,6 +77,7 @@ namespace AdvancedDebugTool
         // Vector2 field
         public bool DrawVector2Field(string label, ref Vector2 v)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             bool hasValueChanged = DrawAxisField("X", ref v.x, Color.red) |
@@ -63,6 +89,7 @@ namespace AdvancedDebugTool
         // Vector3 field
         public bool DrawVector3Field(string label, ref Vector3 v)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             bool valueChanged = DrawAxisField("X", ref v.x, Color.red) |
@@ -94,6 +121,7 @@ namespace AdvancedDebugTool
         // Label title + text
         public void DrawLabelBlock(string title, string body)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(title, m_Styles.StyleLabelText, GUILayout.Width(110));
             GUILayout.Label(body, m_Styles.StyleLabelText);
@@ -103,6 +131,7 @@ namespace AdvancedDebugTool
         // Simple text field
         public bool DrawTextField(string label, ref string value)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             string tmpValue = GUILayout.TextField(value, m_Styles.StyleTextField);
@@ -118,6 +147,7 @@ namespace AdvancedDebugTool
         // Dropdown (popup)
         public bool DrawDropdown(string label, ref int selected, string[] options)
         {
+            IncrementMethodIndex();
             selected = Mathf.Clamp(selected, 0, options.Length - 1);
             bool changed = false;
 
@@ -125,12 +155,13 @@ namespace AdvancedDebugTool
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             if (GUILayout.Button("▾ " + options[selected], m_Styles.StyleTextField))
             {
-                m_DropdownOpen[label] = !m_DropdownOpen.GetValueOrDefault(label);
+                m_CurrentDropdownMethod = m_CurrentDropdownMethod != m_CurrentMethodContext 
+                    ? m_CurrentMethodContext : default;
             }
             GUILayout.EndHorizontal();
             
             // Dropdown menu part
-            if (m_DropdownOpen.GetValueOrDefault(label))
+            if (m_CurrentDropdownMethod == m_CurrentMethodContext)
             {
                 GUILayout.BeginVertical(m_Styles.StyleDropdownMenu);
                 for (int i = 0; i < options.Length; i++)
@@ -146,7 +177,7 @@ namespace AdvancedDebugTool
                             selected = i;
                             changed  = true;
                         }
-                        m_DropdownOpen[label] = false;
+                        m_CurrentDropdownMethod = default;
                     }
                 }
                 GUILayout.EndVertical();
@@ -154,58 +185,70 @@ namespace AdvancedDebugTool
             return changed;
         }
 
-        public bool DrawEnumDropdown<TEnum>(string label, ref TEnum value) where TEnum : struct, Enum
+        public bool DrawEnumDropdown<TEnum>(string label, ref TEnum value) where TEnum : Enum, IConvertible
         {
-            if (!m_EnumValues.TryGetValue(typeof(Enum), out string[] stringValues))
+            IncrementMethodIndex();
+            if (!m_EnumValues.TryGetValue(typeof(TEnum), out object[] objectValues))
             {
-                m_EnumValues[typeof(Enum)] = stringValues = Enum.GetNames(typeof(TEnum));
+                m_EnumValues[typeof(TEnum)] = objectValues = 
+                    Enum.GetValues(typeof(TEnum))
+                    .Cast<object>()
+                    .ToArray();
             }
-
-            string tmpValue = value.ToString();
-            int selectedIndex = Array.FindIndex(stringValues, x => x == tmpValue);
+            
             bool changed = false;
+            TEnum tmpValue = value;
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
-            if (GUILayout.Button("▾ " + stringValues[selectedIndex], m_Styles.StyleTextField))
+            GUILayout.BeginVertical("box");
+            if (GUILayout.Button("▾ " + value.ToString(), m_Styles.StyleTextField))
             {
-                m_DropdownOpen[label] = !m_DropdownOpen.GetValueOrDefault(label);
+                m_CurrentDropdownMethod = m_CurrentDropdownMethod != m_CurrentMethodContext 
+                    ? m_CurrentMethodContext : default;
             }
-            GUILayout.EndHorizontal();
             
             // Dropdown menu part
-            if (m_DropdownOpen.GetValueOrDefault(label))
+            if (m_CurrentDropdownMethod == m_CurrentMethodContext)
             {
                 GUILayout.BeginVertical(m_Styles.StyleDropdownMenu);
-                for (int i = 0; i < stringValues.Length; i++)
+
+                foreach (TEnum enumValue in objectValues)
                 {
-                    GUIStyle style = (i == selectedIndex)
+                    bool isSelected = Equals(enumValue, value);
+                    GUIStyle style = isSelected
                         ? m_Styles.StyleDropdownItemSelected
                         : m_Styles.StyleDropdownItem;
 
-                    if (GUILayout.Button(stringValues[i], style))
+                    if (GUILayout.Button(enumValue.ToString(), style))
                     {
-                        if (selectedIndex != i)
-                        {
-                            selectedIndex = i;
-                            changed  = true;
-                        }
-                        m_DropdownOpen[label] = false;
+                        tmpValue = enumValue;
+                        changed |= !isSelected;
+                        m_CurrentDropdownMethod = default;
                     }
                 }
                 GUILayout.EndVertical();
             }
-
-            if (changed)
-            {
-                value = Enum.Parse<TEnum>(stringValues[selectedIndex]);
-            }
+            GUILayout.EndVertical();
+            
+            GUILayout.EndHorizontal();
+            value = tmpValue;
             return changed;
+        }
+
+        public bool DrawButton(string label)
+        {
+            IncrementMethodIndex();
+            GUILayout.BeginHorizontal("button");
+            bool hasBeenClicked = GUILayout.Button(label, m_Styles.StyleButton);
+            GUILayout.EndHorizontal();
+            return hasBeenClicked;
         }
         
         // Toggle
         public bool DrawToggle(string label, ref bool value)
         {
+            IncrementMethodIndex();
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
             bool tmpValue = GUILayout.Toggle(value, value ? "ON" : "OFF", m_Styles.StyleToggle);
@@ -216,6 +259,15 @@ namespace AdvancedDebugTool
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Should be called each time a dropdown is required
+        /// For the moment, only on each draw method called
+        /// </summary>
+        private void IncrementMethodIndex()
+        {
+            m_CurrentMethodContext.MethodId++;
         }
     }
 }

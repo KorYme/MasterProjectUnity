@@ -3,16 +3,24 @@ using UnityEngine;
 
 public class TestDebugTool : MonoBehaviour
 {
+    private enum TestEnum
+    {
+        One,
+        Two,
+    }
+    
     private DebugTool m_DebugTool;
 
     private float m_Timer;
     
     private bool m_TestToggle;
+    private TestEnum m_Key;
 
     private void Awake()
     {
         m_DebugTool = new DebugTool();
         m_DebugTool.AddObjectToMenu(this);
+        m_DebugTool.Show();
     }
 
     private void OnGUI()
@@ -33,11 +41,26 @@ public class TestDebugTool : MonoBehaviour
     private void TimerDisplay(DebugContext debugContext)
     {
         debugContext.DrawLabelBlock("Test Label", $"Timer: {m_Timer}");
+        if (debugContext.DrawEnumDropdown("Key 1", ref m_Key))
+        {
+            
+        }
     }
     
-    [DebugMethod("Toggle method", DebugCategory.Gameplay)]
-    private void ToggleDisplay(DebugContext debugContext)
+    [DebugMethod("Button method", DebugCategory.Gameplay)]
+    private void ButtonDisplay(DebugContext debugContext)
     {
-        // m_TestToggle = debugContext.DrawToggle("Test Toggle", m_TestToggle);
+        if (debugContext.DrawEnumDropdown("Key 1", ref m_Key))
+        {
+            
+        }
+        if (debugContext.DrawEnumDropdown("Key 2", ref m_Key))
+        {
+            
+        }
+        if (debugContext.DrawButton("DebugValue"))
+        {
+            Debug.Log(m_Key.ToString());
+        }
     }
 }

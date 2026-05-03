@@ -152,7 +152,7 @@ namespace AdvancedDebugTool
             StyleDropdownMenu = new GUIStyle("box")
             {
                 padding = new RectOffset(0, 0, 2, 2),
-                margin  = new RectOffset(114, 0, 0, 0), // aligne sous le bouton (offset du label)
+                margin  = new RectOffset(0, 0, 0, 0), // aligne sous le bouton (offset du label)
             };
             StyleDropdownMenu.normal.background = bgMid;
 

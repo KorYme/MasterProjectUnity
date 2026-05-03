@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace AdvancedDebugTool
 {
@@ -9,16 +10,36 @@ namespace AdvancedDebugTool
         General,
         Gameplay,
         Rendering,
-        Other
+        Other,
+        One,
+        Two,
+        Three,
+        Four,
+        Five,
+        Six,
+        Seven,
+        Eight,
+        Nine,
+        Ten,
+        Eleven,
+        Twelve,
+        Thirteen,
+        Fourteen,
+        Fifteen,
+        Sixteen,
+        Seventeen,
+        Eighteen,
+        Nineteen,
+        Twenty, 
     }
     
     public class DebugMethodInfo : IComparable<DebugMethodInfoInstance>
     {
-        public string Title;
-        public DebugCategory Category;
-        public int Order;
-        public MethodInfo Method;
-        public bool UseDebugContext;
+        public string Title  { get; set; }
+        public DebugCategory Category  { get; set; }
+        public int Order  { get; set; }
+        public MethodInfo Method  { get; set; }
+        public bool UseDebugContext  { get; set; }
 
         public DebugMethodInfoInstance CreateMethodInstance(object instance)
         {
@@ -29,7 +50,7 @@ namespace AdvancedDebugTool
                 Order = Order,
                 Method = Method,
                 UseDebugContext = UseDebugContext,
-                Instance =  instance,
+                Instance = instance,
             };
         }
 
@@ -41,7 +62,21 @@ namespace AdvancedDebugTool
 
     public class DebugMethodInfoInstance : DebugMethodInfo
     {
-        public object Instance;
+        private static uint s_CurrentID;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Init()
+        {
+            s_CurrentID = MethodContext.FIRST_METHOD_ID;
+        }
+        
+        public uint Id { get; private set; }
+        public object Instance { get; set; }
+
+        public DebugMethodInfoInstance()
+        {
+            Id = s_CurrentID++;
+        }
 
         public void Invoke(params object[] parameters)
         {
@@ -51,8 +86,8 @@ namespace AdvancedDebugTool
     
     public class DebugTypeDefinition
     {
-        public DebugMethodInfo[] Methods;
-        public HashSet<object> Instances;
+        public DebugMethodInfo[] Methods { get; set; }
+        public HashSet<object> Instances { get; set; }
     }
     
     public interface IDebugInfoProvider

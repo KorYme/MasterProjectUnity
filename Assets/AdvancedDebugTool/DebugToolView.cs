@@ -12,6 +12,7 @@ namespace AdvancedDebugTool
         public static readonly Vector2 WINDOW_POS = new Vector2(2, 2);
         
         private DebugContext m_DebugContext;
+        private IMethodContextSetter m_MethodContextSetter;
         private object[] m_Arguments;
         private IDebugInfoProvider m_DebugInfoProvider;
         private DebugToolStyles m_Styles;
@@ -42,6 +43,7 @@ namespace AdvancedDebugTool
             {
                 m_Styles = new DebugToolStyles();
                 m_DebugContext = new DebugContext(m_Styles);
+                m_MethodContextSetter = m_DebugContext;
                 m_Arguments = new object[] { m_DebugContext };
             }
             
@@ -59,12 +61,14 @@ namespace AdvancedDebugTool
             
             GUI.skin = m_PreviousSkin;
             m_PreviousSkin = null;
-            
         }
 
         private void DrawWindow(int id)
         {
+            uint debugToolViewMethodIndex = 0;
+            m_MethodContextSetter.SetCurrentMethodContext(MethodContext.DEBUG_TOOL_VIEW_ID, debugToolViewMethodIndex);
             DrawStatusBar();
+            DrawSeparator();
 
             m_DebugContext.DrawEnumDropdown("Category", ref m_DebugCategory);
             
@@ -88,7 +92,9 @@ namespace AdvancedDebugTool
                 if (!isFoldedOut) continue;
                 
                 GUILayout.BeginVertical("box");
+                debugToolViewMethodIndex = m_MethodContextSetter.SetCurrentMethodContext(methodInstance.Id);
                 methodInstance.Invoke(m_Arguments);
+                m_MethodContextSetter.SetCurrentMethodContext(MethodContext.DEBUG_TOOL_VIEW_ID, debugToolViewMethodIndex);
                 GUILayout.EndVertical();
             }
             
@@ -96,6 +102,7 @@ namespace AdvancedDebugTool
 
             // Drag
             GUI.DragWindow(new Rect(0, 0, WINDOW_WIDTH, 24));
+            m_MethodContextSetter.SetCurrentMethodContext(MethodContext.DEFAULT_ID);
         }
         
         private void DrawStatusBar()
@@ -108,8 +115,6 @@ namespace AdvancedDebugTool
                 OnCloseRequest?.Invoke();
             }
             GUILayout.EndHorizontal();
-
-            DrawSeparator();
         }
         
         private void DrawSeparator()
