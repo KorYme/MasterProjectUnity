@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedDebugTool
 {
-    public class DebugToolView
+    public class DebugToolView<TEnum> where TEnum : Enum, IConvertible
     {
         public const int WINDOW_ID = 1000;
         public const float WINDOW_WIDTH = 420f;
@@ -21,7 +21,7 @@ namespace AdvancedDebugTool
         private Rect m_WindowRect;
         private Vector2 m_Scroll;
         private GUISkin m_PreviousSkin;
-        private DebugCategory m_DebugCategory;
+        private TEnum m_DebugCategory;
 
         public event Action OnCloseRequest; 
 
@@ -75,7 +75,7 @@ namespace AdvancedDebugTool
             // Scrollable area
             m_Scroll = GUILayout.BeginScrollView(m_Scroll);
             
-            foreach (DebugMethodInfoInstance methodInstance in m_DebugInfoProvider.GetDebugInfos(m_DebugCategory))
+            foreach (DebugMethodInfoInstance methodInstance in m_DebugInfoProvider.GetDebugInfos(m_DebugCategory.ToInt32(null)))
             {
                 GUILayout.BeginHorizontal(m_Styles.StyleCategoryBar);
                 if (!m_CategoryFoldouts.TryGetValue(methodInstance.Title, out bool isFoldedOut))
@@ -108,7 +108,6 @@ namespace AdvancedDebugTool
         private void DrawStatusBar()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"Frame n°{Time.frameCount}", m_Styles.StyleLabelText);
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("X", m_Styles.StyleButtonDanger, GUILayout.Width(72)))
             {

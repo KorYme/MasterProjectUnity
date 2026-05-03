@@ -1,17 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
 
 namespace AdvancedDebugTool
 {
-    public class DebugTool
+    public class DebugTool<TAttribute, TEnum> where TAttribute : DebugMethodBaseAttribute where TEnum : Enum
     {
-        private DebugToolReflector m_DebugToolReflector;
-        private DebugToolView m_DebugToolView;
+        private DebugToolReflector<TAttribute, TEnum> m_DebugToolReflector;
+        private DebugToolView<TEnum> m_DebugToolView;
         private bool m_IsDisplayed;
         
         public DebugTool()
         {
-            m_DebugToolReflector = new DebugToolReflector();
-            m_DebugToolView = new DebugToolView(m_DebugToolReflector);
+            m_DebugToolReflector = new DebugToolReflector<TAttribute, TEnum>();
+            m_DebugToolView = new DebugToolView<TEnum>(m_DebugToolReflector);
             m_DebugToolView.OnCloseRequest += Hide;
         }
 

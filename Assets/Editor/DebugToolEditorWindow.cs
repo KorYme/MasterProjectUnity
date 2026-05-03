@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class DebugToolEditorWindow : EditorWindow
 {
-    private DebugTool m_DebugTool;
+    private DebugTool<DebugMethodAttribute, DebugCategory> m_DebugTool;
     
     private void OnEnable()
     {
-        m_DebugTool ??= new DebugTool();
+        m_DebugTool ??= new DebugTool<DebugMethodAttribute, DebugCategory>();
         m_DebugTool.AddObjectToMenu(this);
         m_DebugTool.Show();
     }

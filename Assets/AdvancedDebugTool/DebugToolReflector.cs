@@ -5,39 +5,11 @@ using UnityEngine;
 
 namespace AdvancedDebugTool
 {
-    public enum DebugCategory
-    {
-        General,
-        Gameplay,
-        Rendering,
-        Other,
-        One,
-        Two,
-        Three,
-        Four,
-        Five,
-        Six,
-        Seven,
-        Eight,
-        Nine,
-        Ten,
-        Eleven,
-        Twelve,
-        Thirteen,
-        Fourteen,
-        Fifteen,
-        Sixteen,
-        Seventeen,
-        Eighteen,
-        Nineteen,
-        Twenty, 
-    }
-    
     public class DebugMethodInfo : IComparable<DebugMethodInfoInstance>
     {
         public string Title  { get; set; }
-        public DebugCategory Category  { get; set; }
-        public int Order  { get; set; }
+        public int CategoryValue { get; set; }
+        public int Order { get; set; }
         public MethodInfo Method  { get; set; }
         public bool UseDebugContext  { get; set; }
 
@@ -46,7 +18,7 @@ namespace AdvancedDebugTool
             return new DebugMethodInfoInstance()
             {
                 Title = Title,
-                Category = Category,
+                CategoryValue = CategoryValue,
                 Order = Order,
                 Method = Method,
                 UseDebugContext = UseDebugContext,
@@ -92,28 +64,28 @@ namespace AdvancedDebugTool
     
     public interface IDebugInfoProvider
     {
-        IReadOnlyList<DebugMethodInfoInstance> GetDebugInfos(DebugCategory category);
+        IReadOnlyList<DebugMethodInfoInstance> GetDebugInfos(int category);
     }
     
-    public class DebugToolReflector : IDebugInfoProvider
+    public class DebugToolReflector<TAttribute, TEnum> : IDebugInfoProvider where TAttribute : DebugMethodBaseAttribute where TEnum : Enum
     {
         private const BindingFlags BINDING_FLAGS = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
         
         private Dictionary<Type, DebugTypeDefinition> m_TypeDefinitions;
-        private Dictionary<DebugCategory, List<DebugMethodInfoInstance>> m_MethodInstances;
+        private Dictionary<int, List<DebugMethodInfoInstance>> m_MethodInstances;
 
         public DebugToolReflector()
         {
             m_TypeDefinitions = new Dictionary<Type, DebugTypeDefinition>();
             
-            m_MethodInstances = new Dictionary<DebugCategory, List<DebugMethodInfoInstance>>();
-            foreach (DebugCategory category in Enum.GetValues(typeof(DebugCategory)))
+            m_MethodInstances = new Dictionary<int, List<DebugMethodInfoInstance>>();
+            foreach (int categoryValue in Enum.GetValues(typeof(TEnum)))
             {
-                m_MethodInstances.Add(category, new List<DebugMethodInfoInstance>());
+                m_MethodInstances.Add(categoryValue, new List<DebugMethodInfoInstance>());
             }
         }
         
-        IReadOnlyList<DebugMethodInfoInstance> IDebugInfoProvider.GetDebugInfos(DebugCategory category)
+        IReadOnlyList<DebugMethodInfoInstance> IDebugInfoProvider.GetDebugInfos(int category)
         {
             return m_MethodInstances[category];
         }
@@ -124,11 +96,11 @@ namespace AdvancedDebugTool
             if (!m_TypeDefinitions.TryGetValue(type, out DebugTypeDefinition debugTypeDefinition))
             {
                 MethodInfo[] methods = type.GetMethods(BINDING_FLAGS);
-                DebugMethodAttribute methodAttribute;
+                TAttribute methodAttribute;
                 List<DebugMethodInfo> debugMethods = new List<DebugMethodInfo>();
                 foreach (MethodInfo method in methods)
                 {
-                    if ((methodAttribute = method.GetCustomAttribute<DebugMethodAttribute>()) == null)
+                    if ((methodAttribute = method.GetCustomAttribute<TAttribute>()) == null)
                     {
                         continue;
                     }
@@ -149,7 +121,7 @@ namespace AdvancedDebugTool
                     debugMethods.Add(new DebugMethodInfo()
                     {
                         Title = methodAttribute.MenuTitle,
-                        Category = methodAttribute.Category,
+                        CategoryValue = methodAttribute.CategoryValue,
                         Order = methodAttribute.Order,
                         UseDebugContext = parameters.Length == 1,
                         Method = method,
@@ -184,11 +156,10 @@ namespace AdvancedDebugTool
             debugTypeDefinition.Instances.Add(objectToDebug);
             foreach (DebugMethodInfo methodInfo in debugTypeDefinition.Methods)
             {
-                m_MethodInstances[methodInfo.Category].Add(methodInfo.CreateMethodInstance(objectToDebug));
+                m_MethodInstances[methodInfo.CategoryValue].Add(methodInfo.CreateMethodInstance(objectToDebug));
             }
             
-            // TODO : Optimize here
-            foreach ((DebugCategory _, List<DebugMethodInfoInstance> methodInstances) in m_MethodInstances)
+            foreach ((int _, List<DebugMethodInfoInstance> methodInstances) in m_MethodInstances)
             {
                 methodInstances.Sort();
             }
@@ -203,7 +174,7 @@ namespace AdvancedDebugTool
                 return false;
             }
 
-            foreach ((DebugCategory _, List<DebugMethodInfoInstance> methodInstances) in m_MethodInstances)
+            foreach ((int _, List<DebugMethodInfoInstance> methodInstances) in m_MethodInstances)
             {
                 methodInstances.RemoveAll(item => item.Instance == objectToDebug);
             }

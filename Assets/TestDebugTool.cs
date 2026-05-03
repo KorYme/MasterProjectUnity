@@ -9,18 +9,17 @@ public class TestDebugTool : MonoBehaviour
         Two,
     }
     
-    private DebugTool m_DebugTool;
+    private DebugTool<DebugMethodAttribute, DebugCategory> m_DebugTool;
 
     private float m_Timer;
     
     private bool m_TestToggle;
-    private TestEnum m_Key;
-
+    private TestEnum m_EnumValue;
+    
     private void Awake()
     {
-        m_DebugTool = new DebugTool();
+        m_DebugTool = new DebugTool<DebugMethodAttribute, DebugCategory>();
         m_DebugTool.AddObjectToMenu(this);
-        m_DebugTool.Show();
     }
 
     private void OnGUI()
@@ -37,11 +36,11 @@ public class TestDebugTool : MonoBehaviour
         m_Timer += Time.deltaTime;
     }
 
-    [DebugMethod("Timer method", DebugCategory.General)]
+    [DebugMethod("Timer method")]
     private void TimerDisplay(DebugContext debugContext)
     {
         debugContext.DrawLabelBlock("Test Label", $"Timer: {m_Timer}");
-        if (debugContext.DrawEnumDropdown("Key 1", ref m_Key))
+        if (debugContext.DrawEnumDropdown("Test 1", ref m_EnumValue))
         {
             
         }
@@ -50,17 +49,17 @@ public class TestDebugTool : MonoBehaviour
     [DebugMethod("Button method", DebugCategory.Gameplay)]
     private void ButtonDisplay(DebugContext debugContext)
     {
-        if (debugContext.DrawEnumDropdown("Key 1", ref m_Key))
+        if (debugContext.DrawEnumDropdown("Test 1", ref m_EnumValue))
         {
             
         }
-        if (debugContext.DrawEnumDropdown("Key 2", ref m_Key))
+        if (debugContext.DrawEnumDropdown("Test 2", ref m_EnumValue))
         {
             
         }
         if (debugContext.DrawButton("DebugValue"))
         {
-            Debug.Log(m_Key.ToString());
+            Debug.Log(m_EnumValue.ToString());
         }
     }
 }
