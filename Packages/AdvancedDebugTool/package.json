@@ -14,5 +14,12 @@
     "url": "https://github.com/KorYme/MasterProjectUnity"
   },
   "dependencies": {
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Advanced Debug Tool Introduction",
+      "description": "Contains samples scripts to better understand how to setup and use this debug tool.",
+      "path": "Samples/Introduction"
+    }
+  ]
 }

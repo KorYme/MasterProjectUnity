@@ -1,0 +1,19 @@
+{
+    "name": "AdvancedDebugTool.Samples.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c9d3a621687afbc4cbed9eadee8b7149",
+        "GUID:e7832a5388f52914681e145d6649f003"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

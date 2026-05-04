@@ -1,14 +1,13 @@
 using AdvancedDebugTool;
 using UnityEditor;
-using UnityEngine;
 
 public class DebugToolEditorWindow : EditorWindow
 {
-    private DebugTool<DebugMethodAttribute, DebugCategory> m_DebugTool;
+    private DebugTool<SampleDebugMethodAttribute, SampleCategory> m_DebugTool;
     
     private void OnEnable()
     {
-        m_DebugTool ??= new DebugTool<DebugMethodAttribute, DebugCategory>();
+        m_DebugTool ??= new DebugTool<SampleDebugMethodAttribute, SampleCategory>();
         m_DebugTool.AddObjectToMenu(this);
         m_DebugTool.Show();
     }
@@ -21,18 +20,14 @@ public class DebugToolEditorWindow : EditorWindow
     
     private void OnGUI()
     {
-        if (GUILayout.Button("Toggle Window"))
-        {
-            m_DebugTool.ToggleDisplay();
-        }
         BeginWindows();
         m_DebugTool.DrawOnGUI();
         EndWindows();
     }
 
-    [DebugMethod("Test 1 Editor Window")]
+    [SampleDebugMethod("Introduction")]
     private void Test1(DebugContext ctx)
     {
-        ctx.DrawLabelBlock("Test réussi ?", "OUI");
+        ctx.DrawLabelBlock("Even in editor ?!?", "YES, thanks to Unity IMGui API !");
     }
 }
