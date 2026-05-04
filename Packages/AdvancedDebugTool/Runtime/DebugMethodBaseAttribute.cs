@@ -2,7 +2,9 @@
 
 namespace AdvancedDebugTool
 {
+    #if JETBRAINS
     [JetBrains.Annotations.MeansImplicitUse]
+    #endif
     public abstract class DebugMethodBaseAttribute : Attribute
     {
         public DebugMethodBaseAttribute(string menuTitle, int categoryValue, int order = 0)

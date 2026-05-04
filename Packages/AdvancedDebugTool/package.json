@@ -1,6 +1,6 @@
 {
   "name": "com.koryme.advanced-debug-tool",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Advanced Debug Tool",
   "description": "Easy to implement debug tool using Unity IMGui API.",
   "unity": "2022.3",
@@ -12,8 +12,6 @@
   "author": {
     "name": "KorYme",
     "url": "https://github.com/KorYme/MasterProjectUnity"
-  },
-  "dependencies": {
   },
   "samples": [
     {

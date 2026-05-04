@@ -1,3 +1,20 @@
 {
-	"name": "AdvancedDebugTool"
+    "name": "AdvancedDebugTool",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ide.rider",
+            "expression": "3.0",
+            "define": "JETBRAINS"
+        }
+    ],
+    "noEngineReferences": false
 }
