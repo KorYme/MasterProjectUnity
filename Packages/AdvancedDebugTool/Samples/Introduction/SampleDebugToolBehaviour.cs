@@ -1,3 +1,4 @@
+using System;
 using AdvancedDebugTool;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
@@ -10,6 +11,16 @@ public class SampleDebugToolBehaviour : MonoBehaviour
     {
         A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
     }
+
+    [Flags]
+    public enum FlagEnum
+    {
+        None = 0,
+        Fruit = 1 << 0,
+        Vegetable = 1 << 1,
+        Poop = 1 << 2,
+        Tomato = Vegetable | Fruit,
+    }
     
     private DebugTool<SampleDebugMethodAttribute, SampleCategory> m_DebugTool;
 
@@ -17,6 +28,7 @@ public class SampleDebugToolBehaviour : MonoBehaviour
     private bool m_ExampleToggle;
     private string m_ExampleText;
     private ExampleEnum m_ExampleEnum;
+    private FlagEnum m_ExampleFlagEnum;
     private int m_ExampleInt;
     private float m_ExampleFloat;
     private Vector2 m_ExampleVector2;
@@ -74,9 +86,13 @@ public class SampleDebugToolBehaviour : MonoBehaviour
     [SampleDebugMethod("Enum dropdown", SampleCategory.TextValues)]
     private void EnumDebug(DebugContext debugContext)
     {
-        if (debugContext.DrawEnumDropdown("Enum value", ref m_ExampleEnum))
+        // if (debugContext.DrawEnumDropdown("Enum value", ref m_ExampleEnum))
+        // {
+        //     Debug.Log(m_ExampleEnum.ToString());
+        // }
+        if (debugContext.DrawEnumFlagsDropdown("Enum flags dropdown", ref m_ExampleFlagEnum))
         {
-            Debug.Log(m_ExampleEnum.ToString());
+            
         }
     }
     

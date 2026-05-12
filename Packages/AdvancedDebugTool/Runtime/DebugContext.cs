@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -18,8 +19,21 @@ namespace AdvancedDebugTool
     
     public class DebugContext : IMethodContextSetter
     {
+        private const string FLAGS_NONE = "None";
+        private const string FLAGS_ALL = "All";
+        
+        private struct EnumFlagValues
+        {
+            public object[] Values;
+            public string NoneName;
+            public string AllName;
+            public int ValueAll;
+            public int RemovedValues;
+        }
+        
         private DebugToolStyles m_Styles;
         private readonly Dictionary<Type, object[]> m_EnumValues = new Dictionary<Type, object[]>();
+        private readonly Dictionary<Type, EnumFlagValues> m_EnumFlagsValues = new Dictionary<Type, EnumFlagValues>();
 
         private MethodContext m_CurrentMethodContext;
         
@@ -144,8 +158,11 @@ namespace AdvancedDebugTool
             }
             return false;
         }
+        
+        // ================================
+        // Dropdowns 
+        // ================================
 
-        // Dropdown (popup)
         public bool DrawDropdown(string label, ref int selected, string[] options)
         {
             IncrementMethodIndex();
@@ -225,7 +242,6 @@ namespace AdvancedDebugTool
                     {
                         tmpValue = enumValue;
                         changed |= !isSelected;
-                        m_CurrentDropdownMethod = default;
                     }
                 }
                 GUILayout.EndScrollView();
@@ -237,14 +253,132 @@ namespace AdvancedDebugTool
             value = tmpValue;
             return changed;
         }
+        
+        public bool DrawEnumFlagsDropdown<TEnum>(string label, ref TEnum value) where TEnum : Enum, IConvertible
+        {
+            IncrementMethodIndex();
+            if (!m_EnumFlagsValues.TryGetValue(typeof(TEnum), out EnumFlagValues enumValues))
+            {
+                enumValues.Values = Enum.GetValues(typeof(TEnum))
+                    .Cast<object>()
+                    .ToArray();
+                enumValues.ValueAll = 0;
+                foreach (TEnum enumValue in enumValues.Values)
+                {
+                    enumValues.ValueAll |= enumValue.ToInt32(null);
+                }
 
+                enumValues.NoneName = Enum.IsDefined(typeof(TEnum), 0) ? Enum.ToObject(typeof(TEnum), 0).ToString() : FLAGS_NONE;
+                enumValues.AllName = Enum.IsDefined(typeof(TEnum), enumValues.ValueAll) ? Enum.ToObject(typeof(TEnum), enumValues.ValueAll).ToString() : FLAGS_ALL;
+                enumValues.RemovedValues = (Enum.IsDefined(typeof(TEnum), enumValues.ValueAll) ? 1 : 0) + (Enum.IsDefined(typeof(TEnum), 0) ? 1 : 0) - (enumValues.ValueAll == 0 ? 1 : 0);
+                m_EnumFlagsValues[typeof(TEnum)] = enumValues;
+            }
+        
+            bool changed  = false;
+            int intValue = value.ToInt32(null);
+        
+            string summary = BuildFlagsSummary(enumValues, intValue);
+        
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, m_Styles.StyleLabelText, GUILayout.Width(110));
+            GUILayout.BeginVertical("box");
+
+            if (GUILayout.Button("▾ " + summary, m_Styles.StyleTextField))
+            {
+                SetAsCurrentDropdown();
+            }
+
+            GUIStyle style;
+            if (m_CurrentDropdownMethod == m_CurrentMethodContext)
+            {
+                GUILayout.BeginVertical(m_Styles.StyleDropdownMenu);
+                m_CurrentDropdownScroll = GUILayout.BeginScrollView(m_CurrentDropdownScroll, 
+                    GUILayout.Height(GetDropdownHeight(enumValues.Values.Length - enumValues.RemovedValues)));
+        
+                foreach (TEnum enumValue in enumValues.Values)
+                {
+                    int flagBit = enumValue.ToInt32(null);
+                    if (flagBit == 0 || flagBit == enumValues.ValueAll)
+                    {
+                        continue;
+                    }
+                    bool isSelected = (intValue & flagBit) == flagBit;
+        
+                    style = isSelected
+                        ? m_Styles.StyleDropdownItemSelected
+                        : m_Styles.StyleDropdownItem;
+        
+                    if (GUILayout.Button(enumValue.ToString(), style))
+                    {
+                        intValue = isSelected
+                            ? intValue & ~flagBit
+                            : intValue | flagBit;
+        
+                        value = (TEnum)Enum.ToObject(typeof(TEnum), intValue);
+                        changed = true;
+                    }
+                }
+        
+                GUILayout.EndScrollView();
+        
+                GUILayout.BeginHorizontal();
+                
+                style = intValue == 0
+                    ? m_Styles.StyleDropdownItemSelected
+                    : m_Styles.StyleDropdownItem;
+                if (GUILayout.Button(enumValues.NoneName, style))
+                {
+                    value = (TEnum)Enum.ToObject(typeof(TEnum), 0);
+                    changed = true;
+                }
+                style = intValue == enumValues.ValueAll
+                    ? m_Styles.StyleDropdownItemSelected
+                    : m_Styles.StyleDropdownItem;
+                if (GUILayout.Button(enumValues.AllName, style))
+                {
+                    value = (TEnum)Enum.ToObject(typeof(TEnum), enumValues.ValueAll);
+                    changed = true;
+                }
+        
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+            }
+        
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        
+            return changed;
+        }
+        
+        private string BuildFlagsSummary(EnumFlagValues enumValue, int intValue)
+        {
+            if (intValue == 0) return enumValue.NoneName;
+            if (intValue == enumValue.ValueAll) return enumValue.AllName;
+            
+            List<string> active = enumValue.Values
+                .Cast<IConvertible>()
+                .Where(v => {
+                    int bit = v.ToInt32(null);
+                    return (intValue & bit) == bit && bit != 0;
+                })
+                .Select(v => v.ToString(CultureInfo.InvariantCulture))
+                .ToList();
+        
+            return active.Count switch
+            {
+                0 => enumValue.NoneName,
+                1 => active[0],
+                _ => $"Mixed ({active.Count})"
+            };
+        }
+        
         private float GetDropdownHeight(int itemCount)
         {
             float dropdownMaxHeight = m_Styles.StyleDropdownItem.CalcHeight(GUIContent.none, 110f) * itemCount
-                                   + m_Styles.StyleDropdownMenu.padding.top + m_Styles.StyleDropdownMenu.padding.top;
+                                      + m_Styles.StyleDropdownMenu.padding.top + m_Styles.StyleDropdownMenu.padding.top;
             return Mathf.Clamp(dropdownMaxHeight, DebugToolStyles.MIN_DROPDOWN_HEIGHT, DebugToolStyles.MAX_DROPDOWN_HEIGHT);
         }
-
+        
         private void SetAsCurrentDropdown()
         {
             if (m_CurrentDropdownMethod != m_CurrentMethodContext)
