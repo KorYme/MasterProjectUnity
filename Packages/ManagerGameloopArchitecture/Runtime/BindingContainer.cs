@@ -48,6 +48,19 @@ namespace ManagerInjection
             }
             return newManager;
         }
+        
+        public T Bind<T>(MockBinder<T> binder)
+            where T : class, IManager
+        {
+            T newManager = BindWithMockService<T>();
+
+            if (binder.ManagerReference is IManagerReferenceSetter<T> managerReferenceSetter)
+            {
+                managerReferenceSetter.SetManagerReference(newManager);
+                OnUnbindAll += managerReferenceSetter.UnsetManagerReference;
+            }
+            return newManager;
+        }
 
         public T BindWithPrefab<T>(BaseManager managerPrefab) where T : class, IManager
         {

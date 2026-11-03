@@ -12,11 +12,13 @@ namespace ManagerInjection.Samples
     {
         [SerializeField] private ManagerBinder<ITestManager, TestManager> _testManagerBind;
         [SerializeField] private ManagerBinder<IWarningManager, WarningManager> _warningManagerBind;
+        [SerializeField] private MockBinder<IWarningManager> _warningMockBind;
         
         protected override void InstantiateManagers(in BindingContainer container)
         {
             SampleGlobals.TestManager = container.Bind(_testManagerBind);
             SampleGlobals.WarningManager = container.Bind(_warningManagerBind);
+            SampleGlobals.WarningManager = container.Bind(_warningMockBind);
             Debug.Log("All Managers Instantiated");
         }
     }
