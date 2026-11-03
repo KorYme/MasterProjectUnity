@@ -63,9 +63,9 @@ namespace ManagerInjection
 
         protected virtual void SetupManagerInjection()
         {
-            foreach (KeyValuePair<Type, IManager> kvp in _managersContainer.AllManagers)
+            foreach (KeyValuePair<Type, IManager> kvp in _managersContainer.Managers)
             {
-                InjectionUtilities.InjectDependencies(typeof(InjectManager), _managersContainer.AllManagers, kvp.Value);
+                InjectionUtilities.InjectDependencies(typeof(InjectManager), _managersContainer.Managers, kvp.Value);
             }
         }
 

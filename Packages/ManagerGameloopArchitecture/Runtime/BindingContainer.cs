@@ -15,16 +15,19 @@ namespace ManagerInjection
             Mock,
         }
         
-        public IReadOnlyDictionary<Type, IManager> AllManagers => _allManagers;
-        private Dictionary<Type, IManager> _allManagers;
+        public IReadOnlyDictionary<Type, IManager> Managers => _managersRefByType;
+        private Dictionary<Type, IManager> _managersRefByType;
 
+        private Dictionary<IManager, IManager> _managersSources;
+        
         protected event Action OnUnbindAll;
 
         private Transform m_transform;
 
         public BindingContainer(Transform transform = null)
         {
-            _allManagers = new Dictionary<Type, IManager>();
+            _managersRefByType = new Dictionary<Type, IManager>();
+            _managersSources = new Dictionary<IManager, IManager>();
             m_transform = transform;
             OnUnbindAll = null;
         }
@@ -68,11 +71,15 @@ namespace ManagerInjection
             {
                 return mockManager;
             }
-            BaseManager managerInstance = UnityEngine.Object.Instantiate(managerPrefab, m_transform);
-            managerInstance.name = managerPrefab.name;
-            _allManagers.Add(typeof(T), managerInstance);
-            // Debug.Log($"{nameof(BindingContainer)} : {typeof(T).Name} has been binded with a prefab instance.");
-            return managerInstance as T;
+            if (!_managersSources.TryGetValue(managerPrefab, out IManager manager))
+            {
+                BaseManager baseManager = UnityEngine.Object.Instantiate(managerPrefab, m_transform);
+                baseManager.name = managerPrefab.name;
+                manager = baseManager;
+                _managersSources.Add(managerPrefab, manager);
+            }
+            _managersRefByType.Add(typeof(T), manager);
+            return manager as T;
         }
 
         public T BindWithInstance<T>(IManager managerInstance) where T : class, IManager
@@ -81,25 +88,30 @@ namespace ManagerInjection
             {
                 return mockManager;
             }
-            _allManagers.Add(typeof(T), managerInstance);
-            if (managerInstance is MonoBehaviour monoBehaviour && monoBehaviour.transform != m_transform)
+
+            if (!_managersSources.TryGetValue(managerInstance, out IManager manager))
             {
-                monoBehaviour.transform.SetParent(m_transform);
+                _managersSources.Add(managerInstance, managerInstance);
+                if (managerInstance is Component component && component.transform != m_transform)
+                {
+                    component.transform.SetParent(m_transform);
+                }
+                manager = managerInstance;
             }
-            // Debug.Log($"{nameof(BindingContainer)} : {typeof(T).Name} has been binded with a simple instance.");
-            return managerInstance as T;
+            _managersRefByType.Add(typeof(T), manager);
+            return manager as T;
         }
 
         public T BindWithMockService<T>() where T : class, IManager
         {
-            if (_allManagers.ContainsKey(typeof(T)))
+            if (_managersRefByType.ContainsKey(typeof(T)))
             {
                 Debug.LogError($"The binding container already references the {typeof(T).Name} type.");
                 return null;
             }
 
             T mockService = Substitute.For<T>();
-            _allManagers.Add(typeof(T), mockService);
+            _managersRefByType.Add(typeof(T), mockService);
             Debug.Log($"{nameof(BindingContainer)} : {typeof(T).Name} has been binded with a mock instance.");
             return mockService;
         }
@@ -118,7 +130,7 @@ namespace ManagerInjection
                 mockManager = BindWithMockService<T>();
                 return false;
             }
-            if (_allManagers.TryGetValue(typeof(T), out IManager managerBinded))
+            if (_managersRefByType.TryGetValue(typeof(T), out IManager managerBinded))
             {
                 Debug.LogError($"The binding container already references the {typeof(T).Name} type.");
                 mockManager = managerBinded as T;
@@ -127,7 +139,7 @@ namespace ManagerInjection
             mockManager = null;
             return true;
         }
-
+        
         public void UnbindAll()
         {
             OnUnbindAll?.Invoke();

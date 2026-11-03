@@ -46,11 +46,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _testManagerBind:
-    _bindingType: 0
-    _manager: {fileID: 4055665936101114292, guid: 3554e0056f66b694f87382fa98e19207, type: 3}
+    <BindingType>k__BackingField: 0
+    <Manager>k__BackingField: {fileID: 4055665936101114292, guid: 3554e0056f66b694f87382fa98e19207, type: 3}
+    <ManagerReference>k__BackingField: {fileID: 0}
   _warningManagerBind:
-    _bindingType: 0
-    _manager: {fileID: 8650179574467465093, guid: 9a0e9fba95f95594e82ba6855161c40e, type: 3}
+    <BindingType>k__BackingField: 0
+    <Manager>k__BackingField: {fileID: 8650179574467465093, guid: 9a0e9fba95f95594e82ba6855161c40e, type: 3}
+    <ManagerReference>k__BackingField: {fileID: 0}
+  _errorManagerBind:
+    <BindingType>k__BackingField: 0
+    <Manager>k__BackingField: {fileID: 8650179574467465093, guid: 9a0e9fba95f95594e82ba6855161c40e, type: 3}
+    <ManagerReference>k__BackingField: {fileID: 0}
+  _warningMockBind:
+    <ManagerReference>k__BackingField: {fileID: 0}
 --- !u!114 &8735950485483888679
 MonoBehaviour:
   m_ObjectHideFlags: 0

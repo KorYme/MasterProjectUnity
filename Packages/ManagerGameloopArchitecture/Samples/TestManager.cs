@@ -17,7 +17,7 @@ namespace ManagerInjection.Samples
         
         public void Test()
         {
-            Debug.Log($"Warning level : {_warningManager.GetWarningLevel}");
+            // Debug.Log($"Warning level : {_warningManager.GetWarningLevel}");
         }
 
         public void Retest()
