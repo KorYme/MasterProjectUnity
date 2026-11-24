@@ -1,0 +1,17 @@
+{
+  "name": "com.koryme.required-attribute-roslyn-analyzer",
+  "version": "1.0.0",
+  "displayName": "Required Attribute Roslyn Analyzer",
+  "description": "Roslyn analyzer working with a specific attribute to block compilation when field of type with this attribute doesn't have the parameterd attribute.",
+  "unity": "2022.3",
+  "keywords": [
+    "roslyn",
+    "analyzer",
+    "required",
+    "attribute"
+  ],
+  "author": {
+    "name": "KorYme",
+    "url": "https://github.com/KorYme/MasterProjectUnity"
+  }
+}

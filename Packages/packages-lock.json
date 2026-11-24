@@ -22,6 +22,12 @@
         "net.tnrd.nsubstitute": "5.1.0"
       }
     },
+    "com.koryme.required-attribute-roslyn-analyzer": {
+      "version": "file:RequiredAttributeRoslynAnalyzer",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.koryme.save-system": {
       "version": "file:SaveSystem",
       "depth": 0,
