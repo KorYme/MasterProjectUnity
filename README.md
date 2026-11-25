@@ -51,3 +51,9 @@ _To add these packages to your projects, use the link next to its name in the Un
 > 
 > Available Encryption algorithm for the moment :
 > 1. XOR
+
+---
+
+`Required Attribute Roslyn Analyzer` : https://github.com/KorYme/MasterProjectUnity.git?path=/Packages/RequiredAttributeRoslynAnalyzer
+
+> Roslyn analyzer working with a specific attribute to block compilation when field of type with this attribute doesn't have the parameterd attribute.
